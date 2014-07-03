@@ -18,12 +18,13 @@
       if (stristr($data, " ")) {
         $ex = explode(" ", trim($data));
         $ex[] = $cex;
+        $data = $ex;
       }
 
       // Iterate through each registration.
       foreach ($registrations as $id => $registration) {
         // Trigger the event for a certain registration.
-        EventHandling::triggerEvent($name, $id, array($connection, $ex));
+        EventHandling::triggerEvent($name, $id, array($connection, $data));
       }
       return true;
     }
