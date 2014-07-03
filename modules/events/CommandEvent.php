@@ -21,7 +21,7 @@
           }
         }
         $ex[] = $cex;
-        $data = $ex;
+        $data = array_values($ex);
       }
 
       // Iterate through each registration.
