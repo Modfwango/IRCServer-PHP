@@ -9,11 +9,9 @@
 
       if (stristr($data, " :")) {
         $cex = explode(" :", trim($data));
-        if (count($cex) > 2) {
-          return false;
-        }
         $data = $cex[0];
-        $cex = $cex[1];
+        unset($cex[0]);
+        $cex = implode(" :", $cex);
       }
       if (stristr($data, " ")) {
         $ex = explode(" ", trim($data));
