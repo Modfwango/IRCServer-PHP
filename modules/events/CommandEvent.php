@@ -8,12 +8,12 @@
       $data = trim($data);
 
       if (stristr($data, " :")) {
-        $cex = explode(" :", $data);
+        $cex = explode(" :", trim($data));
         if (count($cex) > 2) {
           return false;
         }
-        $cex = $cex[1];
         $data = $cex[0];
+        $cex = $cex[1];
       }
       if (stristr($data, " ")) {
         $ex = explode(" ", trim($data));
