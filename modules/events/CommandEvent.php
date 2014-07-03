@@ -15,6 +15,11 @@
       }
       if (stristr($data, " ")) {
         $ex = explode(" ", trim($data));
+        foreach ($ex as $key => $item) {
+          if (trim($item) == null) {
+            unset($ex[$key]);
+          }
+        }
         $ex[] = $cex;
         $data = $ex;
       }
