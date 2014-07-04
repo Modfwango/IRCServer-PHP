@@ -10,6 +10,9 @@
         $data = $cex[0];
         unset($cex[0]);
         $cex = implode(" :", $cex);
+        if (trim($cex) == null) {
+          unset($cex);
+        }
       }
       if (stristr($data, " ")) {
         $ex = explode(" ", trim($data));
