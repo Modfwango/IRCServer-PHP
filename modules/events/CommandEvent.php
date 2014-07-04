@@ -23,6 +23,9 @@
         }
         $data = array_values($ex);
       }
+      if (is_string($data)) {
+        $data = array($data);
+      }
 
       // Iterate through each registration.
       foreach ($registrations as $id => $registration) {
