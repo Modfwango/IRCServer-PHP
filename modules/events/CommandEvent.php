@@ -24,7 +24,10 @@
         $data = array_values($ex);
       }
       else {
-        $data = array($data, $cex);
+        $data = array($data);
+        if (isset($cex)) {
+          $data[] = $cex;
+        }
       }
 
       // Iterate through each registration.
