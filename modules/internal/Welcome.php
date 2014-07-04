@@ -55,6 +55,8 @@
           // Trigger the commandEvent event for each registered module.
           EventHandling::triggerEvent("commandEvent", $id, array($connection,
             array("LUSERS")));
+          EventHandling::triggerEvent("commandEvent", $id, array($connection,
+            array("MOTD")));
         }
       }
     }
