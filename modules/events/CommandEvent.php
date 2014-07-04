@@ -20,7 +20,9 @@
             unset($ex[$key]);
           }
         }
-        $ex[] = $cex;
+        if (isset($cex)) {
+          $ex[] = $cex;
+        }
         $data = array_values($ex);
       }
 
