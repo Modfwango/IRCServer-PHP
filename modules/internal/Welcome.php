@@ -1,6 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("CommandEvent", "ConnectionCreatedEvent",
+    public $depend = array("CommandEvent", "ConnectionCreatedEvent", "LUSERS",
       "UserRegistrationEvent");
     public $name = "Welcome";
 
