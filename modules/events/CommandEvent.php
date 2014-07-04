@@ -13,13 +13,13 @@
       }
       if (stristr($data, " ")) {
         $ex = explode(" ", trim($data));
+        if (isset($cex)) {
+          $ex[] = $cex;
+        }
         foreach ($ex as $key => $item) {
           if (trim($item) == null) {
             unset($ex[$key]);
           }
-        }
-        if (isset($cex)) {
-          $ex[] = $cex;
         }
         $data = array_values($ex);
       }
