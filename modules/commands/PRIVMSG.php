@@ -20,7 +20,9 @@
               return true;
             }
           }
-          $connection->send();
+          $connection->send(":".__SERVERDOMAIN__." 401 ".
+            $connection->getOption("nick")." ".$command[1].
+            " :No such nick/channel");
         }
         elseif (count($command) == 2) {
           $connection->send(":".__SERVERDOMAIN__." 412 ".
