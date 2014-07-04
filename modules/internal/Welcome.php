@@ -27,7 +27,7 @@
         " Internet Relay Chat Network ".$connection->getOption("nick"));
       $connection->send(":".__SERVERDOMAIN__." 002 ".
         $connection->getOption("nick")." :Your host is ".__SERVERDOMAIN__."[".
-        $connection->getLocalIP()."/".$connection->getLocalPort.
+        $connection->getLocalIP()."/".$connection->getPort().
         "], running version ".__PROJECTVERSION__);
       $connection->send(":".__SERVERDOMAIN__." 003 ".
         $connection->getOption("nick")." :This server was created ".date(
