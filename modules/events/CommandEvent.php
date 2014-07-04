@@ -3,15 +3,15 @@
     public $name = "CommandEvent";
 
     public function preprocessEvent($name, $registrations, $connection, $data) {
-      $data = trim($data);
+      $data = array(trim($data));
 
-      if (stristr($data, " :")) {
-        $cex = explode(" :", trim($data));
+      if (stristr($data[0], " :")) {
+        $cex = explode(" :", trim($data[0]));
         $data = array($cex[0]);
         unset($cex[0]);
         $cex = implode(" :", $cex);
       }
-      if (stristr($data, " ")) {
+      if (stristr($data[0], " ")) {
         $ex = explode(" ", trim($data[0]));
         if (isset($cex)) {
           $ex[] = $cex;
