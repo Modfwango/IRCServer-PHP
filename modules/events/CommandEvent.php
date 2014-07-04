@@ -7,12 +7,12 @@
 
       if (stristr($data, " :")) {
         $cex = explode(" :", trim($data));
-        $data = $cex[0];
+        $data = array($cex[0]);
         unset($cex[0]);
         $cex = implode(" :", $cex);
       }
       if (stristr($data, " ")) {
-        $ex = explode(" ", trim($data));
+        $ex = explode(" ", trim($data[0]));
         if (isset($cex)) {
           $ex[] = $cex;
         }
@@ -22,9 +22,6 @@
           }
         }
         $data = array_values($ex);
-      }
-      if (is_string($data)) {
-        $data = array($data);
       }
 
       // Iterate through each registration.
