@@ -1,7 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("CommandEvent", "ConnectionCreatedEvent", "LUSERS",
-      "UserRegistrationEvent");
+      "MOTD", "UserRegistrationEvent");
     public $name = "Welcome";
 
     public function receiveConnectionCreatedEvent($name, $connection) {
