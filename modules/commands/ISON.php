@@ -14,10 +14,21 @@
         foreach ($command as $user) {
           foreach (ConnectionManagement::getConnections() as $c) {
             if (strtolower($c->getOption("nick")) == strtolower($user)) {
-              $online[] = $c->getOption("nick");
+              if (strlen(":".__SERVERDOMAIN__." 303 ".
+                      $connection->getOption("nick")." :".implode(" ", $online))
+                      < 512) {
+                $online[] = $c->getOption("nick");
+              }
             }
           }
         }
+
+        while (strlen(":".__SERVERDOMAIN__." 303 ".
+                $connection->getOption("nick")." :".implode(" ", $online))
+                > 512) {
+          array_pop($online);
+        }
+
         $connection->send(":".__SERVERDOMAIN__." 303 ".
           $connection->getOption("nick")." :".implode(" ", $online));
         return true;

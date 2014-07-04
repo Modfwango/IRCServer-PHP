@@ -15,13 +15,19 @@
             " Message of the Day - ");
           if (stristr(__MOTD__, "\n")) {
             foreach (explode("\n", __MOTD__) as $line) {
-              $connection->send(":".__SERVERDOMAIN__." 372 ".
-                $connection->getOption("nick")." :- ".$line);
+              $line = str_split($line, 80);
+              foreach ($line as $l) {
+                $connection->send(":".__SERVERDOMAIN__." 372 ".
+                  $connection->getOption("nick")." :- ".$l);
+              }
             }
           }
           else {
-            $connection->send(":".__SERVERDOMAIN__." 372 ".
-              $connection->getOption("nick")." :- ".__MOTD__);
+            $line = str_split(__MOTD__, 80);
+            foreach ($line as $l) {
+              $connection->send(":".__SERVERDOMAIN__." 372 ".
+                $connection->getOption("nick")." :- ".$l);
+            }
           }
           $connection->send(":".__SERVERDOMAIN__." 376 ".
             $connection->getOption("nick")." :End of /MOTD command.");
