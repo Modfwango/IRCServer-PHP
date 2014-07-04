@@ -38,16 +38,7 @@
         __CHANNELMODES__." ".__CHANNELMODESWITHPARAMS__);
       $connection->send(":".__SERVERDOMAIN__." 005 ".(
         $connection->getOption("nick") ? $connection->getOption("nick") : "*").
-        " CHANTYPES= CHANMODES= CHANLIMIT=:30 PREFIX=() MAXLIST=:100 MODES=4 ".
-        "NETWORK=".__NETNAME__." :are supported by this server");
-      $connection->send(":".__SERVERDOMAIN__." 005 ".(
-        $connection->getOption("nick") ? $connection->getOption("nick") : "*").
-        " STATUSMSG= CASEMAPPING=rfc1459 NICKLEN=30 CHANNELLEN=50 TOPICLEN=390".
-        " :are supported by this server");
-      $connection->send(":".__SERVERDOMAIN__." 005 ".(
-        $connection->getOption("nick") ? $connection->getOption("nick") : "*").
-        " FNC TARGMAX=NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:5,NOTICE:5 :are ".
-        "supported by this server");
+        " PREFIX=(ov)@+ CHANTYPES=#& :are supported by this server");
 
       $event = EventHandling::getEventByName("commandEvent");
       if ($event != false) {
