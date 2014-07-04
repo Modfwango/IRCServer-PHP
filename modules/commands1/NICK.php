@@ -2,7 +2,7 @@
   class @@CLASSNAME@@ {
     public $depend = array("CommandEvent",
       /*"Config", */"UserRegistrationEvent");
-    public $name = "Nick";
+    public $name = "NICK";
 
     private function nicknameAvailable($nick) {
       foreach (ConnectionManagement::getConnections() as $c) {
