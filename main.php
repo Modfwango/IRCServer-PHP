@@ -6,6 +6,7 @@
     "git rev-parse HEAD"), 0, 7));
   define("__NETNAME__", "PHPNet");
   define("__MOTD__", "Hello!\nThis is a test.");
+  define("__PINGTIME__", 120);
   define("__SERVERDOMAIN__", "php.clayfreeman.com");
   require_once(__PROJECTROOT__."/.modfwango/main.php");
 ?>

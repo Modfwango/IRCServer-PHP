@@ -36,6 +36,7 @@
       }
       if (strtolower($command[0]) == "pong") {
         $this->responses[$connection->getOption("id")] = true;
+        return true;
       }
       return false;
     }
@@ -60,6 +61,7 @@
           " QUIT :Ping timeout: ".__PINGTIME__." seconds");
         $connection->send("ERROR :Closing Link: ".$connection->getHost().
           " (Ping timeout: ".__PINGTIME__." seconds)");
+        $connection->disconnect();
       }
     }
 
