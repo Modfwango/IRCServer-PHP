@@ -33,11 +33,22 @@
         }
       }
 
+      $found = false;
       // Iterate through each registration.
       foreach ($registrations as $id => $registration) {
         // Trigger the event for a certain registration.
-        EventHandling::triggerEvent($name, $id, array($connection, $data));
+        if (EventHandling::triggerEvent($name, $id, array($connection,
+            $data))) {
+          $found = true;
+        }
       }
+
+      if ($found == false) {
+        $connection->send(":".__SERVERDOMAIN__." 421 ".(
+          $connection->getOption("nick") ? $connection->getOption("nick") :
+          "*")." ".$data[0]." :Unknown command");
+      }
+
       return true;
     }
 

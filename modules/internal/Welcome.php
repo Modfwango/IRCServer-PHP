@@ -32,11 +32,22 @@
         "D M d Y", __STARTTIME__)." at ".date("H:i:s e", __STARTTIME__));
       $connection->send(":".__SERVERDOMAIN__." 004 ".
         $connection->getOption("nick")." ".__SERVERDOMAIN__." ".
-        __PROJECTVERSION__." ".__USERMODES__." ".__CHANNELMODES__." ".
-        __CHANNELMODESWITHPARAMS__);
+        __PROJECTVERSION__." oiwszcrkfydnxbauglZCD biklmnopstveIrS bkloveI");
       $connection->send(":".__SERVERDOMAIN__." 005 ".
         $connection->getOption("nick").
-        " PREFIX=() CHANTYPES= :are supported by this server");
+        " CHANTYPES=&# EXCEPTS INVEX CHANMODES=eIb,k,l,imnpstS CHANLIMIT=&#:15".
+        " PREFIX=(ov)@+ MAXLIST=beI:25 MODES=4 NETWORK=".__NETNAME__." KNOCK".
+        " STATUSMSG=@+ CALLERID=g :are supported by this server");
+      $connection->send(":".__SERVERDOMAIN__." 005 ".
+        $connection->getOption("nick").
+        " SAFELIST ELIST=U CASEMAPPING=rfc1459 CHARSET=ascii NICKLEN=9".
+        " CHANNELLEN=50 TOPICLEN=160 ETRACE CPRIVMSG CNOTICE DEAF=D".
+        " MONITOR=100 :are supported by this server");
+      $connection->send(":".__SERVERDOMAIN__." 005 ".
+        $connection->getOption("nick").
+        " FNC TARGMAX=NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:4,NOTICE:4,".
+        "ACCEPT:,MONITOR: :are supported by this server :are supported by this".
+        " server");
 
       $event = EventHandling::getEventByName("commandEvent");
       if ($event != false) {

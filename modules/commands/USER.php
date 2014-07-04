@@ -55,7 +55,9 @@
             $connection->getOption("nick") ? $connection->getOption("nick") :
             "*")." USER :Not enough parameters");
         }
+        return true;
       }
+      return false;
     }
 
     public function isInstantiated() {

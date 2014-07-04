@@ -32,7 +32,9 @@
           $connection->send(":".__SERVERDOMAIN__." 411 ".
             $connection->getOption("nick")." :No recipient given (PRIVMSG)");
         }
+        return true;
       }
+      return false;
     }
 
     public function isInstantiated() {

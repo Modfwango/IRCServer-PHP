@@ -30,7 +30,9 @@
           $connection->send(":".__SERVERDOMAIN__." 422 ".
             $connection->getOption("nick")." :MOTD file is missing");
         }
+        return true;
       }
+      return false;
     }
 
     public function isInstantiated() {

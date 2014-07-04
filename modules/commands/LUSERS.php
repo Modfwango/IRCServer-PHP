@@ -37,7 +37,9 @@
           ConnectionManagement::getConnections())." (".count(
           ConnectionManagement::getConnections())." clients) (".count(
           ConnectionManagement::getConnections())." connections received)");
+        return true;
       }
+      return false;
     }
 
     public function isInstantiated() {

@@ -61,7 +61,9 @@
             $connection->getOption("nick") ? $connection->getOption("nick") :
             "*")." :No nickname given");
         }
+        return true;
       }
+      return false;
     }
 
     public function isInstantiated() {

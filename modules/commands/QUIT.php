@@ -21,7 +21,9 @@
         $connection->send("ERROR :Closing Link: ".$connection->getHost()." (".
           $message.")");
         $connection->disconnect();
+        return true;
       }
+      return false;
     }
 
     public function isInstantiated() {
