@@ -3,16 +3,16 @@
     public $name = "CommandEvent";
 
     public function preprocessEvent($name, $registrations, $connection, $data) {
-      $data = array(trim($data));
+      $data = trim($data);
 
-      if (stristr($data[0], " :")) {
-        $cex = explode(" :", trim($data[0]));
-        $data = array($cex[0]);
+      if (stristr($data, " :")) {
+        $cex = explode(" :", trim($data));
+        $data = $cex[0];
         unset($cex[0]);
         $cex = implode(" :", $cex);
       }
-      if (stristr($data[0], " ")) {
-        $ex = explode(" ", trim($data[0]));
+      if (stristr($data, " ")) {
+        $ex = explode(" ", trim($data));
         if (isset($cex)) {
           $ex[] = $cex;
         }
@@ -22,6 +22,9 @@
           }
         }
         $data = array_values($ex);
+      }
+      else {
+        $data = array($data, $cex);
       }
 
       // Iterate through each registration.
