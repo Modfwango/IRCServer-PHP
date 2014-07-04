@@ -38,8 +38,10 @@
                 foreach ($event[2] as $id => $registration) {
                   // Trigger the userRegistrationEvent event for each registered
                   // module.
-                  EventHandling::triggerEvent("userRegistrationEvent", $id,
-                      $connection);
+                  if (EventHandling::triggerEvent("userRegistrationEvent", $id,
+                      $connection)) {
+                    $connection->setOption("registered", true);
+                  }
                 }
               }
             }

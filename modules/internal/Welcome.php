@@ -4,7 +4,7 @@
       "MOTD", "UserRegistrationEvent");
     public $name = "Welcome";
 
-    public function receiveConnectionCreatedEvent($name, $connection) {
+    public function receiveConnectionCreated($name, $connection) {
       $connection->send(":".__SERVERDOMAIN__.
         " NOTICE * :*** Looking up your hostname...");
       $ip = $connection->getIP();
