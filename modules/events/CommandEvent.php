@@ -3,8 +3,6 @@
     public $name = "CommandEvent";
 
     public function preprocessEvent($name, $registrations, $connection, $data) {
-      $preprocessors = $registrations[1];
-      $registrations = $registrations[0];
       $data = trim($data);
 
       if (stristr($data, " :")) {
