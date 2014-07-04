@@ -10,7 +10,7 @@
       if (strtolower($command[0]) == "lusers") {
         $connection->send(":".__SERVERDOMAIN__." 251 ".(
           $connection->getOption("nick") ? $connection->getOption("nick") :
-          "*")." :There are ".count(ConnectionManager::getConnections()).
+          "*")." :There are ".count(ConnectionManagement::getConnections()).
           " users and 0 invisible on 1 servers");
         $connection->send(":".__SERVERDOMAIN__." 252 ".(
           $connection->getOption("nick") ? $connection->getOption("nick") :
@@ -20,26 +20,26 @@
           "*")." 0 :channels formed");
         $connection->send(":".__SERVERDOMAIN__." 255 ".(
           $connection->getOption("nick") ? $connection->getOption("nick") :
-          "*")." :I have ".count(ConnectionManager::getConnections()).
+          "*")." :I have ".count(ConnectionManagement::getConnections()).
           " clients and 0 servers");
         $connection->send(":".__SERVERDOMAIN__." 265 ".(
           $connection->getOption("nick") ? $connection->getOption("nick") :
-          "*")." ".count(ConnectionManager::getConnections())." ".count(
-          ConnectionManager::getConnections())." :Current local users ".count(
-          ConnectionManager::getConnections()).", max ".count(
-          ConnectionManager::getConnections()));
+          "*")." ".count(ConnectionManagement::getConnections())." ".count(
+          ConnectionManagement::getConnections())." :Current local users ".count(
+          ConnectionManagement::getConnections()).", max ".count(
+          ConnectionManagement::getConnections()));
         $connection->send(":".__SERVERDOMAIN__." 266 ".(
           $connection->getOption("nick") ? $connection->getOption("nick") :
-          "*")." ".count(ConnectionManager::getConnections())." ".count(
-          ConnectionManager::getConnections())." :Current global users ".count(
-          ConnectionManager::getConnections()).", max ".count(
-          ConnectionManager::getConnections()));
+          "*")." ".count(ConnectionManagement::getConnections())." ".count(
+          ConnectionManagement::getConnections())." :Current global users ".count(
+          ConnectionManagement::getConnections()).", max ".count(
+          ConnectionManagement::getConnections()));
         $connection->send(":".__SERVERDOMAIN__." 250 ".(
           $connection->getOption("nick") ? $connection->getOption("nick") :
           "*")." :Highest connection count: ".count(
-          ConnectionManager::getConnections())." (".count(
-          ConnectionManager::getConnections())." clients) (".count(
-          ConnectionManager::getConnections())." connections received)");
+          ConnectionManagement::getConnections())." (".count(
+          ConnectionManagement::getConnections())." clients) (".count(
+          ConnectionManagement::getConnections())." connections received)");
       }
     }
 
