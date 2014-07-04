@@ -23,15 +23,14 @@
             $connection->setOption("nick", substr($command[1], 0, 30));
             if ($connection->getOption("ident") != false &&
                 $connection->getOption("registered") == false) {
+              $connection->setOption("registered", true);
               $event = EventHandling::getEventByName("userRegistrationEvent");
               if ($event != false) {
                 foreach ($event[2] as $id => $registration) {
                   // Trigger the userRegistrationEvent event for each registered
                   // module.
-                  if (EventHandling::triggerEvent("userRegistrationEvent", $id,
-                      $connection)) {
-                    $connection->setOption("registered", true);
-                  }
+                  EventHandling::triggerEvent("userRegistrationEvent", $id,
+                      $connection);
                 }
               }
             }
