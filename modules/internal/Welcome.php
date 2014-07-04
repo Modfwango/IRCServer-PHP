@@ -12,10 +12,12 @@
       if ($ip == $host) {
         $connection->send(":".__SERVERDOMAIN__.
           " NOTICE * :*** Couldn't look up your hostname");
+        $connection->setOption("id", hash("sha256", rand().$ip));
       }
       else {
         $connection->send(":".__SERVERDOMAIN__.
           " NOTICE * :*** Found your hostname");
+        $connection->setOption("id", hash("sha256", rand().$host));
       }
     }
 
