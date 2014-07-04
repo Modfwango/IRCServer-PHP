@@ -38,7 +38,7 @@
         __CHANNELMODES__." ".__CHANNELMODESWITHPARAMS__);
       $connection->send(":".__SERVERDOMAIN__." 005 ".(
         $connection->getOption("nick") ? $connection->getOption("nick") : "*").
-        " PREFIX=(ov)@+ CHANTYPES=#& :are supported by this server");
+        " PREFIX=() CHANTYPES= :are supported by this server");
 
       $event = EventHandling::getEventByName("commandEvent");
       if ($event != false) {
