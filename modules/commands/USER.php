@@ -1,7 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("CommandEvent",
-      /*"Config", */"UserRegistrationEvent");
+    public $depend = array("CommandEvent", "UserRegistrationEvent");
     public $name = "USER";
 
     public function preprocessUserRegistration($name, $id, $connection) {
