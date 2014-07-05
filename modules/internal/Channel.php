@@ -1,7 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("ChannelJoinEvent", "ChannelMessageEvent",
-      "NickChangeEvent", "UserQuitEvent");
+      "ChannelPartEvent", "NickChangeEvent", "UserQuitEvent");
     public $name = "Channel";
     private $options = array();
 
@@ -101,6 +101,43 @@
       }
     }
 
+    public function receiveChannelPart($name, $data) {
+      $source = $data[0];
+      $channel = $data[1];
+      $message = $data[2];
+      $channels = $source->getOption("channels");
+      if ($channels == false) {
+        return;
+      }
+
+      foreach ($channels as $key => $cname) {
+        if (strtolower($cname) == strtolower($channel)) {
+          unset($channels[$key]);
+        }
+      }
+      $source->setOption("channels", $channels);
+
+      $targets = array();
+      $ch = $this->getChannelByName($channel);
+      if ($ch != false) {
+        $targets = array_values(array_unique(array_merge(
+          array_values($targets), array_values($ch["members"]))));
+        $ch["members"] = array_diff($ch["members"],
+          array($source->getOption("id")));
+        $this->setChannelByName($ch["name"], $ch);
+      }
+
+      foreach ($targets as $target) {
+        foreach (ConnectionManagement::getConnections() as $t) {
+          if ($t->getOption("id") == $target) {
+            $t->send(":".$source->getOption("nick")."!".
+              $source->getOption("ident")."@".$source->getHost()." PART ".
+              $channel.($message != null ? " :".$message : null));
+          }
+        }
+      }
+    }
+
     public function receiveNickChange($name, $data) {
       $source = $data[0];
       $oldnick = $data[1];
@@ -190,6 +227,8 @@
         "receiveChannelJoin");
       EventHandling::registerForEvent("channelMessageEvent", $this,
         "receiveChannelMessage");
+      EventHandling::registerForEvent("channelPartEvent", $this,
+        "receiveChannelPart");
       EventHandling::registerForEvent("nickChangeEvent", $this,
         "receiveNickChange");
       EventHandling::registerForEvent("userQuitEvent", $this,
