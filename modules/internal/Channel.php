@@ -58,14 +58,15 @@
       $channel = $this->getChannelByName($target);
       if ($channel != false) {
         $channel["members"][] = $source->getOption("id");
-        $this->setChannelByName($name, $channel);
+        $this->setChannelByName($channel["name"], $channel);
       }
       else {
         $channel = array(
           "name" => $target,
           "members" => array(),
           "time" => time()
-        )
+        );
+        $this->setChannelByName($target, $channel);
       }
       $this->broadcast($target, ":".$source->getOption("nick")."!".
         $source->getOption("ident")."@".$source->getHost()." JOIN ".

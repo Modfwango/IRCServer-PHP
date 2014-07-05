@@ -11,7 +11,7 @@
       if ($connection->getOption("registered") == true
            && strtolower($command[0]) == "privmsg") {
         if (count($command) == 3) {
-          $targets = array($command[1])
+          $targets = array($command[1]);
           if (stristr($command[1], ",")) {
             $targets = explode(",", $command[1]);
           }
