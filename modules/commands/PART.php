@@ -12,7 +12,7 @@
           if (count($command) > 1) {
             $message = null;
             if (count($command) > 2) {
-              $message = "Part: ".$command[1];
+              $message = "Part: ".$command[2];
             }
             $targets = array($command[1]);
             if (stristr($command[1], ",")) {
