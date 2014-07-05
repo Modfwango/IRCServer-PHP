@@ -67,6 +67,14 @@
       $this->broadcast($target, ":".$source->getOption("nick")."!".
         $source->getOption("ident")."@".$source->getHost()." JOIN ".
         $channel["name"]);
+      $event = EventHandling::getEventByName("commandEvent");
+      if ($event != false) {
+        foreach ($event[2] as $id => $registration) {
+          // Trigger the commandEvent event for each registered module.
+          EventHandling::triggerEvent("commandEvent", $id,
+              array($connection, array("NAMES", $channel["name"])));
+        }
+      }
     }
 
     public function receiveChannelMessage($name, $data) {
