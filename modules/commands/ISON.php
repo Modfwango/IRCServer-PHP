@@ -9,29 +9,35 @@
 
       if ($connection->getOption("registered") == true
            && strtolower($command[0]) == "ison") {
-        unset($command[0]);
-        $online = array();
-        foreach ($command as $user) {
-          foreach (ConnectionManagement::getConnections() as $c) {
-            if (strtolower($c->getOption("nick")) == strtolower($user)) {
-              if (strlen(":".__SERVERDOMAIN__." 303 ".
-                      $connection->getOption("nick")." :".implode(" ", $online))
-                      < 512) {
-                $online[] = $c->getOption("nick");
+        if (count($command) > 1) {
+          unset($command[0]);
+          $online = array();
+          foreach ($command as $user) {
+            foreach (ConnectionManagement::getConnections() as $c) {
+              if (strtolower($c->getOption("nick")) == strtolower($user)) {
+                if (strlen(":".__SERVERDOMAIN__." 303 ".
+                        $connection->getOption("nick")." :".implode(" ", $online))
+                        < 512) {
+                  $online[] = $c->getOption("nick");
+                }
               }
             }
           }
-        }
 
-        while (strlen(":".__SERVERDOMAIN__." 303 ".
-                $connection->getOption("nick")." :".implode(" ", $online))
-                > 512) {
-          array_pop($online);
-        }
+          while (strlen(":".__SERVERDOMAIN__." 303 ".
+                  $connection->getOption("nick")." :".implode(" ", $online))
+                  > 512) {
+            array_pop($online);
+          }
 
-        $connection->send(":".__SERVERDOMAIN__." 303 ".
-          $connection->getOption("nick")." :".implode(" ", $online));
-        return true;
+          $connection->send(":".__SERVERDOMAIN__." 303 ".
+            $connection->getOption("nick")." :".implode(" ", $online));
+          return true;
+        }
+        else {
+          $connection->send(":".__SERVERDOMAIN__." 461 ".
+            $connection->getOption("nick")." ISON :Not enough parameters");
+        }
       }
       return false;
     }

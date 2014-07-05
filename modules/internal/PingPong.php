@@ -1,6 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("CommandEvent", "Timer", "UserRegistrationEvent");
+    public $depend = array("CommandEvent", "Timer", "USER");
     public $name = "PingPong";
     private $responses = array();
 

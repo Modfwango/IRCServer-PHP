@@ -1,5 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
+    public $depend = array("ChannelJoinEvent");
     public $name = "Channel";
     private $options = array();
 
@@ -15,6 +16,8 @@
     }
 
     public function isInstantiated() {
+      EventHandling::registerForEvent("channelJoinEvent", $this,
+        "receiveChannelJoin");
       return true;
     }
   }

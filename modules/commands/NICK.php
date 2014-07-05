@@ -20,6 +20,7 @@
         if (preg_match("/^[[\\]a-zA-Z\\\\`_^{|}][[\\]a-zA-Z0-9\\\\`_^{|}-]*$/",
             $command[1]) && count($command) == 2) {
           if ($this->nicknameAvailable(substr($command[1], 0, 30)) != false) {
+            $oldnick = $connection->getOption("nick");
             $connection->setOption("nick", substr($command[1], 0, 30));
             if ($connection->getOption("ident") != false &&
                 $connection->getOption("registered") == false) {
@@ -41,7 +42,7 @@
                   // Trigger the nickChangeEvent event for each registered
                   // module.
                   EventHandling::triggerEvent("nickChangeEvent", $id,
-                      $connection);
+                      array($connection, $oldnick));
                 }
               }
             }
