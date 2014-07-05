@@ -33,6 +33,11 @@
         }
       }
 
+      if (substr($data[0], 0, 1) == ":") {
+        unset($data[0]);
+        $data = array_values($data);
+      }
+
       $found = false;
       // Iterate through each registration.
       foreach ($registrations as $id => $registration) {
