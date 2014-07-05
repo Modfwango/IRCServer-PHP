@@ -1,6 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("CommandEvent", "UserQuitEvent");
+    public $depend = array("Channel", "CommandEvent", "ChannelPartEvent");
     public $name = "PART";
 
     public function receiveCommand($name, $data) {
