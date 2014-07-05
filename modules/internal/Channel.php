@@ -134,7 +134,7 @@
           if ($t->getOption("id") == $target) {
             $t->send(":".$source->getOption("nick")."!".
               $source->getOption("ident")."@".$source->getHost()." PART ".
-              $channel.($message != null ? " :".$message : null));
+              $channel["name"].($message != null ? " :".$message : null));
           }
         }
       }
