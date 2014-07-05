@@ -93,11 +93,13 @@
       if (strlen($base.$message) > 510) {
         $chunks = str_split($message, (510 - strlen($base)));
         foreach ($chunks as $chunk) {
-          $this->broadcast($target["name"], $base.$chunk, $source->getOption("id"));
+          $this->broadcast($target["name"], $base.$chunk,
+            $source->getOption("id"));
         }
       }
       else {
-        $this->broadcast($target["name"], $base.$message, $source->getOption("id"));
+        $this->broadcast($target["name"], $base.$message,
+          $source->getOption("id"));
       }
     }
 
@@ -111,14 +113,14 @@
       }
 
       foreach ($channels as $key => $cname) {
-        if (strtolower($cname) == strtolower($channel)) {
+        if (strtolower($cname) == strtolower($channel["name"])) {
           unset($channels[$key]);
         }
       }
       $source->setOption("channels", $channels);
 
       $targets = array();
-      $ch = $this->getChannelByName($channel);
+      $ch = $this->getChannelByName($channel["name"]);
       if ($ch != false) {
         $targets = array_values(array_unique(array_merge(
           array_values($targets), array_values($ch["members"]))));
