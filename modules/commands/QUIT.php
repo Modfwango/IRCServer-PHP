@@ -17,6 +17,11 @@
           $connection->send(":".$connection->getOption("nick")."!".
             $connection->getOption("ident")."@".$connection->getHost().
             " QUIT :".$message);
+        }
+        $connection->send("ERROR :Closing Link: ".$connection->getHost()." (".
+          $message.")");
+        $connection->disconnect();
+        if ($connection->getOption("registered") == true) {
           $event = EventHandling::getEventByName("userQuitEvent");
           if ($event != false) {
             foreach ($event[2] as $id => $registration) {
@@ -27,9 +32,6 @@
             }
           }
         }
-        $connection->send("ERROR :Closing Link: ".$connection->getHost()." (".
-          $message.")");
-        $connection->disconnect();
         return true;
       }
       return false;
