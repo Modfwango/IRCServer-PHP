@@ -64,7 +64,7 @@
         );
         $this->setChannelByName($target, $channel);
       }
-      $this->broadcast($target, ":".$source->getOption("nick")."!".
+      $this->broadcast($channel["name"], ":".$source->getOption("nick")."!".
         $source->getOption("ident")."@".$source->getHost()." JOIN ".
         $channel["name"]);
       $event = EventHandling::getEventByName("commandEvent");
@@ -132,6 +132,7 @@
       foreach ($channels as &$channel) {
         if (strtolower($channel["name"]) == strtolower($name)) {
           $channel = $c;
+          $this->setOption("channels", $channels);
           return true;
         }
       }

@@ -48,6 +48,7 @@
           if (count($channels) == 1) {
             $connection->send(":".__SERVERDOMAIN__." 366 ".
               $connection->getOption("nick")." ".$channels[0]." :End of /NAMES list.");
+            return true;
           }
         }
         $connection->send(":".__SERVERDOMAIN__." 366 ".
