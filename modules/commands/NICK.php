@@ -34,6 +34,17 @@
                 }
               }
             }
+            else {
+              $event = EventHandling::getEventByName("nickChangeEvent");
+              if ($event != false) {
+                foreach ($event[2] as $id => $registration) {
+                  // Trigger the nickChangeEvent event for each registered
+                  // module.
+                  EventHandling::triggerEvent("nickChangeEvent", $id,
+                      $connection);
+                }
+              }
+            }
           }
           else {
             $connection->send(":".__SERVERDOMAIN__." 433 ".(
