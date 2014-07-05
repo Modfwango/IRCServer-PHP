@@ -21,20 +21,25 @@
         $connection->send("ERROR :Closing Link: ".$connection->getHost()." (".
           $message.")");
         $connection->disconnect();
-        if ($connection->getOption("registered") == true) {
-          $event = EventHandling::getEventByName("userQuitEvent");
-          if ($event != false) {
-            foreach ($event[2] as $id => $registration) {
-              // Trigger the userQuitEvent event for each
-              // registered module.
-              EventHandling::triggerEvent("userQuitEvent", $id,
-                  array($connection, $message));
-            }
-          }
-        }
+        $this->notifyQuit(null, $connection, $message);
         return true;
       }
       return false;
+    }
+
+    public function notifyQuit($name, $connection, $message = null) {
+      if ($connection->getOption("registered") == true) {
+        $event = EventHandling::getEventByName("userQuitEvent");
+        if ($event != false) {
+          foreach ($event[2] as $id => $registration) {
+            // Trigger the userQuitEvent event for each
+            // registered module.
+            EventHandling::triggerEvent("userQuitEvent", $id,
+                array($connection, ($message != null ? $message :
+                "Remote host closed the connection")));
+          }
+        }
+      }
     }
 
     public function isInstantiated() {
