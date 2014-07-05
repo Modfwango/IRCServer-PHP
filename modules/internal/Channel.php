@@ -59,7 +59,7 @@
       else {
         $channel = array(
           "name" => $target,
-          "members" => array(),
+          "members" => array($source->getOption("id")),
           "created" => time()
         );
         $this->setChannelByName($target, $channel);

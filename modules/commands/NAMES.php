@@ -28,7 +28,7 @@
               }
 
               $base = ":".__SERVERDOMAIN__." 353 ".
-                $connection->getOption("nick")." = ".$channel." :";
+                $connection->getOption("nick")." = ".$channel["name"]." :";
               $remaining = (510 - strlen($base));
               foreach ($members as $member) {
                 $remaining -= (strlen($member) + 1);
