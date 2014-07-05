@@ -49,6 +49,11 @@
       if ($channels == false) {
         $channels = array();
       }
+      foreach ($channels as $cha) {
+        if (strtolower($cha) == strtolower($target)) {
+          return;
+        }
+      }
       $source->setOption("channels", array_values(array_unique(array_merge(
         $channels, array($target)))));
       $channel = $this->getChannelByName($target);
@@ -83,16 +88,16 @@
       $target = $data[1];
       $message = $data[2];
       $base = ":".$source->getOption("nick")."!".$source->getOption("ident").
-        "@".$source->getHost()." PRIVMSG ".$target." :";
+        "@".$source->getHost()." PRIVMSG ".$target["name"]." :";
 
       if (strlen($base.$message) > 510) {
         $chunks = str_split($message, (510 - strlen($base)));
         foreach ($chunks as $chunk) {
-          $this->broadcast($target, $base.$chunk, $source->getOption("id"));
+          $this->broadcast($target["name"], $base.$chunk, $source->getOption("id"));
         }
       }
       else {
-        $this->broadcast($target, $base.$message, $source->getOption("id"));
+        $this->broadcast($target["name"], $base.$message, $source->getOption("id"));
       }
     }
 
