@@ -80,7 +80,6 @@
               array($source, array("NAMES", $channel["name"])));
         }
       }
-      Logger::info(var_export($this->getOption("channels"), true));
     }
 
     public function receiveChannelMessage($name, $data) {
