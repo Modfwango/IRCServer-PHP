@@ -32,7 +32,7 @@
               $remaining = (510 - strlen($base));
               foreach ($members as $member) {
                 $remaining -= (strlen($member) + 1);
-                if ($remaining > -1) {
+                if ($remaining > -2) {
                   if (!isset($items)) {
                     $items = array();
                   }
@@ -40,14 +40,19 @@
                 }
                 else {
                   $remaining = (510 - strlen($base));
-                  $connection->send($base.implode(" ", $line));
+                  $connection->send($base.implode(" ", $items));
+                  unset($items);
                 }
+              }
+              if (isset($items)) {
+                $connection->send($base.implode(" ", $items));
               }
             }
           }
           if (count($channels) == 1) {
             $connection->send(":".__SERVERDOMAIN__." 366 ".
-              $connection->getOption("nick")." ".$channels[0]." :End of /NAMES list.");
+              $connection->getOption("nick")." ".$channels[0].
+              " :End of /NAMES list.");
             return true;
           }
         }

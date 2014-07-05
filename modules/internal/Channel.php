@@ -124,7 +124,7 @@
         foreach (ConnectionManagement::getConnections() as $t) {
           if ($t->getOption("id") == $target) {
             $t->send(":".$oldnick."!".$source->getOption("ident").
-              "@".$source->getHost()." NICK :".$source->getOption("nick"));
+              "@".$source->getHost()." NICK ".$source->getOption("nick"));
           }
         }
       }
