@@ -1,6 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("PrivateMessageEvent");
+    public $depend = array("NickChangeEvent", "PrivateMessageEvent");
     public $name = "Client";
 
     public function receiveNickChange($name, $data) {
