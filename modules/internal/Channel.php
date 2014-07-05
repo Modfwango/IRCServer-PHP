@@ -164,6 +164,9 @@
         if ($this->getOption("channels") != false) {
           $ch = $this->getChannelByName($channel);
           if ($ch != false) {
+            $ch["members"] = array_diff($ch["members"],
+              array($source->getOption("id")));
+            $this->setChannelByName($ch["name"], $ch);
             $targets = array_values(array_unique(array_merge(
               array_values($targets), array_values($ch["members"]))));
           }
