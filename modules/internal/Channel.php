@@ -9,10 +9,6 @@
       if (!is_array($exclude)) {
         $exclude = array($exclude);
       }
-      $channels = $source->getOption("channels");
-      if ($channels == false) {
-        return;
-      }
       $channel = $this->getChannelByName($name);
       if ($channel != false) {
         foreach ($channel["members"] as $id) {
