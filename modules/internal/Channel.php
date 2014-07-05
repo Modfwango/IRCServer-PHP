@@ -83,7 +83,7 @@
       $target = $data[1];
       $message = $data[2];
       $base = ":".$source->getOption("nick")."!".$source->getOption("ident").
-        "@".$source->getHost()." PRIVMSG ".$target->getOption("name")." :";
+        "@".$source->getHost()." PRIVMSG ".$target." :";
 
       if (strlen($base.$message) > 510) {
         $chunks = str_split($message, (510 - strlen($base)));
