@@ -60,7 +60,7 @@
         $channel = array(
           "name" => $target,
           "members" => array(),
-          "time" => time()
+          "created" => time()
         );
         $this->setChannelByName($target, $channel);
       }
@@ -130,14 +130,14 @@
       if ($channels == false) {
         $channels = array();
       }
-      foreach ($channels as &$channel) {
+      foreach ($channels as $key => $channel) {
         if (strtolower($channel["name"]) == strtolower($name)) {
-          $channel = $c;
-          $this->setOption("channels", $channels);
-          return true;
+          unset($channels[$key]);
         }
       }
-      return false;
+      $channels[] = $c;
+      $this->setOption("channels", $channels);
+      return true;
     }
 
     public function setOption($key, $value) {
