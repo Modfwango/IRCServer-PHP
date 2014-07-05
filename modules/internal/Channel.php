@@ -13,19 +13,31 @@
       if ($channels == false) {
         return;
       }
-      foreach ($channels as $channel) {
-        if (strtolower($channel["name"]) == strtolower($name)) {
-          foreach ($channel["members"] as $id) {
-            if (!in_array($id, $exclude)) {
-              foreach (ConnectionManagement::getConnections() as $connection) {
-                if ($connection->getOption("id") == $id) {
-                  $connection->send($data);
-                }
+      $channel = $this->getChannelByName($name);
+      if ($channel != false) {
+        foreach ($channel["members"] as $id) {
+          if (!in_array($id, $exclude)) {
+            foreach (ConnectionManagement::getConnections() as $connection) {
+              if ($connection->getOption("id") == $id) {
+                $connection->send($data);
               }
             }
           }
         }
       }
+    }
+
+    public function getChannelByName($name) {
+      $channels = $this->getOption("channels");
+      if ($channels == false) {
+        $channels = array();
+      }
+      foreach ($channels as $channel) {
+        if (strtolower($channel["name"]) == strtolower($name)) {
+          return $channel;
+        }
+      }
+      return false;
     }
 
     public function getOption($key) {
@@ -34,7 +46,30 @@
     }
 
     public function receiveChannelJoin($name, $data) {
+      $source = $data[0];
+      $target = $data[1];
 
+      $channels = $source->getOption("channels");
+      if ($channels == false) {
+        $channels = array();
+      }
+      $source->setOption("channels", array_values(array_unique(array_merge(
+        $channels, array($target)))));
+      $channel = $this->getChannelByName($target);
+      if ($channel != false) {
+        $channel["members"][] = $source->getOption("id");
+        $this->setChannelByName($name, $channel);
+      }
+      else {
+        $channel = array(
+          "name" => $target,
+          "members" => array(),
+          "time" => time()
+        )
+      }
+      $this->broadcast($target, ":".$source->getOption("nick")."!".
+        $source->getOption("ident")."@".$source->getHost()." JOIN ".
+        $channel["name"]);
     }
 
     public function receiveChannelMessage($name, $data) {
@@ -66,11 +101,10 @@
       $targets = array();
       foreach ($channels as $channel) {
         if ($this->getOption("channels") != false) {
-          foreach ($this->getOption("channels") as &$ch) {
-            if (strtolower($ch["name"]) == strtolower($channel)) {
-              $targets = array_values(array_unique(array_merge(
-                array_values($targets), array_values($ch["members"]))));
-            }
+          $ch = $this->getChannelByName($channel);
+          if ($ch != false) {
+            $targets = array_values(array_unique(array_merge(
+              array_values($targets), array_values($ch["members"]))));
           }
         }
       }
@@ -83,6 +117,20 @@
           }
         }
       }
+    }
+
+    public function setChannelByName($name, $c) {
+      $channels = $this->getOption("channels");
+      if ($channels == false) {
+        $channels = array();
+      }
+      foreach ($channels as &$channel) {
+        if (strtolower($channel["name"]) == strtolower($name)) {
+          $channel = $c;
+          return true;
+        }
+      }
+      return false;
     }
 
     public function setOption($key, $value) {
@@ -102,11 +150,10 @@
       $targets = array();
       foreach ($channels as $channel) {
         if ($this->getOption("channels") != false) {
-          foreach ($this->getOption("channels") as &$ch) {
-            if (strtolower($ch["name"]) == strtolower($channel)) {
-              $targets = array_values(array_unique(array_merge(
-                array_values($targets), array_values($ch["members"]))));
-            }
+          $ch = $this->getChannelByName($channel);
+          if ($ch != false) {
+            $targets = array_values(array_unique(array_merge(
+              array_values($targets), array_values($ch["members"]))));
           }
         }
       }
