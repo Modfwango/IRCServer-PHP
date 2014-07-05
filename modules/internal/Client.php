@@ -1,7 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("PrivateMessageEvent");
-    public $name = "User";
+    public $name = "Client";
 
     public function receivePrivateMessage($name, $data) {
       $source = $data[0];
