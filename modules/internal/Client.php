@@ -3,6 +3,14 @@
     public $depend = array("PrivateMessageEvent");
     public $name = "Client";
 
+    public function receiveNickChange($name, $data) {
+      $source = $data[0];
+      $oldnick = $data[1];
+
+      $source->send(":".$oldnick."!".$source->getOption("ident").
+        "@".$source->getHost()." NICK ".$source->getOption("nick"));
+    }
+
     public function receivePrivateMessage($name, $data) {
       $source = $data[0];
       $target = $data[1];
@@ -22,6 +30,8 @@
     }
 
     public function isInstantiated() {
+      EventHandling::registerForEvent("nickChangeEvent", $this,
+        "receiveNickChange");
       EventHandling::registerForEvent("privateMessageEvent", $this,
         "receivePrivateMessage");
       return true;

@@ -120,6 +120,7 @@
         }
       }
 
+      $targets = array_diff($targets, array($source->getOption("id")));
       foreach ($targets as $target) {
         foreach (ConnectionManagement::getConnections() as $t) {
           if ($t->getOption("id") == $target) {
