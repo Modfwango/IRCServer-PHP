@@ -32,12 +32,12 @@
 
           $connection->send(":".__SERVERDOMAIN__." 303 ".
             $connection->getOption("nick")." :".implode(" ", $online));
-          return true;
         }
         else {
           $connection->send(":".__SERVERDOMAIN__." 461 ".
             $connection->getOption("nick")." ISON :Not enough parameters");
         }
+        return true;
       }
       return false;
     }

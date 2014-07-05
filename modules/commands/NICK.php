@@ -1,6 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("CommandEvent", "UserRegistrationEvent");
+    public $depend = array("CommandEvent", "NickChangeEvent",
+      "UserRegistrationEvent");
     public $name = "NICK";
 
     private function nicknameAvailable($nick) {

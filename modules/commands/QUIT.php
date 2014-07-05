@@ -1,6 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("CommandEvent");
+    public $depend = array("CommandEvent", "UserQuitEvent");
     public $name = "MOTD";
 
     public function receiveCommand($name, $data) {
@@ -17,6 +17,15 @@
           $connection->send(":".$connection->getOption("nick")."!".
             $connection->getOption("ident")."@".$connection->getHost().
             " QUIT :".$message);
+          $event = EventHandling::getEventByName("userQuitEvent");
+          if ($event != false) {
+            foreach ($event[2] as $id => $registration) {
+              // Trigger the userQuitEvent event for each
+              // registered module.
+              EventHandling::triggerEvent("userQuitEvent", $id,
+                  array($connection, $message));
+            }
+          }
         }
         $connection->send("ERROR :Closing Link: ".$connection->getHost()." (".
           $message.")");

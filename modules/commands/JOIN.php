@@ -1,6 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Channel", "CommandEvent");
+    public $depend = array("Channel", "ChannelJoinEvent", "CommandEvent");
     public $name = "JOIN";
 
     public function receiveCommand($name, $data) {
@@ -44,11 +44,12 @@
           $connection->send(":".__SERVERDOMAIN__." 461 ".
             $connection->getOption("nick")." JOIN :Not enough parameters");
         }
+        return true;
       }
+      return false;
     }
 
     public function isInstantiated() {
-      EventHandling::createEvent("channelJoinEvent", $this);
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand");
       return true;
     }
