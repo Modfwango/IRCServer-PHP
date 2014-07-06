@@ -35,6 +35,10 @@
         $data = array_values($data);
       }
 
+      if (count($data) == 0) {
+        return true;
+      }
+
       $found = false;
       // Iterate through each registration.
       foreach ($registrations as $id => $registration) {
