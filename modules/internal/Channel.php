@@ -142,6 +142,8 @@
           $source->getOption("ident")."@".$source->getHost();
         $ch["topic"]["timestamp"] = time();
         $this->setChannel($ch);
+        $this->broadcast($ch["name"], ":".$ch["topic"]["author"]." TOPIC ".
+          $ch["name"]." :".$ch["topic"]["text"]);
       }
     }
 
