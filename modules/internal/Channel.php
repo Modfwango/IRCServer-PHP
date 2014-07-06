@@ -1,7 +1,8 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("ChannelJoinEvent", "ChannelMessageEvent",
-      "ChannelPartEvent", "Client", "NickChangeEvent", "UserQuitEvent");
+      "ChannelPartEvent", "ChannelTopicEvent", "Client", "NickChangeEvent",
+      "UserQuitEvent");
     public $name = "Channel";
     private $client = null;
     private $channels = array();
