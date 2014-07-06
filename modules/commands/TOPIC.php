@@ -42,7 +42,7 @@
                     if (!isset($data[2])) {
                       $connection->send(":".__SERVERDOMAIN__." 331 ".
                         $connection->getOption("nick")." ".$target.
-                        " :No topic is set.")
+                        " :No topic is set.");
                     }
                   }
                   else {
