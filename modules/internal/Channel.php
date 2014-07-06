@@ -69,7 +69,7 @@
           foreach ($event[2] as $id => $registration) {
             // Trigger the commandEvent event for each registered module.
             EventHandling::triggerEvent("commandEvent", $id,
-                array($source, array("TOPIC", $channel["name"]), null));
+                array($source, array("TOPIC", $channel["name"]), true));
             EventHandling::triggerEvent("commandEvent", $id,
                 array($source, array("NAMES", $channel["name"])));
           }
