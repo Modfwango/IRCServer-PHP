@@ -30,8 +30,8 @@
             }
           }
           if ($connection->getOption("ident") == false) {
-            $connection->setOption("ident", $command[1]);
-            $connection->setOption("realname", $command[4]);
+            $connection->setOption("ident", substr($command[1], 0, 10));
+            $connection->setOption("realname", substr($command[4], 0, 50));
             if ($connection->getOption("nick")) {
               $connection->setOption("registered", true);
               $event = EventHandling::getEventByName("userRegistrationEvent");
