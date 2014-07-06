@@ -31,9 +31,11 @@
     public function clientIsOnChannel($id, $channel) {
       if (isset($this->channels[strtolower($channel)])) {
         if (in_array($id, $this->channels[strtolower($channel)]["members"])) {
+          Logger::info("Client is on channel");
           return true;
         }
       }
+      Logger::info("Client is not on channel");
       return false;
     }
 
@@ -46,7 +48,7 @@
       $source = $data[0];
       $target = $data[1];
 
-      if ($this->clientIsOnChannel($source->getOption("id"), $target)) {
+      if (!$this->clientIsOnChannel($source->getOption("id"), $target)) {
         $channel = $this->getChannelByName($target);
         if ($channel != false) {
           $channel["members"][] = $source->getOption("id");
