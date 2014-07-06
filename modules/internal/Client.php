@@ -29,7 +29,7 @@
 
     public function getClientIDByHost($host) {
       // Retrieve the requested ID if it exists, otherwise return false.
-      return (isset($this->clients["byhost"][strtolower($host])) ?
+      return (isset($this->clients["byhost"][strtolower($host)]) ?
         $this->clients["byhost"][strtolower($host)] : false);
     }
 
