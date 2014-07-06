@@ -94,7 +94,6 @@
           $this->clients["bynick"][strtolower($client->getOption("nick"))] =
             $client->getOption("id");
         }
-        Logger::info(var_export($this->clients, true));
         return true;
       }
       return false;
