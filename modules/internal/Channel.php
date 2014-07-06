@@ -31,11 +31,9 @@
     public function clientIsOnChannel($id, $channel) {
       if (isset($this->channels[strtolower($channel)])) {
         if (in_array($id, $this->channels[strtolower($channel)]["members"])) {
-          Logger::info("Client is on channel");
           return true;
         }
       }
-      Logger::info("Client is not on channel");
       return false;
     }
 
