@@ -114,7 +114,12 @@
           array_values($targets), array_values($ch["members"]))));
         $ch["members"] = array_diff($ch["members"],
           array($source->getOption("id")));
-        $this->setChannel($ch);
+        if (count($ch["members"]) == 0) {
+          $this->unsetChannel($ch);
+        }
+        else {
+          $this->setChannel($ch);
+        }
       }
 
       foreach ($targets as $target) {
@@ -180,13 +185,16 @@
       $message = $data[1];
 
       $targets = array();
-      foreach ($this->channels as &$channel) {
+      foreach ($this->channels as $key => &$channel) {
         if ($this->clientIsOnChannel($source->getOption("id"),
             $channel["name"])) {
           $channel["members"] = array_diff($channel["members"],
             array($source->getOption("id")));
           $targets = array_values(array_unique(array_merge(
             array_values($targets), array_values($channel["members"]))));
+          if (count($channel["members"]) == 0) {
+            $this->unsetChannel($channel);
+          }
         }
       }
 
@@ -198,6 +206,14 @@
             $message);
         }
       }
+    }
+
+    public function unsetChannel($c) {
+      if (isset($this->channels[strtolower($c["name"])])) {
+        unset($this->channels[strtolower($c["name"])]);
+        return true;
+      }
+      return false;
     }
 
     public function isInstantiated() {
