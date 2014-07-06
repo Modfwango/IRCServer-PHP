@@ -97,7 +97,8 @@
       $channel = $data[1];
       $message = $data[2];
 
-      if (!$this->clientIsOnChannel($source->getOption("id"), $channel)) {
+      if (!$this->clientIsOnChannel($source->getOption("id"),
+          $channel["name"])) {
         return;
       }
 
