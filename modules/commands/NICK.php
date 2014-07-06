@@ -19,16 +19,17 @@
           if ($this->nicknameAvailable(substr($command[1], 0, 30)) != false) {
             $oldnick = $connection->getOption("nick");
             $connection->setOption("nick", substr($command[1], 0, 30));
-            if ($connection->getOption("ident") != false &&
-                $connection->getOption("registered") == false) {
-              $connection->setOption("registered", true);
-              $event = EventHandling::getEventByName("userRegistrationEvent");
-              if ($event != false) {
-                foreach ($event[2] as $id => $registration) {
-                  // Trigger the userRegistrationEvent event for each registered
-                  // module.
-                  EventHandling::triggerEvent("userRegistrationEvent", $id,
-                      $connection);
+            if ($connection->getOption("registered") == false) {
+              if ($connection->getOption("ident") != false) {
+                $connection->setOption("registered", true);
+                $event = EventHandling::getEventByName("userRegistrationEvent");
+                if ($event != false) {
+                  foreach ($event[2] as $id => $registration) {
+                    // Trigger the userRegistrationEvent event for each registered
+                    // module.
+                    EventHandling::triggerEvent("userRegistrationEvent", $id,
+                        $connection);
+                  }
                 }
               }
             }
