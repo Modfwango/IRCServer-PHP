@@ -1,6 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("CommandEvent", "UserQuitEvent");
+    public $depend = array("CommandEvent", "ConnectionDisconnectedEvent",
+      "UserQuitEvent");
     public $name = "QUIT";
 
     public function receiveCommand($name, $data) {
