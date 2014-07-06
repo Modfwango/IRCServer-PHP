@@ -46,28 +46,30 @@
       $source = $data[0];
       $target = $data[1];
 
-      $channel = $this->getChannelByName($target);
-      if ($channel != false) {
-        $channel["members"][] = $source->getOption("id");
-        $this->setChannel($channel);
-      }
-      else {
-        $channel = array(
-          "name" => $target,
-          "members" => array($source->getOption("id")),
-          "created" => time()
-        );
-        $this->setChannel($channel);
-      }
-      $this->broadcast($channel["name"], ":".$source->getOption("nick")."!".
-        $source->getOption("ident")."@".$source->getHost()." JOIN ".
-        $channel["name"]);
-      $event = EventHandling::getEventByName("commandEvent");
-      if ($event != false) {
-        foreach ($event[2] as $id => $registration) {
-          // Trigger the commandEvent event for each registered module.
-          EventHandling::triggerEvent("commandEvent", $id,
-              array($source, array("NAMES", $channel["name"])));
+      if ($this->clientIsOnChannel($source->getOption("id"), $target)) {
+        $channel = $this->getChannelByName($target);
+        if ($channel != false) {
+          $channel["members"][] = $source->getOption("id");
+          $this->setChannel($channel);
+        }
+        else {
+          $channel = array(
+            "name" => $target,
+            "members" => array($source->getOption("id")),
+            "created" => time()
+          );
+          $this->setChannel($channel);
+        }
+        $this->broadcast($channel["name"], ":".$source->getOption("nick")."!".
+          $source->getOption("ident")."@".$source->getHost()." JOIN ".
+          $channel["name"]);
+        $event = EventHandling::getEventByName("commandEvent");
+        if ($event != false) {
+          foreach ($event[2] as $id => $registration) {
+            // Trigger the commandEvent event for each registered module.
+            EventHandling::triggerEvent("commandEvent", $id,
+                array($source, array("NAMES", $channel["name"])));
+          }
         }
       }
     }
