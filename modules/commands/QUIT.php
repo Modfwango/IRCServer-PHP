@@ -21,8 +21,9 @@
         }
         $connection->send("ERROR :Closing Link: ".$connection->getHost()." (".
           $message.")");
-        $connection->disconnect();
         $this->notifyQuit(null, $connection, $message);
+        $connection->setOption("registered", false);
+        $connection->disconnect();
         return true;
       }
       return false;
