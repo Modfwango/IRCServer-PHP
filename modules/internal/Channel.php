@@ -1,8 +1,9 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("ChannelJoinEvent", "ChannelMessageEvent",
-      "ChannelPartEvent", "NickChangeEvent", "UserQuitEvent");
+      "ChannelPartEvent", "Client", "NickChangeEvent", "UserQuitEvent");
     public $name = "Channel";
+    private $client = null;
     private $options = array();
 
     public function broadcast($name, $data, $exclude = null) {
@@ -13,10 +14,9 @@
       if ($channel != false) {
         foreach ($channel["members"] as $id) {
           if (!in_array($id, $exclude)) {
-            foreach (ConnectionManagement::getConnections() as $connection) {
-              if ($connection->getOption("id") == $id) {
-                $connection->send($data);
-              }
+            $connection = $this->client->getClientByID($id);
+            if ($connection != false) {
+              $connection->send($data);
             }
           }
         }
@@ -129,12 +129,11 @@
       }
 
       foreach ($targets as $target) {
-        foreach (ConnectionManagement::getConnections() as $t) {
-          if ($t->getOption("id") == $target) {
-            $t->send(":".$source->getOption("nick")."!".
-              $source->getOption("ident")."@".$source->getHost()." PART ".
-              $channel["name"].($message != null ? " :".$message : null));
-          }
+        $t = $this->client->getClientByID($target);
+        if ($t != false) {
+          $t->send(":".$source->getOption("nick")."!".
+            $source->getOption("ident")."@".$source->getHost()." PART ".
+            $channel["name"].($message != null ? " :".$message : null));
         }
       }
     }
@@ -160,11 +159,10 @@
 
       $targets = array_diff($targets, array($source->getOption("id")));
       foreach ($targets as $target) {
-        foreach (ConnectionManagement::getConnections() as $t) {
-          if ($t->getOption("id") == $target) {
-            $t->send(":".$oldnick."!".$source->getOption("ident").
-              "@".$source->getHost()." NICK ".$source->getOption("nick"));
-          }
+        $t = $this->client->getClientByID($target);
+        if ($t != false) {
+          $t->send(":".$oldnick."!".$source->getOption("ident").
+            "@".$source->getHost()." NICK ".$source->getOption("nick"));
         }
       }
     }
@@ -213,17 +211,17 @@
       }
 
       foreach ($targets as $target) {
-        foreach (ConnectionManagement::getConnections() as $t) {
-          if ($t->getOption("id") == $target) {
-            $t->send(":".$source->getOption("nick")."!".
-              $source->getOption("ident")."@".$source->getHost()." QUIT :".
-              $message);
-          }
+        $t = $this->client->getClientByID($target);
+        if ($t != false) {
+          $t->send(":".$source->getOption("nick")."!".
+            $source->getOption("ident")."@".$source->getHost()." QUIT :".
+            $message);
         }
       }
     }
 
     public function isInstantiated() {
+      $this->client = ModuleManagement::getModuleByName("Client");
       EventHandling::registerForEvent("channelJoinEvent", $this,
         "receiveChannelJoin");
       EventHandling::registerForEvent("channelMessageEvent", $this,

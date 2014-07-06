@@ -1,7 +1,8 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Channel", "CommandEvent");
+    public $depend = array("Channel", "Client", "CommandEvent");
     public $name = "NAMES";
+    private $client = null;
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];
@@ -20,10 +21,9 @@
               if ($channel != false) {
                 $members = array();
                 foreach ($channel["members"] as $id) {
-                  foreach (ConnectionManagement::getConnections() as $c) {
-                    if ($c->getOption("id") == $id) {
-                      $members[] = $c->getOption("nick");
-                    }
+                  $c = $this->client->getClientByID($id);
+                  if ($c != false) {
+                    $members[] = $c->getOption("nick");
                   }
                 }
 
@@ -70,6 +70,7 @@
     }
 
     public function isInstantiated() {
+      $this->client = ModuleManagement::getModuleByName("Client");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand");
       return true;
     }

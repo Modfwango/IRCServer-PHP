@@ -1,8 +1,9 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Channel", "ChannelMessageEvent", "CommandEvent",
-      "PrivateMessageEvent");
+    public $depend = array("Channel", "ChannelMessageEvent", "Client",
+      "CommandEvent", "PrivateMessageEvent");
     public $name = "PRIVMSG";
+    private $client = null;
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];
@@ -42,20 +43,17 @@
               }
               elseif (preg_match("/^[[\\]a-zA-Z\\\\`_^{|}][[\\]a-zA-Z0-9\\\\`_".
                       "^{|}-]*$/", $target)) {
-                foreach (ConnectionManagement::getConnections() as $c) {
-                  $nick = $c->getOption("nick");
-                  if ($nick != false && strtolower($nick)
-                      == strtolower($target)) {
-                    $found = true;
-                    $event = EventHandling::getEventByName(
-                      "privateMessageEvent");
-                    if ($event != false) {
-                      foreach ($event[2] as $id => $registration) {
-                        // Trigger the privateMessageEvent event for each
-                        // registered module.
-                        EventHandling::triggerEvent("privateMessageEvent", $id,
-                            array($connection, $c, $command[2]));
-                      }
+                $c = $this->client->getClientByNick($target);
+                if ($c != false) {
+                  $found = true;
+                  $event = EventHandling::getEventByName(
+                    "privateMessageEvent");
+                  if ($event != false) {
+                    foreach ($event[2] as $id => $registration) {
+                      // Trigger the privateMessageEvent event for each
+                      // registered module.
+                      EventHandling::triggerEvent("privateMessageEvent", $id,
+                          array($connection, $c, $command[2]));
                     }
                   }
                 }
@@ -87,6 +85,7 @@
     }
 
     public function isInstantiated() {
+      $this->client = ModuleManagement::getModuleByName("Client");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand");
       return true;
     }

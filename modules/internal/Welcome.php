@@ -1,8 +1,9 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("CommandEvent", "ConnectionCreatedEvent", "LUSERS",
-      "MOTD", "USER");
+    public $depend = array("Client", "CommandEvent", "ConnectionCreatedEvent",
+      "LUSERS", "MOTD", "USER");
     public $name = "Welcome";
+    private $client = null;
 
     public function receiveConnectionCreated($name, $connection) {
       $connection->send(":".__SERVERDOMAIN__.
@@ -19,6 +20,7 @@
           " NOTICE * :*** Found your hostname");
         $connection->setOption("id", hash("sha256", rand().$host));
       }
+      $this->client->setClient($connection);
     }
 
     public function receiveUserRegistration($name, $connection) {
@@ -64,6 +66,7 @@
     }
 
     public function isInstantiated() {
+      $this->client = ModuleManagement::getModuleByName("Client");
       EventHandling::registerForEvent("connectionCreatedEvent", $this,
         "receiveConnectionCreated");
       EventHandling::registerForEvent("userRegistrationEvent", $this,

@@ -1,16 +1,12 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("CommandEvent", "NickChangeEvent",
+    public $depend = array("Client", "CommandEvent", "NickChangeEvent",
       "UserRegistrationEvent");
     public $name = "NICK";
+    private $client = null;
 
     private function nicknameAvailable($nick) {
-      foreach (ConnectionManagement::getConnections() as $c) {
-        if (strtolower($nick) == $c->getOption("nick")) {
-          return false;
-        }
-      }
-      return true;
+      return ($this->client->getClientByNick($nick) == false ? true : false);
     }
 
     public function receiveCommand($name, $data) {
@@ -69,6 +65,7 @@
     }
 
     public function isInstantiated() {
+      $this->client = ModuleManagement::getModuleByName("Client");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand");
       return true;
     }

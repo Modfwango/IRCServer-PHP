@@ -1,7 +1,8 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("CommandEvent");
+    public $depend = array("Client", "CommandEvent");
     public $name = "ISON";
+    private $client = null;
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];
@@ -13,13 +14,12 @@
             unset($command[0]);
             $online = array();
             foreach ($command as $user) {
-              foreach (ConnectionManagement::getConnections() as $c) {
-                if (strtolower($c->getOption("nick")) == strtolower($user)) {
-                  if (strlen(":".__SERVERDOMAIN__." 303 ".
-                      $connection->getOption("nick")." :".implode(" ",
-                      $online)) < 512) {
-                    $online[] = $c->getOption("nick");
-                  }
+              $c = $this->client->getClientByNick($user);
+              if ($c != false) {
+                if (strlen(":".__SERVERDOMAIN__." 303 ".
+                    $connection->getOption("nick")." :".implode(" ",
+                    $online)) < 512) {
+                  $online[] = $c->getOption("nick");
                 }
               }
             }
@@ -49,6 +49,7 @@
     }
 
     public function isInstantiated() {
+      $this->client = ModuleManagement::getModuleByName("Client");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand");
       return true;
     }
