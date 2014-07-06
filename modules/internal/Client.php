@@ -72,6 +72,10 @@
       }
     }
 
+    public function receiveUserQuit($name, $data) {
+      $this->unsetClient($data[0]);
+    }
+
     public function receiveUserRegistration($name, $connection) {
       $this->setClient($connection);
     }
@@ -122,6 +126,8 @@
         "receiveNickChange");
       EventHandling::registerForEvent("privateMessageEvent", $this,
         "receivePrivateMessage");
+      EventHandling::registerForEvent("userQuitEvent", $this,
+        "receiveUserQuit");
       EventHandling::registerForEvent("userRegistrationEvent", $this,
         "receiveUserRegistration");
       return true;
