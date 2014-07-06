@@ -124,6 +124,24 @@
       }
     }
 
+    public function receiveChannelTopic($name, $data) {
+      $source = $data[0];
+      $channel = $data[1];
+      $message = $data[2];
+
+      $ch = $this->getChannelByName($channel["name"]);
+      if ($ch != false) {
+        if (!isset($ch["topic"])) {
+          $ch["topic"] = array();
+        }
+        $ch["topic"]["text"] = $message;
+        $ch["topic"]["author"] = $source->getOption("nick")."!".
+          $source->getOption("ident")."@".$source->getHost();
+        $ch["topic"]["timestamp"] = time();
+        $this->setChannel($ch);
+      }
+    }
+
     public function receiveNickChange($name, $data) {
       $source = $data[0];
       $oldnick = $data[1];
@@ -185,6 +203,8 @@
         "receiveChannelMessage");
       EventHandling::registerForEvent("channelPartEvent", $this,
         "receiveChannelPart");
+      EventHandling::registerForEvent("channelTopicEvent", $this,
+        "receiveChannelTopic");
       EventHandling::registerForEvent("nickChangeEvent", $this,
         "receiveNickChange");
       EventHandling::registerForEvent("userQuitEvent", $this,
