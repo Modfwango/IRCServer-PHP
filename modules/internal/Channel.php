@@ -39,7 +39,7 @@
 
     public function getChannelByName($name) {
       // Retrieve the requested channel if it exists, otherwise return false.
-      return (isset($this->channels[$key]) ? $this->channels[$key] : false);
+      return (isset($this->channels[$name]) ? $this->channels[$name] : false);
     }
 
     public function receiveChannelJoin($name, $data) {
