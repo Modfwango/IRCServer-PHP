@@ -35,7 +35,9 @@
         return true;
       }
       if (strtolower($command[0]) == "pong") {
-        $this->responses[$connection->getOption("id")] = true;
+        if (strtolower($command[1]) == strtolower(__SERVERDOMAIN__)) {
+          $this->responses[$connection->getOption("id")] = true;
+        }
         return true;
       }
       return false;
