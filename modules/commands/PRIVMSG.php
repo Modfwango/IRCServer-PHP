@@ -3,6 +3,7 @@
     public $depend = array("Channel", "ChannelMessageEvent", "Client",
       "CommandEvent", "PrivateMessageEvent");
     public $name = "PRIVMSG";
+    private $channel = null;
     private $client = null;
 
     public function receiveCommand($name, $data) {
@@ -17,28 +18,25 @@
               $targets = explode(",", $command[1]);
             }
             foreach ($targets as $target) {
-              $found = false;
               if (preg_match("/^[#][\x21-\x2B\x2D-\x7E]*$/", $target)) {
-                $channels = ModuleManagement::getModuleByName("Channel")->
-                  getOption("channels");
-                if ($channels == false) {
-                  $channels = array();
-                }
-                foreach ($channels as $c) {
-                  $name = $c["name"];
-                  if (strtolower($name) == strtolower($target)) {
-                    $found = true;
-                    $event = EventHandling::getEventByName(
-                      "channelMessageEvent");
-                    if ($event != false) {
-                      foreach ($event[2] as $id => $registration) {
-                        // Trigger the channelMessageEvent event for each
-                        // registered module.
-                        EventHandling::triggerEvent("channelMessageEvent", $id,
-                            array($connection, $c, $command[2]));
-                      }
+                $c = $this->channel->getChannelByName($target);
+                if ($c != false) {
+                  $found = true;
+                  $event = EventHandling::getEventByName(
+                    "channelMessageEvent");
+                  if ($event != false) {
+                    foreach ($event[2] as $id => $registration) {
+                      // Trigger the channelMessageEvent event for each
+                      // registered module.
+                      EventHandling::triggerEvent("channelMessageEvent", $id,
+                          array($connection, $c, $command[2]));
                     }
                   }
+                }
+                else {
+                  $connection->send(":".__SERVERDOMAIN__." 401 ".
+                    $connection->getOption("nick")." PRIVMSG :No such".
+                    " nick/channel");
                 }
               }
               elseif (preg_match("/^[[\\]a-zA-Z\\\\`_^{|}][[\\]a-zA-Z0-9\\\\`_".
@@ -57,11 +55,11 @@
                     }
                   }
                 }
-              }
-              if ($found == false) {
-                $connection->send(":".__SERVERDOMAIN__." 401 ".
-                  $connection->getOption("nick")." PRIVMSG :No such".
-                  " nick/channel");
+                else {
+                  $connection->send(":".__SERVERDOMAIN__." 401 ".
+                    $connection->getOption("nick")." PRIVMSG :No such".
+                    " nick/channel");
+                }
               }
             }
           }
@@ -85,6 +83,7 @@
     }
 
     public function isInstantiated() {
+      $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand");
       return true;

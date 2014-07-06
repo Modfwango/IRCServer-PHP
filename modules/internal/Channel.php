@@ -4,11 +4,16 @@
       "ChannelPartEvent", "Client", "NickChangeEvent", "UserQuitEvent");
     public $name = "Channel";
     private $client = null;
-    private $options = array();
+    private $channels = array();
 
     public function broadcast($name, $data, $exclude = null) {
       if (!is_array($exclude)) {
-        $exclude = array($exclude);
+        if ($exclude == null) {
+          $exclude = array();
+        }
+        else {
+          $exclude = array($exclude);
+        }
       }
       $channel = $this->getChannelByName($name);
       if ($channel != false) {
@@ -23,43 +28,28 @@
       }
     }
 
-    public function getChannelByName($name) {
-      $channels = $this->getOption("channels");
-      if ($channels == false) {
-        $channels = array();
-      }
-      foreach ($channels as $channel) {
-        if (strtolower($channel["name"]) == strtolower($name)) {
-          return $channel;
+    public function clientIsOnChannel($id, $channel) {
+      if (isset($this->channels[strtolower($channel)])) {
+        if (in_array($id, $this->channels[strtolower($channel)]["members"])) {
+          return true;
         }
       }
       return false;
     }
 
-    public function getOption($key) {
-      // Retrieve the requested option if it exists, otherwise return false.
-      return (isset($this->options[$key]) ? $this->options[$key] : false);
+    public function getChannelByName($name) {
+      // Retrieve the requested channel if it exists, otherwise return false.
+      return (isset($this->channels[$key]) ? $this->channels[$key] : false);
     }
 
     public function receiveChannelJoin($name, $data) {
       $source = $data[0];
       $target = $data[1];
 
-      $channels = $source->getOption("channels");
-      if ($channels == false) {
-        $channels = array();
-      }
-      foreach ($channels as $cha) {
-        if (strtolower($cha) == strtolower($target)) {
-          return;
-        }
-      }
-      $source->setOption("channels", array_values(array_unique(array_merge(
-        $channels, array($target)))));
       $channel = $this->getChannelByName($target);
       if ($channel != false) {
         $channel["members"][] = $source->getOption("id");
-        $this->setChannelByName($channel["name"], $channel);
+        $this->setChannel($channel);
       }
       else {
         $channel = array(
@@ -67,7 +57,7 @@
           "members" => array($source->getOption("id")),
           "created" => time()
         );
-        $this->setChannelByName($target, $channel);
+        $this->setChannel($channel);
       }
       $this->broadcast($channel["name"], ":".$source->getOption("nick")."!".
         $source->getOption("ident")."@".$source->getHost()." JOIN ".
@@ -106,17 +96,10 @@
       $source = $data[0];
       $channel = $data[1];
       $message = $data[2];
-      $channels = $source->getOption("channels");
-      if ($channels == false) {
+
+      if (!$this->clientIsOnChannel($source->getOption("id"), $channel)) {
         return;
       }
-
-      foreach ($channels as $key => $cname) {
-        if (strtolower($cname) == strtolower($channel["name"])) {
-          unset($channels[$key]);
-        }
-      }
-      $source->setOption("channels", $channels);
 
       $targets = array();
       $ch = $this->getChannelByName($channel["name"]);
@@ -125,7 +108,7 @@
           array_values($targets), array_values($ch["members"]))));
         $ch["members"] = array_diff($ch["members"],
           array($source->getOption("id")));
-        $this->setChannelByName($ch["name"], $ch);
+        $this->setChannel($ch);
       }
 
       foreach ($targets as $target) {
@@ -141,19 +124,13 @@
     public function receiveNickChange($name, $data) {
       $source = $data[0];
       $oldnick = $data[1];
-      $channels = $source->getOption("channels");
-      if ($channels == false) {
-        return;
-      }
 
       $targets = array();
-      foreach ($channels as $channel) {
-        if ($this->getOption("channels") != false) {
-          $ch = $this->getChannelByName($channel);
-          if ($ch != false) {
-            $targets = array_values(array_unique(array_merge(
-              array_values($targets), array_values($ch["members"]))));
-          }
+      foreach ($this->channels as $channel) {
+        if ($this->clientIsOnChannel($source->getOption("id"),
+            $channel["name"])) {
+          $targets = array_values(array_unique(array_merge(
+            array_values($targets), array_values($channel["members"]))));
         }
       }
 
@@ -167,46 +144,23 @@
       }
     }
 
-    public function setChannelByName($name, $c) {
-      $channels = $this->getOption("channels");
-      if ($channels == false) {
-        $channels = array();
-      }
-      foreach ($channels as $key => $channel) {
-        if (strtolower($channel["name"]) == strtolower($name)) {
-          unset($channels[$key]);
-        }
-      }
-      $channels[] = $c;
-      $this->setOption("channels", $channels);
-      return true;
-    }
-
-    public function setOption($key, $value) {
-      // Set an option for this connection.
-      $this->options[$key] = $value;
+    public function setChannel($c) {
+      $this->channels[strtolower($c["name"])] = $c;
       return true;
     }
 
     public function receiveUserQuit($name, $data) {
       $source = $data[0];
       $message = $data[1];
-      $channels = $source->getOption("channels");
-      if ($channels == false) {
-        return;
-      }
 
       $targets = array();
-      foreach ($channels as $channel) {
-        if ($this->getOption("channels") != false) {
-          $ch = $this->getChannelByName($channel);
-          if ($ch != false) {
-            $ch["members"] = array_diff($ch["members"],
-              array($source->getOption("id")));
-            $this->setChannelByName($ch["name"], $ch);
-            $targets = array_values(array_unique(array_merge(
-              array_values($targets), array_values($ch["members"]))));
-          }
+      foreach ($this->channels as &$channel) {
+        if ($this->clientIsOnChannel($source->getOption("id"),
+            $channel["name"])) {
+          $channel["members"] = array_diff($channel["members"],
+            array($source->getOption("id")));
+          $targets = array_values(array_unique(array_merge(
+            array_values($targets), array_values($channel["members"]))));
         }
       }
 

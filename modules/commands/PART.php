@@ -2,6 +2,7 @@
   class @@CLASSNAME@@ {
     public $depend = array("Channel", "CommandEvent", "ChannelPartEvent");
     public $name = "PART";
+    private $channel = null;
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];
@@ -19,28 +20,19 @@
               $targets = explode(",", $command[1]);
             }
             foreach ($targets as $target) {
-              $found = false;
-              $channels = ModuleManagement::getModuleByName("Channel")->
-                getOption("channels");
-              if ($channels == false) {
-                $channels = array();
-              }
-              foreach ($channels as $c) {
-                $name = $c["name"];
-                if (strtolower($name) == strtolower($target)) {
-                  $found = true;
-                  $event = EventHandling::getEventByName("channelPartEvent");
-                  if ($event != false) {
-                    foreach ($event[2] as $id => $registration) {
-                      // Trigger the channelMessageEvent event for each
-                      // registered module.
-                      EventHandling::triggerEvent("channelPartEvent", $id,
-                          array($connection, $c, $message));
-                    }
+              $c = $this->channel->getChannelByName($target);
+              if ($c != false) {
+                $event = EventHandling::getEventByName("channelPartEvent");
+                if ($event != false) {
+                  foreach ($event[2] as $id => $registration) {
+                    // Trigger the channelMessageEvent event for each
+                    // registered module.
+                    EventHandling::triggerEvent("channelPartEvent", $id,
+                        array($connection, $c, $message));
                   }
                 }
               }
-              if ($found == false) {
+              else {
                 $connection->send(":".__SERVERDOMAIN__." 403 ".
                   $connection->getOption("nick")." ".$target.
                   " :No such channel");
@@ -63,6 +55,7 @@
     }
 
     public function isInstantiated() {
+      $this->channel = ModuleManagement::getModuleByName("Channel");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand");
       return true;
     }
