@@ -22,6 +22,13 @@
       $connection = $data[0];
       $command = $data[1];
 
+      foreach ($command as $key => $param) {
+        if (trim($param) == null) {
+          unset($command[$key]);
+        }
+      }
+      $command = array_values($command);
+
       if (strtolower($command[0]) == "user") {
         if (count($command) >= 5) {
           if (count($command) > 5) {

@@ -7,6 +7,13 @@
       $connection = $data[0];
       $command = $data[1];
 
+      foreach ($command as $key => $param) {
+        if (trim($param) == null) {
+          unset($command[$key]);
+        }
+      }
+      $command = array_values($command);
+
       if (strtolower($command[0]) == "lusers") {
         if ($connection->getOption("registered") == true) {
           $connection->send(":".__SERVERDOMAIN__." 251 ".

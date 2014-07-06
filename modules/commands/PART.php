@@ -8,6 +8,13 @@
       $connection = $data[0];
       $command = $data[1];
 
+      foreach ($command as $key => $param) {
+        if (trim($param) == null) {
+          unset($command[$key]);
+        }
+      }
+      $command = array_values($command);
+
       if (strtolower($command[0]) == "part") {
         if ($connection->getOption("registered") == true) {
           if (count($command) > 1) {

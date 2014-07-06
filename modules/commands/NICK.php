@@ -13,6 +13,13 @@
       $connection = $data[0];
       $command = $data[1];
 
+      foreach ($command as $key => $param) {
+        if (trim($param) == null) {
+          unset($command[$key]);
+        }
+      }
+      $command = array_values($command);
+
       if (strtolower($command[0]) == "nick") {
         if (preg_match("/^[[\\]a-zA-Z\\\\`_^{|}][[\\]a-zA-Z0-9\\\\`_^{|}-]*$/",
             $command[1]) && count($command) == 2) {
