@@ -102,20 +102,17 @@
     public function unsetClient($client) {
       if (isset($this->clients["byid"][$client->getOption("id")])) {
         unset($this->clients["byid"][$client->getOption("id")]);
-        foreach ($this->clients["byhost"] as $key => $byhost) {
-          if ($byhost == $client->getOption("id")) {
-            unset($this->clients["byhost"][$key]);
-          }
+        if (in_array($client->getOption("id"), $this->clients["byhost"])) {
+          $this->clients["byhost"] = array_diff($this->clients["byhost"],
+            array($client->getOption("id")));
         }
-        foreach ($this->clients["byident"] as $key => $byident) {
-          if ($byident == $client->getOption("id")) {
-            unset($this->clients["byident"][$key]);
-          }
+        if (in_array($client->getOption("id"), $this->clients["byident"])) {
+          $this->clients["byident"] = array_diff($this->clients["byident"],
+            array($client->getOption("id")));
         }
-        foreach ($this->clients["bynick"] as $key => $bynick) {
-          if ($bynick == $client->getOption("id")) {
-            unset($this->clients["bynick"][$key]);
-          }
+        if (in_array($client->getOption("id"), $this->clients["bynick"])) {
+          $this->clients["bynick"] = array_diff($this->clients["bynick"],
+            array($client->getOption("id")));
         }
       }
     }
