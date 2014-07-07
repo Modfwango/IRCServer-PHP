@@ -184,11 +184,13 @@
           }
         }
       }
-      $this->setChannel($ch);
 
       if (count($modesdone) == 0) {
         return;
       }
+
+      $ch["modetime"] = time();
+      $this->setChannel($ch);
 
       $modes = null;
       $params = null;
