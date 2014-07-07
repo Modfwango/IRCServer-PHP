@@ -21,6 +21,7 @@
       if (stristr(" ", $mex[0])) {
         $mex = explode(" ", $mex[0]);
       }
+      Logger::info("mex:  ".var_export($mex, true));
 
       $operation = "+";
       $modes = array();
