@@ -1,9 +1,32 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Channel", "Client", "CommandEvent");
+    public $depend = array("Channel", "Client", "CommandEvent", "Modes");
     public $name = "WHO";
     private $channel = null;
     private $client = null;
+    private $modes = null;
+
+    private function getHighestPrefix($prefixes, $modenames, $channel, $c) {
+      $p = array();
+      $has = $this->channel->hasModes($channel["name"], $modenames);
+      if ($has != false) {
+        foreach ($has as $m) {
+          if ($m["param"] == $c->getOption("nick")
+              && isset($prefixes[$m["name"]])) {
+            if (!isset($p[$prefixes[$m["name"]][1]])) {
+              $p[$prefixes[$m["name"]][1]] = array();
+            }
+            $p[$prefixes[$m["name"]][1]][] =
+              $prefixes[$m["name"]][0];
+          }
+        }
+      }
+      ksort($p);
+      end($p);
+      $weight = key($p);
+      $p = array_pop($p);
+      return array($weight => $p[0]);
+    }
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];
@@ -19,13 +42,25 @@
       if (strtolower($command[0]) == "who") {
         if ($connection->getOption("registered") == true) {
           if (count($command) > 1) {
+            $modenames = array();
+            $prefixes = array();
+            foreach ($this->modes->getPrefixes() as $prefix) {
+              $name = $this->modes->getModeNameByChar("0", $prefix[1]);
+              if ($name != false) {
+                $modenames[] = $name;
+                $prefixes[$name] = array($prefix[0], $prefix[2]);
+              }
+            }
             $match = "*";
             $users = array();
             $channel = $this->channel->getChannelByName($command[1]);
             if ($channel != false) {
               $match = $command[1];
               foreach ($channel["members"] as $member) {
-                $users[] = $this->client->getClientByID($member);
+                $c = $this->client->getClientByID($member);
+                $prefix = $this->getHighestPrefix($prefixes, $modenames,
+                  $channel, $c);
+                $users[] = array($c, array_shift($prefix));
               }
             }
             else {
@@ -52,11 +87,16 @@
               }
             }
             foreach ($users as $user) {
+              $prefix = null;
+              if (is_array($user)) {
+                $prefix = $user[1];
+                $user = $user[0];
+              }
               $connection->send(":".__SERVERDOMAIN__." 352 ".
                 $connection->getOption("nick")." ".$match." ".
                 $user->getOption("ident")." ".$user->getHost()." ".
                 __SERVERDOMAIN__." ".$user->getOption("nick").
-                " H :0 ".$user->getOption("realname"));
+                " H".$prefix." :0 ".$user->getOption("realname"));
             }
             $connection->send(":".__SERVERDOMAIN__." 315 ".
               $connection->getOption("nick")." ".$command[1].
@@ -80,6 +120,7 @@
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
+      $this->modes = ModuleManagement::getModuleByName("Modes");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand");
       return true;
     }
