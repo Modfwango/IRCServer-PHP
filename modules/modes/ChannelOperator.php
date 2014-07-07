@@ -13,6 +13,7 @@
 
       $has = $this->channel->hasModes($channel["name"],
         array("ChannelOperator"));
+      $h = ($has == true ? true : false);
       Logger::info(var_export($has, true));
       foreach ($modes as $key => $mode) {
         $client = $this->client->getClientByNick($mode["param"]);
@@ -20,7 +21,7 @@
           $mode["param"] = $client->getOption("nick");
           if ($mode["name"] == "ChannelOperator") {
             if ($mode["operation"] == "+") {
-              if ($has != false) {
+              if ($h != false) {
                 foreach ($has as $m) {
                   if ($mode["param"] == $m["param"]) {
                     unset($modes[$key]);
@@ -28,11 +29,15 @@
                 }
               }
               else {
-                $has = true;
+                foreach ($has as $m) {
+                  if ($mode["param"] == $m["param"]) {
+                    $h = true;
+                  }
+                }
               }
             }
             if ($mode["operation"] == "-") {
-              if ($has == false) {
+              if ($h == false) {
                 foreach ($has as $m) {
                   if ($mode["param"] == $m["param"]) {
                     unset($modes[$key]);
@@ -40,7 +45,11 @@
                 }
               }
               else {
-                $has = false;
+                foreach ($has as $m) {
+                  if ($mode["param"] == $m["param"]) {
+                    $h = true;
+                  }
+                }
               }
             }
           }
