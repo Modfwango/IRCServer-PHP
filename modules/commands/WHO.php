@@ -18,16 +18,17 @@
       if (strtolower($command[0]) == "who") {
         if ($connection->getOption("registered") == true) {
           if (count($command) > 1) {
+            $match = "*";
             $users = array();
             $channel = $this->channel->getChannelByName($command[1]);
             if ($channel != false) {
+              $match = $command[1];
               foreach ($channel["members"] as $member) {
                 $users[] = $this->client->getClientByID($member);
               }
             }
             else {
-              if ($command[1] == "0") {
-                $command[1] = "*";
+              if ($command[1] == "0" || $command[1] == "*") {
                 $users = ConnectionManagement::getConnections();
               }
               else {
@@ -51,7 +52,7 @@
             }
             foreach ($users as $user) {
               $connection->send(":".__SERVERDOMAIN__." 352 ".
-                $connection->getOption("nick")." ".$command[1]." ".
+                $connection->getOption("nick")." ".$match." ".
                 $user->getOption("ident")." ".$user->getHost()." ".
                 __SERVERDOMAIN__." ".$user->getOption("nick").
                 " H :0 ".$user->getOption("realname"));
