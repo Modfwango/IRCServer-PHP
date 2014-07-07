@@ -22,6 +22,8 @@
       foreach ($modes as $key => $mode) {
         $client = $this->client->getClientByNick($mode["param"]);
         if ($client != false) {
+          Logger::info("Client found for parameter:  ".
+            $client->getOption("nick"));
           $mode["param"] = $client->getOption("nick");
           if ($mode["name"] == "ChannelOperator") {
             if (!isset($h[$mode["param"]])) {
