@@ -22,8 +22,8 @@
                   $event = EventHandling::getEventByName("channelTopicEvent");
                   if ($event != false) {
                     foreach ($event[2] as $id => $registration) {
-                      // Trigger the channelMessageEvent event for each
-                      // registered module.
+                      // Trigger the channelTopicEvent event for each registered
+                      // module.
                       EventHandling::triggerEvent("channelTopicEvent", $id,
                           array($connection, $c, $command[2]));
                     }

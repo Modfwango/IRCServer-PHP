@@ -1,7 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("NickChangeEvent", "PrivateMessageEvent",
-      "UserRegistrationEvent");
+      "UserModeEvent", "UserRegistrationEvent");
     public $name = "Client";
     private $clients = array("byhost" => array(), "byident" => array(),
       "byid" => array(), "bynick" => array(), "byrealname" => array());
@@ -129,6 +129,70 @@
       }
     }
 
+    public function receiveUserMode($name, $data) {
+      $source = $data[0];
+      $modes = $data[1];
+
+      if (count($modes) == 0) {
+        return;
+      }
+
+      $modesdone = array();
+      $cl = $source->getOption("modes");
+      if ($cl == false) {
+        $cl = array();
+      }
+      foreach ($modes as $mode) {
+        if ($mode["operation"] == "+") {
+          $modesdone[] = $mode;
+          $cl[] = $mode;
+        }
+        else {
+          if (!isset($mode["param"])) {
+            foreach ($cl as $key => $m) {
+              if ($m["name"] == $mode["name"]) {
+                $modesdone[] = $mode;
+                unset($cl[$key]);
+              }
+            }
+          }
+          else {
+            foreach ($cl as $key => $m) {
+              if ($m["name"] == $mode["name"]
+                  && $m["param"] == $mode["param"]) {
+                $modesdone[] = $mode;
+                unset($cl[$key]);
+              }
+            }
+          }
+        }
+      }
+      $source->setOption("modes", $cl);
+
+      if (count($modesdone) == 0) {
+        return;
+      }
+
+      $modes = null;
+      $params = null;
+      $lastOperation = null;
+      foreach ($modesdone as $mode) {
+        if ($lastOperation != $mode["operation"]) {
+          $lastOperation = $mode["operation"];
+          $modes .= $mode["operation"];
+        }
+        $omode = $this->modes->getModeByName($mode["name"]);
+        $modes .= $omode[1];
+        if (isset($mode["param"])) {
+          $params .= " ".$mode["param"];
+        }
+      }
+      $modeString = $modes.$params;
+
+      $source->send(":".$source->getOption("nick")." MODE ".
+        $source->getOption("nick")." :".$modeString);
+    }
+
     public function receiveUserQuit($name, $data) {
       $this->unsetClient($data[0]);
     }
@@ -193,6 +257,8 @@
         "receivePrivateMessage");
       EventHandling::registerForEvent("userQuitEvent", $this,
         "receiveUserQuit");
+      EventHandling::registerForEvent("userModeEvent", $this,
+        "receiveUserMode");
       EventHandling::registerForEvent("userRegistrationEvent", $this,
         "receiveUserRegistration");
       return true;

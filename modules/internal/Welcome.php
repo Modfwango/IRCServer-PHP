@@ -1,9 +1,10 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("Client", "CommandEvent", "ConnectionCreatedEvent",
-      "LUSERS", "MOTD", "USER");
+      "LUSERS", "Modes", "MOTD", "USER");
     public $name = "Welcome";
     private $client = null;
+    private $modes = null;
 
     public function receiveConnectionCreated($name, $connection) {
       $connection->send(":".__SERVERDOMAIN__.
@@ -24,6 +25,13 @@
     }
 
     public function receiveUserRegistration($name, $connection) {
+      $pmodes = array();
+      $pprefixes = array();
+      foreach ($this->modes->getPrefixes() as $prefix) {
+        $pprefixes[] = $prefix[0];
+        $pmodes[] = $prefix[1];
+      }
+
       $connection->send(":".__SERVERDOMAIN__." 001 ".
         $connection->getOption("nick")." :Welcome to the ".__NETNAME__.
         " Internet Relay Chat Network ".$connection->getOption("nick"));
@@ -40,8 +48,9 @@
       $connection->send(":".__SERVERDOMAIN__." 005 ".
         $connection->getOption("nick").
         " CHANTYPES=&# EXCEPTS INVEX CHANMODES=eIb,k,l,imnpstS CHANLIMIT=&#:15".
-        " PREFIX=(ov)@+ MAXLIST=beI:25 MODES=4 NETWORK=".__NETNAME__." KNOCK".
-        " STATUSMSG=@+ CALLERID=g :are supported by this server");
+        " PREFIX=(".implode(null, $pmodes).")".implode(null, $pprefixes)." ".
+        "MAXLIST=beI:25 MODES=4 NETWORK=".__NETNAME__." KNOCK STATUSMSG=@+ ".
+        "CALLERID=g :are supported by this server");
       $connection->send(":".__SERVERDOMAIN__." 005 ".
         $connection->getOption("nick").
         " SAFELIST ELIST=U CASEMAPPING=rfc1459 CHARSET=ascii NICKLEN=9".
@@ -67,6 +76,7 @@
 
     public function isInstantiated() {
       $this->client = ModuleManagement::getModuleByName("Client");
+      $this->modes = ModuleManagement::getModuleByName("Modes");
       EventHandling::registerForEvent("connectionCreatedEvent", $this,
         "receiveConnectionCreated");
       EventHandling::registerForEvent("userRegistrationEvent", $this,

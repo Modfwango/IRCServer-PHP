@@ -1,8 +1,8 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("ChannelJoinEvent", "ChannelMessageEvent",
-      "ChannelPartEvent", "ChannelTopicEvent", "Client", "NickChangeEvent",
-      "UserQuitEvent");
+      "ChannelModeEvent", "ChannelPartEvent", "ChannelTopicEvent", "Client",
+      "NickChangeEvent", "UserQuitEvent");
     public $name = "Channel";
     private $client = null;
     private $channels = array();
@@ -74,7 +74,9 @@
             }
           }
         }
-        return $return;
+        if (count($return) > 0) {
+          return $return;
+        }
       }
       return false;
     }
@@ -134,6 +136,70 @@
         $this->broadcast($target["name"], $base.$message,
           $source->getOption("id"));
       }
+    }
+
+    public function receiveChannelMode($name, $data) {
+      $source = $data[0];
+      $channel = $data[1];
+      $modes = $data[2];
+
+      if (count($modes) == 0) {
+        return;
+      }
+
+      $modesdone = array();
+      $ch = $this->getChannelByName($channel["name"]);
+      if ($ch != false) {
+        foreach ($modes as $mode) {
+          if ($mode["operation"] == "+") {
+            $modesdone[] = $mode;
+            $ch["modes"][] = $mode;
+          }
+          else {
+            if (!isset($mode["param"])) {
+              foreach ($ch["modes"] as $key => $m) {
+                if ($m["name"] == $mode["name"]) {
+                  $modesdone[] = $mode;
+                  unset($ch["modes"][$key]);
+                }
+              }
+            }
+            else {
+              foreach ($ch["modes"] as $key => $m) {
+                if ($m["name"] == $mode["name"]
+                    && $m["param"] == $mode["param"]) {
+                  $modesdone[] = $mode;
+                  unset($ch["modes"][$key]);
+                }
+              }
+            }
+          }
+        }
+      }
+
+      if (count($modesdone) == 0) {
+        return;
+      }
+
+      $modes = null;
+      $params = null;
+      $lastOperation = null;
+      foreach ($modesdone as $mode) {
+        if ($lastOperation != $mode["operation"]) {
+          $lastOperation = $mode["operation"];
+          $modes .= $mode["operation"];
+        }
+        $omode = $this->modes->getModeByName($mode["name"]);
+        $modes .= $omode[1];
+        if (isset($mode["param"])) {
+          $params .= " ".$mode["param"];
+        }
+      }
+      $modeString = $modes.$params;
+
+      $this->broadcast($ch["name"], $source->getOption("nick")."!".
+        $source->getOption("ident")."@".$source->getHost()." MODE ".$ch["name"].
+        " ".$modeString);
     }
 
     public function receiveChannelPart($name, $data) {
@@ -261,6 +327,8 @@
         "receiveChannelJoin");
       EventHandling::registerForEvent("channelMessageEvent", $this,
         "receiveChannelMessage");
+      EventHandling::registerForEvent("channelModeEvent", $this,
+        "receiveChannelMode");
       EventHandling::registerForEvent("channelPartEvent", $this,
         "receiveChannelPart");
       EventHandling::registerForEvent("channelTopicEvent", $this,

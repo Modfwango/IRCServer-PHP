@@ -27,7 +27,7 @@
                   $event = EventHandling::getEventByName("channelJoinEvent");
                   if ($event != false) {
                     foreach ($event[2] as $id => $registration) {
-                      // Trigger the nickChangeEvent event for each registered
+                      // Trigger the channelJoinEvent event for each registered
                       // module.
                       EventHandling::triggerEvent("channelJoinEvent", $id,
                           array($connection, $channel));
