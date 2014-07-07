@@ -16,6 +16,7 @@
         array("ChannelOperator"));
       if (is_array($has) && count($has) > 0) {
         foreach ($has as $m) {
+          Logger::info("Has mode +o ".$m["param"]);
           $h[$m["param"]] = true;
         }
       }
