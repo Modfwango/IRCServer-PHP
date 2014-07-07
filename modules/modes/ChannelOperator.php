@@ -14,8 +14,10 @@
       $h = array();
       $has = $this->channel->hasModes($channel["name"],
         array("ChannelOperator"));
-      foreach ($has as $m) {
-        $h[$m["param"]] = true;
+      if (is_array($has) && count($has) > 0) {
+        foreach ($has as $m) {
+          $h[$m["param"]] = true;
+        }
       }
       Logger::info(var_export($has, true));
       foreach ($modes as $key => $mode) {
