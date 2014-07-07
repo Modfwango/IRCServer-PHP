@@ -33,7 +33,7 @@
     public function getPrefixes() {
       $return = array();
       foreach ($this->prefixes["byprefix"] as $prefix => $char) {
-        $return = array($prefix, $char);
+        $return[] = array($prefix, $char);
       }
       return $return;
     }
