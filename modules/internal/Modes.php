@@ -58,6 +58,7 @@
       $this->modes["byname"][$mode[0]] = array($mode[0], $mode[1], $mode[2],
         $mode[3]);
       $this->modes["bychar"][$mode[2]][$mode[1]] = $mode[0];
+      Logger::info(var_export($this->modes, true));
     }
 
     public function setPrefix($prefix) {
