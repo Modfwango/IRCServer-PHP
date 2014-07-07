@@ -155,6 +155,7 @@
         foreach ($modes as $mode) {
           if ($mode["operation"] == "+") {
             $modesdone[] = $mode;
+            unset($mode["operation"]);
             $ch["modes"][] = $mode;
           }
           else {
