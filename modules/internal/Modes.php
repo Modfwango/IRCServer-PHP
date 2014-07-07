@@ -1,9 +1,9 @@
 <?php
   class @@CLASSNAME@@ {
     public $name = "Modes";
-    private $modes = array();
-    private $prefixes = array("byname" => array(),
+    private $modes = array("byname" => array(),
       "bychar" => array(0 => array(), 1 => array()));
+    private $prefixes = array("byprefix" => array(), "bychar" => array());
 
     public function getCharByPrefix($prefix) {
       if (isset($this->prefixes["byprefix"][$prefix])) {
