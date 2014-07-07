@@ -19,24 +19,19 @@
       */
       $mex = array($modeString);
       if (stristr($mex[0], " ")) {
-        Logger::info("Found spaces in mex.");
         $mex = explode(" ", $mex[0]);
       }
-      Logger::info("mex:  ".var_export($mex, true));
 
       $operation = "+";
       $modes = array();
       $ms = str_split(array_shift($mex));
       $mex = array_values($mex);
-      Logger::info("ms:  ".var_export($ms, true));
-      Logger::info("mex:  ".var_export($mex, true));
       foreach ($ms as $m) {
         if ($m == "+" || $m == "-") {
           $operation = $m;
         }
         else {
           $mode = $this->modes->getModeByChar($type, $m);
-          //Logger::info("mode:  ".var_export($mode, true));
           if ($mode != false) {
             if ($operation == "+" && in_array($mode[3],
                 array("1", "2", "3", "4"))) {
@@ -46,7 +41,6 @@
                   "name" => $mode[0],
                   "param" => array_shift($mex)
                 );
-                Logger::info("Added mode to stack:  ".var_export($modes));
                 $mex = array_values($mex);
               }
             }
@@ -56,7 +50,6 @@
                 "operation" => $operation,
                 "name" => $mode[0]
               );
-              Logger::info("Added mode to stack:  ".var_export($modes));
             }
             elseif ($operation == "-" && in_array($mode[3],
                     array("1", "3", "4"))) {
@@ -67,7 +60,6 @@
                   "param" => array_shift($mex)
                 );
                 $mex = array_values($mex);
-                Logger::info("Added mode to stack:  ".var_export($modes));
               }
             }
             elseif ($operation == "-" && in_array($mode[3],
@@ -76,7 +68,6 @@
                 "operation" => $operation,
                 "name" => $mode[0]
               );
-              Logger::info("Added mode to stack:  ".var_export($modes));
             }
           }
         }

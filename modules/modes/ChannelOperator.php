@@ -11,8 +11,6 @@
       $channel = $data[1];
       $modes = $data[2];
 
-      Logger::info(var_export($modes, true));
-
       $h = array();
       $has = $this->channel->hasModes($channel["name"],
         array("ChannelOperator"));
@@ -23,9 +21,8 @@
       }
       foreach ($modes as $key => $mode) {
         $client = $this->client->getClientByNick($mode["param"]);
-        if ($client != false) {
-          Logger::info("Client found for parameter:  ".
-            $client->getOption("nick"));
+        if ($client != false && $this->channel->clientIsOnChannel(
+            $client->getOption("id"), $channel["name"])) {
           $mode["param"] = $client->getOption("nick");
           if ($mode["name"] == "ChannelOperator") {
             if (!isset($h[$mode["param"]])) {
