@@ -16,7 +16,7 @@
         if ($mode["name"] == "ProtectTopic") {
           if ($mode["operation"] == "+") {
             if ($has == true) {
-              unset($modes[$mode["operation"]][$key]);
+              unset($modes[$key]);
             }
             else {
               $has = true;
@@ -24,7 +24,7 @@
           }
           if ($mode["operation"] == "-") {
             if ($has == false) {
-              unset($modes[$mode["operation"]][$key]);
+              unset($modes[$key]);
             }
             else {
               $has = false;
