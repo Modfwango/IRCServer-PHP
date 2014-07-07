@@ -18,7 +18,7 @@
         :hi!lol@199.68.xkl.qkq MODE #bobby -n
       */
       $mex = array($modeString);
-      if (stristr(" ", $mex[0])) {
+      if (stristr($mex[0], " ")) {
         Logger::info("Found spaces in mex.");
         $mex = explode(" ", $mex[0]);
       }
