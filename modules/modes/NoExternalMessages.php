@@ -56,7 +56,7 @@
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->modes = ModuleManagement::getModuleByName("Modes");
-      $this->modes->setMode(array("NoExternalMessages", "n", 0, 0));
+      $this->modes->setMode(array("NoExternalMessages", "n", "0", "0"));
       EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
         "receiveChannelMode");
       EventHandling::registerAsEventPreprocessor("channelMessageEvent", $this,

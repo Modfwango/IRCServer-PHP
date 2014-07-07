@@ -62,7 +62,7 @@
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->modes = ModuleManagement::getModuleByName("Modes");
-      $this->modes->setMode(array("ProtectTopic", "t", 0, 0));
+      $this->modes->setMode(array("ProtectTopic", "t", "0", "0"));
       EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
         "receiveChannelMode");
       EventHandling::registerAsEventPreprocessor("channelTopicEvent", $this,

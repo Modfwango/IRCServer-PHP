@@ -37,7 +37,7 @@
           Logger::info(var_export($mode, true));
           if ($mode != false) {
             if ($operation == "+" && in_array($mode[3],
-                array(1, 2, 3, 4))) {
+                array("1", "2", "3", "4"))) {
               if (isset($mex[0])) {
                 $modes[] = array(
                   "operation" => $operation,
@@ -49,7 +49,7 @@
               }
             }
             elseif ($operation == "+" && in_array($mode[3],
-                    array(0))) {
+                    array("0"))) {
               $modes[] = array(
                 "operation" => $operation,
                 "name" => $mode[0]
@@ -57,7 +57,7 @@
               Logger::info("Added mode to stack:  ".var_export($modes));
             }
             elseif ($operation == "-" && in_array($mode[3],
-                    array(1, 3, 4))) {
+                    array("1", "3", "4"))) {
               if (isset($mex[0])) {
                 $modes[] = array(
                   "operation" => $operation,
@@ -69,7 +69,7 @@
               }
             }
             elseif ($operation == "-" && in_array($mode[3],
-                    array(0, 2))) {
+                    array("0", "2"))) {
               $modes[] = array(
                 "operation" => $operation,
                 "name" => $mode[0]
@@ -106,7 +106,7 @@
               $channel = $this->channel->getChannelByName($command[1]);
               $client = $this->client->getClientByNick($command[1]);
               if ($channel != false) {
-                $modes = $this->parseModes(0, $command[2]);
+                $modes = $this->parseModes("0", $command[2]);
                 $event = EventHandling::getEventByName("channelModeEvent");
                 if ($event != false) {
                   foreach ($event[2] as $id => $registration) {
@@ -120,7 +120,7 @@
               elseif ($client != false) {
                 if ($client->getOption("nick")
                     == $connection->getOption("nick")) {
-                  $modes = $this->parseModes(1, $command[2]);
+                  $modes = $this->parseModes("1", $command[2]);
                   $event = EventHandling::getEventByName("userModeEvent");
                   if ($event != false) {
                     foreach ($event[2] as $id => $registration) {
