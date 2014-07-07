@@ -59,13 +59,15 @@
           $this, "sendPingRequest", $connection);
       }
       else {
-        $connection->send(":".$connection->getOption("nick")."!".
-          $connection->getOption("ident")."@".$connection->getHost().
-          " QUIT :Ping timeout: ".__PINGTIME__." seconds");
+        $message = "Ping timeout: ".__PINGTIME__." seconds";
+        if ($connection->getOption("registered") == true) {
+          $connection->send(":".$connection->getOption("nick")."!".
+            $connection->getOption("ident")."@".$connection->getHost().
+            " QUIT :".$message);
+        }
         $connection->send("ERROR :Closing Link: ".$connection->getHost().
-          " (Ping timeout: ".__PINGTIME__." seconds)");
-        $this->quit->notifyQuit(null, $connection, "Ping timeout: ".
-          __PINGTIME__." seconds");
+          " (".$message.")");
+        $this->quit->notifyQuit(null, $connection, $message);
         $connection->setOption("registered", false);
         $connection->disconnect();
       }
