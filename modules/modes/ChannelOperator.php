@@ -20,7 +20,6 @@
           if ($client != false && $this->channel->clientIsOnChannel(
               $client->getOption("id"), $channel["name"])) {
             $m["param"] = $client->getOption("nick");
-            Logger::info("Has mode +o ".$m["param"]);
             $h[$m["param"]] = true;
           }
         }
@@ -65,6 +64,7 @@
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
       $this->modes->setMode(array("ChannelOperator", "o", "0", "4"));
+      $this->modes->setPrefix(array("@", "o"));
       EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
         "receiveChannelMode");
       return true;
