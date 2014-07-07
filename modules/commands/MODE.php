@@ -17,6 +17,7 @@
         MODE #bobby -n
         :hi!lol@199.68.xkl.qkq MODE #bobby -n
       */
+      Logger::info(var_export($modeString, true));
       $mex = array($modeString);
       if (stristr(" ", $mex[0])) {
         $mex = explode(" ", $mex[0]);
