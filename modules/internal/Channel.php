@@ -151,6 +151,7 @@
 
       $modesdone = array();
       $ch = $this->getChannelByName($channel["name"]);
+      Logger::info(var_export($ch, true));
       if ($ch != false) {
         foreach ($modes as $mode) {
           if ($mode["operation"] == "+") {
