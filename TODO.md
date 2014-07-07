@@ -12,3 +12,4 @@ Add a way to check that modes will not be overwritten
 Consider how I'm going to remove case-insensitive parametered modes
 Add timestamp to mode key in channels
 Add channel operator mode
+Burst mode on channel join
