@@ -1,7 +1,8 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("CommandEvent", "Timer", "USER");
+    public $depend = array("CommandEvent", "QUIT", "Timer", "USER");
     public $name = "PingPong";
+    private $quit = null;
     private $responses = array();
 
     private function getPingResponse($server, $subject) {
@@ -63,11 +64,15 @@
           " QUIT :Ping timeout: ".__PINGTIME__." seconds");
         $connection->send("ERROR :Closing Link: ".$connection->getHost().
           " (Ping timeout: ".__PINGTIME__." seconds)");
+        $this->notifyQuit(null, $connection, "Ping timeout: ".__PINGTIME__.
+          " seconds");
+        $connection->setOption("registered", false);
         $connection->disconnect();
       }
     }
 
     public function isInstantiated() {
+      $this->quit = ModuleManagement::getModuleByName("QUIT");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand");
       EventHandling::registerForEvent("userRegistrationEvent", $this,
         "receiveUserRegistration");
