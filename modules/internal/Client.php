@@ -27,6 +27,11 @@
       return $this->getClientByID($this->getClientIDByNick($nick));
     }
 
+    public function getClientByRealname($realname) {
+      // Retrieve the requested client if it exists, otherwise return false.
+      return $this->getClientByID($this->getClientIDByRealname($realname));
+    }
+
     public function getClientIDByHost($host) {
       // Retrieve the requested ID if it exists, otherwise return false.
       return (isset($this->clients["byhost"][strtolower($host)]) ?
@@ -43,6 +48,58 @@
       // Retrieve the requested ID if it exists, otherwise return false.
       return (isset($this->clients["bynick"][strtolower($nick)]) ?
         $this->clients["bynick"][strtolower($nick)] : false);
+    }
+
+    public function getClientIDByRealname($realname) {
+      // Retrieve the requested ID if it exists, otherwise return false.
+      return (isset($this->clients["byrealname"][strtolower($realname)]) ?
+        $this->clients["byrealname"][strtolower($realname)] : false);
+    }
+
+    public function getClientsByMatchingHost($pattern) {
+      $clients = array();
+      foreach ($this->clients["byhost"] as $host => $id) {
+        if ($this->matchGlob($pattern, $host)) {
+          $clients[] = $this->getClientByID($id);
+        }
+      }
+      return $clients;
+    }
+
+    public function getClientsByMatchingIdent($pattern) {
+      $clients = array();
+      foreach ($this->clients["byident"] as $ident => $id) {
+        if ($this->matchGlob($pattern, $ident)) {
+          $clients[] = $this->getClientByID($id);
+        }
+      }
+      return $clients;
+    }
+
+    public function getClientsByMatchingNick($pattern) {
+      $clients = array();
+      foreach ($this->clients["bynick"] as $nick => $id) {
+        if ($this->matchGlob($pattern, $nick)) {
+          $clients[] = $this->getClientByID($id);
+        }
+      }
+      return $clients;
+    }
+
+    public function getClientsByMatchingRealname($pattern) {
+      $clients = array();
+      foreach ($this->clients["byrealname"] as $realname => $id) {
+        if ($this->matchGlob($pattern, $realname)) {
+          $clients[] = $this->getClientByID($id);
+        }
+      }
+      return $clients;
+    }
+
+    private function matchGlob($pattern, $string) {
+       $regex = str_replace(array("*", "?"), array(".*", "."),
+         preg_quote($pattern));
+       return preg_match('/^'.$regex.'$/i', $string);
     }
 
     public function receiveNickChange($name, $data) {
@@ -98,6 +155,10 @@
           $this->clients["bynick"][strtolower($client->getOption("nick"))] =
             $client->getOption("id");
         }
+        if ($client->getOption("realname") != false) {
+          $this->clients["byrealname"][strtolower(
+            $client->getOption("realname"))] = $client->getOption("id");
+        }
         return true;
       }
       return false;
@@ -117,6 +178,10 @@
         if (in_array($client->getOption("id"), $this->clients["bynick"])) {
           $this->clients["bynick"] = array_diff($this->clients["bynick"],
             array($client->getOption("id")));
+        }
+        if (in_array($client->getOption("id"), $this->clients["byrealname"])) {
+          $this->clients["byrealname"] = array_diff(
+            $this->clients["byrealname"], array($client->getOption("id")));
         }
       }
     }
