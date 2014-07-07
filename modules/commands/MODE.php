@@ -19,6 +19,7 @@
       */
       $mex = array($modeString);
       if (stristr(" ", $mex[0])) {
+        Logger::info("Found spaces in mex.");
         $mex = explode(" ", $mex[0]);
       }
       Logger::info("mex:  ".var_export($mex, true));
