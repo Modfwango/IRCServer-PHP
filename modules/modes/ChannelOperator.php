@@ -11,17 +11,22 @@
       $channel = $data[1];
       $modes = $data[2];
 
-      $h = array();
-      $has = $this->channel->hasModes($channel["name"],
-        array("ChannelOperator"));
-      if (is_array($has) && count($has) > 0) {
-        foreach ($has as $m) {
-          Logger::info("Has mode +o ".$m["param"]);
-          $h[$m["param"]] = true;
+      if ($mode["name"] == "ChannelOperator") {
+        $h = array();
+        $has = $this->channel->hasModes($channel["name"],
+          array("ChannelOperator"));
+        if (is_array($has) && count($has) > 0) {
+          foreach ($has as $m) {
+            $client = $this->client->getClientByNick($m["param"]);
+            if ($client != false && $this->channel->clientIsOnChannel(
+                $client->getOption("id"), $channel["name"])) {
+              $m["param"] = $client->getOption("nick");
+              Logger::info("Has mode +o ".$m["param"]);
+              $h[$m["param"]] = true;
+            }
+          }
         }
-      }
-      foreach ($modes as $key => $mode) {
-        if ($mode["name"] == "ChannelOperator") {
+        foreach ($modes as $key => $mode) {
           $client = $this->client->getClientByNick($mode["param"]);
           if ($client != false && $this->channel->clientIsOnChannel(
               $client->getOption("id"), $channel["name"])) {
@@ -50,9 +55,10 @@
             unset($modes[$key]);
           }
         }
+        $data[2] = $modes;
+        return array(null, $data);
       }
-      $data[2] = $modes;
-      return array(null, $data);
+      return array(true);
     }
 
     public function isInstantiated() {
