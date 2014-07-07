@@ -59,7 +59,8 @@
 
     public function getChannelByName($name) {
       // Retrieve the requested channel if it exists, otherwise return false.
-      return (isset($this->channels[$name]) ? $this->channels[$name] : false);
+      return (isset($this->channels[strtolower($name)]) ?
+        $this->channels[strtolower($name)] : false);
     }
 
     public function hasModes($channel, $modes) {
