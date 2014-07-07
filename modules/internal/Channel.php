@@ -61,6 +61,24 @@
       return (isset($this->channels[$name]) ? $this->channels[$name] : false);
     }
 
+    public function hasModes($channel, $modes) {
+      $c = $this->getChannelByName($channel);
+      if ($c != false) {
+        $return = array();
+        foreach ($modes as $mode) {
+          if (is_array($c["modes"]) && count($c["modes"]) > 0) {
+            foreach ($c["modes"] as $cm) {
+              if ($cm["name"] == $mode) {
+                $return[] = $cm;
+              }
+            }
+          }
+        }
+        return $return;
+      }
+      return false;
+    }
+
     public function receiveChannelJoin($name, $data) {
       $source = $data[0];
       $target = $data[1];
