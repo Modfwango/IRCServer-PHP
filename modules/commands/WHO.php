@@ -1,8 +1,9 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Channel", "CommandEvent");
+    public $depend = array("Channel", "Client", "CommandEvent");
     public $name = "WHO";
     private $channel = null;
+    private $client = null;
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];
@@ -78,6 +79,7 @@
 
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
+      $this->client = ModuleManagement::getModuleByName("Client");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand");
       return true;
     }
