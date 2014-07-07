@@ -19,35 +19,33 @@
         if ($connection->getOption("registered") == true) {
           if (count($command) > 1) {
             $users = array();
-            foreach ($targets as ) {
-              $channel = $this->channel->getChannelByName($command[1]);
-              if ($channel != false) {
-                foreach ($channel["members"] as $member) {
-                  $users[] = $this->client->getClientByID($member);
-                }
+            $channel = $this->channel->getChannelByName($command[1]);
+            if ($channel != false) {
+              foreach ($channel["members"] as $member) {
+                $users[] = $this->client->getClientByID($member);
+              }
+            }
+            else {
+              if ($command[1] == "0") {
+                $command[1] = "*";
+                $users = ConnectionManagement::getConnections();
               }
               else {
-                if ($command[1] == "0") {
-                  $command[1] = "*";
-                  $users = ConnectionManagement::getConnections();
+                foreach ($this->client->getClientsByMatchingHost($command[1])
+                          as $client) {
+                  $users[] = $client;
                 }
-                else {
-                  foreach ($this->client->getClientsByMatchingHost($command[1])
-                            as $client) {
-                    $users[] = $client;
-                  }
-                  foreach ($this->client->getClientsByMatchingIdent($command[1])
-                            as $client) {
-                    $users[] = $client;
-                  }
-                  foreach ($this->client->getClientsByMatchingNick($command[1])
-                            as $client) {
-                    $users[] = $client;
-                  }
-                  foreach ($this->client->getClientsByMatchingRealname(
-                            $command[1]) as $client) {
-                    $users[] = $client;
-                  }
+                foreach ($this->client->getClientsByMatchingIdent($command[1])
+                          as $client) {
+                  $users[] = $client;
+                }
+                foreach ($this->client->getClientsByMatchingNick($command[1])
+                          as $client) {
+                  $users[] = $client;
+                }
+                foreach ($this->client->getClientsByMatchingRealname(
+                          $command[1]) as $client) {
+                  $users[] = $client;
                 }
               }
             }
