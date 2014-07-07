@@ -19,7 +19,6 @@
           $h[$m["param"]] = true;
         }
       }
-      Logger::info(var_export($has, true));
       foreach ($modes as $key => $mode) {
         $client = $this->client->getClientByNick($mode["param"]);
         if ($client != false) {

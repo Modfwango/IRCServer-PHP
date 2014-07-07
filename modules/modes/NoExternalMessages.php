@@ -13,7 +13,6 @@
 
       $has = $this->channel->hasModes($channel["name"],
         array("NoExternalMessages"));
-      Logger::info(var_export($has, true));
       foreach ($modes as $key => $mode) {
         if ($mode["name"] == "NoExternalMessages") {
           if ($mode["operation"] == "+") {
