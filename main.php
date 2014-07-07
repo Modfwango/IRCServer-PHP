@@ -1,4 +1,5 @@
 <?php
+  define("__TIMEZONE__", "America/Chicago");
   define("__PROJECTROOT__", dirname(__FILE__));
 
   chdir(__PROJECTROOT__);
