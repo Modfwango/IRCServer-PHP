@@ -26,15 +26,15 @@
       $modes = array();
       $ms = str_split(array_shift($mex));
       $mex = array_values($mex);
-      Logger::info(var_export($ms, true));
-      Logger::info(var_export($mex, true));
+      Logger::info("ms:  ".var_export($ms, true));
+      Logger::info("mex:  ".var_export($mex, true));
       foreach ($ms as $m) {
         if ($m == "+" || $m == "-") {
           $operation = $m;
         }
         else {
           $mode = $this->modes->getModeByChar($type, $m);
-          Logger::info(var_export($mode, true));
+          Logger::info("mode:  ".var_export($mode, true));
           if ($mode != false) {
             if ($operation == "+" && in_array($mode[3],
                 array("1", "2", "3", "4"))) {
