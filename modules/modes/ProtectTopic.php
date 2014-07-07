@@ -48,9 +48,9 @@
           array("ChannelOperator"));
         if ($modes != false) {
           foreach ($modes as $mode) {
-            if ($mode["param"] == $source->getOption("nick")) {*/
+            if ($mode["param"] == $source->getOption("nick")) {
               return array(true);
-        /*    }
+            }
           }
         }*/
         $source->send(":".__SERVERDOMAIN__." 482 ".$source->getOption("nick").
