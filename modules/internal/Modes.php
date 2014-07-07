@@ -88,16 +88,16 @@
       foreach ($this->prefixes["byprefix"] as $prefix => $char) {
         if ($prefix == $prefix[0]) {
           unset($this->prefixes["byprefix"][$prefix]);
-          if (isset($this->prefixes["bychar"][$char])) {
-            unset($this->prefixes["bychar"][$char]);
+          if (isset($this->prefixes["bychar"][$char[0]])) {
+            unset($this->prefixes["bychar"][$char[0]]);
           }
         }
       }
       foreach ($this->prefixes["bychar"] as $char => $prefix) {
         if ($char == $prefix[1]) {
           unset($this->prefixes["bychar"][$char]);
-          if (isset($this->prefixes["byprefix"][$prefix])) {
-            unset($this->prefixes["byprefix"][$prefix]);
+          if (isset($this->prefixes["byprefix"][$prefix[0]])) {
+            unset($this->prefixes["byprefix"][$prefix[0]]);
           }
         }
       }
