@@ -26,8 +26,8 @@
 
     public function getModeNameByChar($target, $char) {
       // Retrieve the requested name if it exists, otherwise return false.
-      return (isset($this->modes["bychar"][$target][strtolower($char)]) ?
-        $this->modes["bychar"][$target][strtolower($char)] : false);
+      return (isset($this->modes["bychar"][$target][$char]) ?
+        $this->modes["bychar"][$target][$char] : false);
     }
 
     public function getPrefixes() {
