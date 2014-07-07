@@ -201,7 +201,7 @@
       }
       $modeString = $modes.$params;
 
-      $this->broadcast($ch["name"], $source->getOption("nick")."!".
+      $this->broadcast($ch["name"], ":".$source->getOption("nick")."!".
         $source->getOption("ident")."@".$source->getHost()." MODE ".$ch["name"].
         " ".$modeString);
     }
