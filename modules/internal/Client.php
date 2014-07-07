@@ -1,10 +1,11 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("NickChangeEvent", "PrivateMessageEvent",
+    public $depend = array("Modes", "NickChangeEvent", "PrivateMessageEvent",
       "UserModeEvent", "UserRegistrationEvent");
     public $name = "Client";
     private $clients = array("byhost" => array(), "byident" => array(),
       "byid" => array(), "bynick" => array(), "byrealname" => array());
+    private $modes = null;
 
     public function getClientByHost($host) {
       // Retrieve the requested client if it exists, otherwise return false.
@@ -251,6 +252,7 @@
     }
 
     public function isInstantiated() {
+      $this->modes = ModuleManagement::getModuleByName("Modes");
       EventHandling::registerForEvent("nickChangeEvent", $this,
         "receiveNickChange");
       EventHandling::registerForEvent("privateMessageEvent", $this,

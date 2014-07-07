@@ -1,7 +1,10 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("CommandEvent", "Modes");
+    public $depend = array("Channel", "Client", "CommandEvent", "Modes");
     public $name = "MODE";
+    private $channel = null;
+    private $client = null;
+    private $modes = null;
 
     public function parseModes($type, $modeString) {
       /*
@@ -181,6 +184,9 @@
     }
 
     public function isInstantiated() {
+      $this->channel = ModuleManagement::getModuleByName("Channel");
+      $this->client = ModuleManagement::getModuleByName("Client");
+      $this->modes = ModuleManagement::getModuleByName("Modes");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand");
       return true;
     }
