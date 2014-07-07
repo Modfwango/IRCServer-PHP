@@ -1,7 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("Channel", "ChannelModeEvent", "ChannelTopicEvent",
-      /*"ChannelOperator", */"Modes");
+      "ChannelOperator", "Modes");
     public $name = "ProtectTopic";
     private $channel = null;
     private $modes = null;
@@ -16,7 +16,7 @@
       foreach ($modes as $key => $mode) {
         if ($mode["name"] == "ProtectTopic") {
           if ($mode["operation"] == "+") {
-            if ($has == true) {
+            if ($has != false) {
               unset($modes[$key]);
             }
             else {
@@ -45,7 +45,7 @@
       $modes = $this->channel->hasModes($channel["name"],
         array("ProtectTopic"));
       if ($modes != false) {
-        /*$modes = $this->channel->hasModes($channel["name"],
+        $modes = $this->channel->hasModes($channel["name"],
           array("ChannelOperator"));
         if ($modes != false) {
           foreach ($modes as $mode) {
@@ -53,7 +53,7 @@
               return array(true);
             }
           }
-        }*/
+        }
         $source->send(":".__SERVERDOMAIN__." 482 ".$source->getOption("nick").
           " ".$channel["name"]." :You're not a channel operator");
         return array(false);
