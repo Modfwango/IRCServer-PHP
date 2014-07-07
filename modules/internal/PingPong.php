@@ -64,8 +64,8 @@
           " QUIT :Ping timeout: ".__PINGTIME__." seconds");
         $connection->send("ERROR :Closing Link: ".$connection->getHost().
           " (Ping timeout: ".__PINGTIME__." seconds)");
-        $this->notifyQuit(null, $connection, "Ping timeout: ".__PINGTIME__.
-          " seconds");
+        $this->quit->notifyQuit(null, $connection, "Ping timeout: ".
+          __PINGTIME__." seconds");
         $connection->setOption("registered", false);
         $connection->disconnect();
       }
