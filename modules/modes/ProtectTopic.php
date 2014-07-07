@@ -12,6 +12,7 @@
       $modes = $data[2];
 
       $has = $this->channel->hasModes($channel["name"], array("ProtectTopic"));
+      Logger::info(var_export($has, true));
       foreach ($modes as $key => $mode) {
         if ($mode["name"] == "ProtectTopic") {
           if ($mode["operation"] == "+") {
@@ -32,7 +33,6 @@
           }
         }
       }
-      Logger::info(var_export($modes, true));
       $data[2] = $modes;
       return array(null, $data);
     }
