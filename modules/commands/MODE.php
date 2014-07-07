@@ -28,6 +28,7 @@
       $ms = str_split(array_shift($mex));
       $mex = array_values($mex);
       foreach ($ms as $m) {
+        Logger::info(var_export($m, true));
         if ($m == "+" || $m == "-") {
           $operation = $m;
         }
