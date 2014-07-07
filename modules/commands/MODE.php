@@ -22,6 +22,8 @@
         $mex = explode(" ", $mex[0]);
       }
 
+      Logger::info(var_export($mex, true));
+
       $operation = "+";
       $modes = array();
       $ms = str_split(array_shift($mex));
