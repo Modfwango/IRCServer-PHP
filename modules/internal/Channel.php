@@ -141,6 +141,7 @@
     }
 
     public function receiveChannelMode($name, $data) {
+      Logger::info($name.":  ".var_export($data, true));
       $source = $data[0];
       $channel = $data[1];
       $modes = $data[2];
@@ -151,7 +152,6 @@
 
       $modesdone = array();
       $ch = $this->getChannelByName($channel["name"]);
-      Logger::info(var_export($ch, true));
       if ($ch != false) {
         foreach ($modes as $mode) {
           if ($mode["operation"] == "+") {
