@@ -4,7 +4,7 @@
       "UserRegistrationEvent");
     public $name = "Client";
     private $clients = array("byhost" => array(), "byident" => array(),
-      "byid" => array(), "bynick" => array());
+      "byid" => array(), "bynick" => array(), "byrealname" => array());
 
     public function getClientByHost($host) {
       // Retrieve the requested client if it exists, otherwise return false.
