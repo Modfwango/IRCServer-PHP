@@ -22,12 +22,12 @@
         $mex = explode(" ", $mex[0]);
       }
 
-      Logger::info(var_export($mex, true));
-
       $operation = "+";
       $modes = array();
       $ms = str_split(array_shift($mex));
       $mex = array_values($mex);
+      Logger::info(var_export($ms, true));
+      Logger::info(var_export($mex, true));
       foreach ($ms as $m) {
         if ($m == "+" || $m == "-") {
           $operation = $m;
