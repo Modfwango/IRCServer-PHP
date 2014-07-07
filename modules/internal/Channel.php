@@ -178,6 +178,7 @@
           }
         }
       }
+      $this->setChannel($ch);
 
       if (count($modesdone) == 0) {
         return;
