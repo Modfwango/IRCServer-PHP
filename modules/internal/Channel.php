@@ -38,6 +38,24 @@
       return false;
     }
 
+    public function clientsShareChannel($clients) {
+      if (is_array($clients)) {
+        foreach ($this->channels as $channel) {
+          $shareChannel = true;
+          foreach ($clients as $client) {
+            if (!$this->clientIsOnChannel($client->getOption("id"),
+                $channel["name"])) {
+              $shareChannel = false;
+            }
+          }
+          if ($shareChannel == true) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
     public function getChannelByName($name) {
       // Retrieve the requested channel if it exists, otherwise return false.
       return (isset($this->channels[$name]) ? $this->channels[$name] : false);
