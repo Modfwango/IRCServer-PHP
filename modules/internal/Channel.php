@@ -67,7 +67,8 @@
       if ($c != false) {
         $return = array();
         foreach ($modes as $mode) {
-          if (is_array($c["modes"]) && count($c["modes"]) > 0) {
+          if (isset($c["modes"]) && is_array($c["modes"])
+              && count($c["modes"]) > 0) {
             foreach ($c["modes"] as $cm) {
               if ($cm["name"] == $mode) {
                 $return[] = $cm;

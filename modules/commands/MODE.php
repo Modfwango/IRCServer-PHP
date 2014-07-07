@@ -17,7 +17,7 @@
         MODE #bobby -n
         :hi!lol@199.68.xkl.qkq MODE #bobby -n
       */
-      $mex = array($command[2]);
+      $mex = array($modeString);
       if (stristr(" ", $mex[0])) {
         $mex = explode(" ", $mex[0]);
       }
