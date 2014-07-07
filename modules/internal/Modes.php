@@ -33,7 +33,7 @@
     public function getPrefixes() {
       $return = array();
       foreach ($this->prefixes["byprefix"] as $prefix => $char) {
-        $return[] = array($prefix, $char);
+        $return[] = array($prefix, $char[0], $char[1]);
       }
       return $return;
     }
@@ -62,8 +62,8 @@
 
     public function setPrefix($prefix) {
       $this->unsetPrefix($prefix);
-      $this->prefixes["byprefix"][$prefix[0]] = $prefix[1];
-      $this->prefixes["bychar"][$prefix[1]] = $prefix[0];
+      $this->prefixes["byprefix"][$prefix[0]] = array($prefix[1], $prefix[2]);
+      $this->prefixes["bychar"][$prefix[1]] = array($prefix[0], $prefix[2]);
     }
 
     public function unsetMode($mode) {
