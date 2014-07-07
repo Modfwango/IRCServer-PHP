@@ -11,45 +11,35 @@
       $channel = $data[1];
       $modes = $data[2];
 
+      $h = array();
       $has = $this->channel->hasModes($channel["name"],
         array("ChannelOperator"));
-      $h = ($has == true ? true : false);
+      foreach ($has as $m) {
+        $h[$m["param"]] = true;
+      }
       Logger::info(var_export($has, true));
       foreach ($modes as $key => $mode) {
         $client = $this->client->getClientByNick($mode["param"]);
         if ($client != false) {
           $mode["param"] = $client->getOption("nick");
           if ($mode["name"] == "ChannelOperator") {
+            if (!isset($h[$mode["param"]])) {
+              $h[$mode["param"]] = false;
+            }
             if ($mode["operation"] == "+") {
-              if ($h != false) {
-                foreach ($has as $m) {
-                  if ($mode["param"] == $m["param"]) {
-                    unset($modes[$key]);
-                  }
-                }
+              if ($h[$mode["param"]] != false) {
+                unset($modes[$key]);
               }
               else {
-                foreach ($has as $m) {
-                  if ($mode["param"] == $m["param"]) {
-                    $h = true;
-                  }
-                }
+                $h[$mode["param"]] = true;
               }
             }
             if ($mode["operation"] == "-") {
-              if ($h == false) {
-                foreach ($has as $m) {
-                  if ($mode["param"] == $m["param"]) {
-                    unset($modes[$key]);
-                  }
-                }
+              if ($h[$mode["param"]] == false) {
+                unset($modes[$key]);
               }
               else {
-                foreach ($has as $m) {
-                  if ($mode["param"] == $m["param"]) {
-                    $h = true;
-                  }
-                }
+                $h[$mode["param"]] = false;
               }
             }
           }
