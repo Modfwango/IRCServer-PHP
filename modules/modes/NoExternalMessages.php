@@ -17,7 +17,7 @@
       foreach ($modes as $key => $mode) {
         if ($mode["name"] == "NoExternalMessages") {
           if ($mode["operation"] == "+") {
-            if ($has == true) {
+            if ($has != false) {
               unset($modes[$key]);
             }
             else {
