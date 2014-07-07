@@ -45,9 +45,9 @@
               }
             }
           }
-        }
-        else {
-          unset($modes[$key]);
+          else {
+            unset($modes[$key]);
+          }
         }
       }
       $data[2] = $modes;
