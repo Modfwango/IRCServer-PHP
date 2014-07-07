@@ -10,6 +10,7 @@
       $source = $data[0];
       $channel = $data[1];
       $modes = $data[2];
+      Logger::info(var_export($modes, true));
 
       $has = $this->channel->hasModes($channel["name"], array("ProtectTopic"));
       foreach ($modes as $key => $mode) {
