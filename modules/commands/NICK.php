@@ -32,8 +32,8 @@
                 $event = EventHandling::getEventByName("userRegistrationEvent");
                 if ($event != false) {
                   foreach ($event[2] as $id => $registration) {
-                    // Trigger the userRegistrationEvent event for each registered
-                    // module.
+                    // Trigger the userRegistrationEvent event for each
+                    // registered module.
                     EventHandling::triggerEvent("userRegistrationEvent", $id,
                         $connection);
                   }

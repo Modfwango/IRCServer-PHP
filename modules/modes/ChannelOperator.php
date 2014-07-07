@@ -1,6 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Channel", "Client", "ChannelModeEvent", "Modes");
+    public $depend = array("Channel", "Client", "ChannelModeEvent",
+      "ChannelPartEvent", "Modes", "NickChangeEvent", "UserQuitEvent");
     public $name = "ChannelOperator";
     private $channel = null;
     private $client = null;
@@ -59,6 +60,60 @@
       return array(null, $data);
     }
 
+    public function receiveChannelPart($name, $data) {
+      $source = $data[0];
+      $channel = $data[1];
+      $message = $data[2];
+
+      $ch = $this->channel->getChannelByName($channel["name"]);
+      if ($ch != false && $this->channel->hasModes($ch["name"],
+          array("ChannelOperator"))) {
+        foreach ($ch["modes"] as $key => $mode) {
+          if ($mode["name"] == "ChannelOperator"
+              && $mode["param"] == $source->getOption("nick")) {
+            unset($ch["modes"][$key]);
+          }
+        }
+        $this->channel->setChannel($ch);
+      }
+    }
+
+    public function receiveNickChange($name, $data) {
+      $source = $data[0];
+      $oldnick = $data[1];
+
+      foreach ($this->channel->getChannels() as $ch) {
+        if ($this->channel->hasModes($ch["name"],
+            array("ChannelOperator"))) {
+          foreach ($ch["modes"] as $key => &$mode) {
+            if ($mode["name"] == "ChannelOperator"
+                && $mode["param"] == $oldnick) {
+              $mode["param"] = $source->getOption("nick");
+            }
+          }
+          $this->channel->setChannel($ch);
+        }
+      }
+    }
+
+    public function receiveUserQuit($name, $data) {
+      $source = $data[0];
+      $message = $data[1];
+
+      foreach ($this->channel->getChannels() as $ch) {
+        if ($this->channel->hasModes($ch["name"],
+            array("ChannelOperator"))) {
+          foreach ($ch["modes"] as $key => $mode) {
+            if ($mode["name"] == "ChannelOperator"
+                && $mode["param"] == $source->getOption("nick")) {
+              unset($ch["modes"][$key]);
+            }
+          }
+          $this->channel->setChannel($ch);
+        }
+      }
+    }
+
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
@@ -67,6 +122,12 @@
       $this->modes->setPrefix(array("@", "o"));
       EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
         "receiveChannelMode");
+      EventHandling::registerForEvent("channelPartEvent", $this,
+        "receiveChannelPart");
+      EventHandling::registerForEvent("nickChangeEvent", $this,
+        "receiveNickChange");
+      EventHandling::registerForEvent("userQuitEvent", $this,
+        "receiveUserQuit");
       return true;
     }
   }

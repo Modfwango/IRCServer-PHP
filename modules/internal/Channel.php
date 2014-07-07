@@ -63,6 +63,10 @@
         $this->channels[strtolower($name)] : false);
     }
 
+    public function getChannels() {
+      return $this->channels;
+    }
+
     public function hasModes($channel, $modes) {
       $c = $this->getChannelByName($channel);
       if ($c != false) {
