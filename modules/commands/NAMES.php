@@ -41,7 +41,8 @@
                   $c = $this->client->getClientByID($id);
                   if ($c != false) {
                     $p = array();
-                    $has = $this->channel->hasModes($channel["name"], $modenames);
+                    $has = $this->channel->hasModes($channel["name"],
+                      $modenames);
                     if ($has != false) {
                       foreach ($has as $m) {
                         if ($m["param"] == $c->getOption("nick")
@@ -55,6 +56,7 @@
                       }
                     }
                     ksort($p);
+                    Logger::info(var_export($p, true));
                     $p = array_pop($p);
                     $members[] = $p[0].$c->getOption("nick");
                   }
