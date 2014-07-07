@@ -11,6 +11,8 @@
       $channel = $data[1];
       $modes = $data[2];
 
+      Logger::info(var_export($modes, true));
+
       $h = array();
       $has = $this->channel->hasModes($channel["name"],
         array("ChannelOperator"));
