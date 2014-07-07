@@ -86,7 +86,7 @@
       }
       $command = array_values($command);
 
-      if (strtolower($command[0]) == "ison") {
+      if (strtolower($command[0]) == "mode") {
         if ($connection->getOption("registered") == true) {
           if (count($command) > 1) {
             if (count($command) > 2) {
