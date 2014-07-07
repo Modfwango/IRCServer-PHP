@@ -1,7 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Channel", "ChannelTopicEvent",// "ChannelOperator",
-      "Modes");
+    public $depend = array("Channel", "ChannelModeEvent", "ChannelTopicEvent",
+      /*"ChannelOperator", */"Modes");
     public $name = "ProtectTopic";
     private $channel = null;
     private $modes = null;
