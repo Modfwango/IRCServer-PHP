@@ -47,7 +47,7 @@
 
     public function setMode($mode) {
       $this->unsetMode($mode);
-      // [[name, char], [0 (channel), 1 (user)], type]
+      // [name, char, [0 (channel), 1 (user)], type]
       // Types:
       // 0 - Never requires a parameter.
       // 1 - Parameter required when set/unset.

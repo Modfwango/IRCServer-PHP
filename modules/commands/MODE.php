@@ -33,7 +33,7 @@
         else {
           $mode = $this->modes->getModeByChar($type, $m);
           if ($mode != false) {
-            if ($operation == "+" && in_array($mode[1],
+            if ($operation == "+" && in_array($mode[3],
                 array(1, 2, 3, 4))) {
               if (isset($mex[0])) {
                 $modes[] = array(
@@ -44,14 +44,14 @@
                 $mex = array_values($mex);
               }
             }
-            elseif ($operation == "+" && in_array($mode[1],
+            elseif ($operation == "+" && in_array($mode[3],
                     array(0))) {
               $modes[] = array(
                 "operation" => $operation,
                 "name" => $mode[0]
               );
             }
-            elseif ($operation == "-" && in_array($mode[1],
+            elseif ($operation == "-" && in_array($mode[3],
                     array(1, 3, 4))) {
               if (isset($mex[0])) {
                 $modes[] = array(
@@ -62,7 +62,7 @@
                 $mex = array_values($mex);
               }
             }
-            elseif ($operation == "-" && in_array($mode[1],
+            elseif ($operation == "-" && in_array($mode[3],
                     array(0, 2))) {
               $modes[] = array(
                 "operation" => $operation,
