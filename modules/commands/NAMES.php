@@ -1,8 +1,10 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Channel", "Client", "CommandEvent");
+    public $depend = array("Channel", "Client", "CommandEvent", "Modes");
     public $name = "NAMES";
+    private $channel = null;
     private $client = null;
+    private $modes = null;
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];
@@ -22,15 +24,33 @@
             if (stristr($command[1], ",")) {
               $channels = explode(",", $command[1]);
             }
+            $modenames = array();
+            $prefixes = array();
+            foreach ($this->modes->getPrefixes() as $prefix) {
+              $name = $this->modes->getModeNameByChar("0", $prefix[1]);
+              if ($name != false) {
+                $modenames[] = $name;
+                $prefixes[$name] = $prefix[0];
+              }
+            }
             foreach ($channels as $channel) {
-              $channel = ModuleManagement::getModuleByName("Channel")->
-                getChannelByName($channel);
+              $channel = $this->channel->getChannelByName($channel);
               if ($channel != false) {
                 $members = array();
                 foreach ($channel["members"] as $id) {
                   $c = $this->client->getClientByID($id);
                   if ($c != false) {
-                    $members[] = $c->getOption("nick");
+                    $p = null;
+                    $has = $this->channel->hasModes($channel["name"], $modenames);
+                    if ($has != false) {
+                      foreach ($has as $m) {
+                        if ($m["param"] == $c->getOption("nick")
+                            && isset($prefixes[$m["name"]])) {
+                          $p .= $prefixes[$m["name"]];
+                        }
+                      }
+                    }
+                    $members[] = $p.$c->getOption("nick");
                   }
                 }
 
@@ -77,7 +97,9 @@
     }
 
     public function isInstantiated() {
+      $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
+      $this->modes = ModuleManagement::getModuleByName("Modes");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand");
       return true;
     }
