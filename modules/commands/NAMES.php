@@ -27,6 +27,7 @@
             $modenames = array();
             $prefixes = array();
             foreach ($this->modes->getPrefixes() as $prefix) {
+              Logger::info(var_export($prefix, true));
               $name = $this->modes->getModeNameByChar("0", $prefix[1]);
               if ($name != false) {
                 $modenames[] = $name;
