@@ -34,6 +34,7 @@
         }
         else {
           $mode = $this->modes->getModeByChar($type, $m);
+          Logger::info(var_export($mode, true));
           if ($mode != false) {
             if ($operation == "+" && in_array($mode[3],
                 array(1, 2, 3, 4))) {
@@ -74,6 +75,7 @@
           }
         }
       }
+      Logger::info(var_export($modes, true));
       return $modes;
     }
 
