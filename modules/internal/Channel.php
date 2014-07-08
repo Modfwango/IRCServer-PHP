@@ -88,6 +88,10 @@
       return false;
     }
 
+    public function receiveChannelCreated($name, $data) {
+      return true;
+    }
+
     public function receiveChannelJoin($name, $data) {
       $source = $data[0];
       $target = $data[1];
@@ -344,6 +348,8 @@
     public function isInstantiated() {
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      EventHandling::registerForEvent("channelCreatedEvent", $this,
+        "receiveChannelCreated");
       EventHandling::registerForEvent("channelJoinEvent", $this,
         "receiveChannelJoin");
       EventHandling::registerForEvent("channelMessageEvent", $this,
