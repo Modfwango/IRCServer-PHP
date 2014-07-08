@@ -91,22 +91,11 @@
         __PROJECTVERSION__." oiwszcrkfydnxbauglZCD ".implode($cmodes).
         " ".implode($cmodespp));
       $connection->send(":".__SERVERDOMAIN__." 005 ".
-        $connection->getOption("nick").
-        " CHANTYPES=&# EXCEPTS INVEX CHANMODES=".implode($cmodesb).",".
-        implode($cmodesk).",".implode($cmodess).",".implode($cmodes).
-        " CHANLIMIT=&#:15". " PREFIX=(".implode(null, $pmodes).")".implode(
-        $pprefixes)." MAXLIST=beI:25 MODES=4 NETWORK=".__NETNAME__." KNOCK".
-        " STATUSMSG=@+ CALLERID=g :are supported by this server");
-      $connection->send(":".__SERVERDOMAIN__." 005 ".
-        $connection->getOption("nick").
-        " SAFELIST ELIST=U CASEMAPPING=rfc1459 CHARSET=ascii NICKLEN=9".
-        " CHANNELLEN=50 TOPICLEN=160 ETRACE CPRIVMSG CNOTICE DEAF=D".
-        " MONITOR=100 :are supported by this server");
-      $connection->send(":".__SERVERDOMAIN__." 005 ".
-        $connection->getOption("nick").
-        " FNC TARGMAX=NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:4,NOTICE:4,".
-        "ACCEPT:,MONITOR: :are supported by this server :are supported by this".
-        " server");
+        $connection->getOption("nick")." CHANTYPES=# CHANMODES=".
+        implode($cmodesb).",".implode($cmodesk).",".implode($cmodess).",".
+        implode($cmodes)." PREFIX=(".implode($pmodes).")".implode($pprefixes).
+        " NETWORK=".__NETNAME__." STATUSMSG=".implode($pprefixes).
+        " :are supported by this server");
 
       $event = EventHandling::getEventByName("commandEvent");
       if ($event != false) {
