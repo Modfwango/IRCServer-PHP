@@ -7,16 +7,6 @@
     private $modes = null;
 
     public function parseModes($type, $modeString) {
-      /*
-        MODE hi +i
-        :hi MODE hi :+i
-
-        JOIN #bobby
-        :kelabs.arinity.org MODE #bobby +nt
-
-        MODE #bobby -n
-        :hi!lol@199.68.xkl.qkq MODE #bobby -n
-      */
       $mex = array($modeString);
       if (stristr($mex[0], " ")) {
         $mex = explode(" ", $mex[0]);
@@ -137,23 +127,55 @@
               }
             }
             else {
-              /*
-                MODE hi
-                :kelabs.arinity.org 221 hi +ix
-
-                MODE #chat
-                :kelabs.arinity.org 324 hi #chat +nt
-                :kelabs.arinity.org 329 hi #chat 1401152496
-              */
               $channel = $this->channel->getChannelByName($command[1]);
               $client = $this->client->getClientByNick($command[1]);
               if ($channel != false) {
-                // Show channel modes.
+                $modes = array();
+                $params = array();
+                foreach ($channel["modes"] as $mode) {
+                  $m = $this->modes->getModeByName($mode["name"]);
+                  if ($m != false) {
+                    if ($m == "0") {
+                      $modes[] = $m[1];
+                    }
+                    if ($m == "1" || $m == "2") {
+                      $modes[] = $m[1];
+                      $params[] = $mode["param"];
+                    }
+                  }
+                }
+                $modes = "+".implode($modes);
+                $params = implode(" ", $params);
+                $modeString = $modes." ".$params;
+                $connection->send(":".__SERVERDOMAIN__." 324 ".
+                  $connection->getOption("nick")." ".$channel["name"]." ".
+                  $modeString);
+                $connection->send(":".__SERVERDOMAIN__." 329 ".
+                  $connection->getOption("nick")." ".$channel["name"]." ".
+                  $channel["modetime"]);
               }
               elseif ($client != false) {
                 if ($client->getOption("nick")
                     == $connection->getOption("nick")) {
-                  // Show client modes.
+                  $modes = array();
+                  $params = array();
+                  foreach ($client->getOption("modes") as $mode) {
+                    $m = $this->modes->getModeByName($mode["name"]);
+                    if ($m != false) {
+                      if ($m == "0") {
+                        $modes[] = $m[1];
+                      }
+                      if ($m == "1" || $m == "2") {
+                        $modes[] = $m[1];
+                        $params[] = $mode["param"];
+                      }
+                    }
+                  }
+                  $modes = "+".implode($modes);
+                  $params = implode(" ", $params);
+                  $modeString = $modes." ".$params;
+                  $connection->send(":".__SERVERDOMAIN__." 221 ".
+                    $connection->getOption("nick")." ".$modeString);
                 }
                 else {
                   $connection->send(":".__SERVERDOMAIN__." 502 ".
