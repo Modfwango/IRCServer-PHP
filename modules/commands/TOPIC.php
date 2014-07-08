@@ -19,14 +19,22 @@
               if (count($command) > 2) {
                 $c = $this->channel->getChannelByName($target);
                 if ($c != false) {
-                  $event = EventHandling::getEventByName("channelTopicEvent");
-                  if ($event != false) {
-                    foreach ($event[2] as $id => $registration) {
-                      // Trigger the channelTopicEvent event for each registered
-                      // module.
-                      EventHandling::triggerEvent("channelTopicEvent", $id,
-                          array($connection, $c, $command[2]));
+                  if ($this->channel->clientIsOnChannel(
+                      $connection->getOption("id"), $c["name"])) {
+                    $event = EventHandling::getEventByName("channelTopicEvent");
+                    if ($event != false) {
+                      foreach ($event[2] as $id => $registration) {
+                        // Trigger the channelTopicEvent event for each
+                        // registered module.
+                        EventHandling::triggerEvent("channelTopicEvent", $id,
+                            array($connection, $c, $command[2]));
+                      }
                     }
+                  }
+                  else {
+                    $connection->send(":".__SERVERDOMAIN__." 442 ".
+                      $connection->getOption("nick")." ".$c["name"].
+                      " :You're not on that channel");
                   }
                 }
                 else {
