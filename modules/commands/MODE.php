@@ -78,7 +78,6 @@
       $command = array_values($command);
 
       if (strtolower($command[0]) == "mode") {
-        Logger::info(var_export($data, true));
         if ($connection->getOption("registered") == true) {
           if (count($command) > 1) {
             if (count($command) > 2) {
@@ -146,7 +145,6 @@
             }
             else {
               $channel = $this->channel->getChannelByName($command[1]);
-              Logger::info(var_export($channel, true));
               $client = $this->client->getClientByNick($command[1]);
               if ($channel != false) {
                 $modes = array();
