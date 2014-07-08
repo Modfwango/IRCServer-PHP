@@ -105,6 +105,14 @@
             "created" => time()
           );
           $this->setChannel($channel);
+          $event = EventHandling::getEventByName("channelCreatedEvent");
+          if ($event != false) {
+            foreach ($event[2] as $id => $registration) {
+              // Trigger the channelCreatedEvent event for each registered
+              // module.
+              EventHandling::triggerEvent("channelCreatedEvent", $id, $channel);
+            }
+          }
         }
         $this->broadcast($channel["name"], ":".$source->getOption("nick")."!".
           $source->getOption("ident")."@".$source->getHost()." JOIN ".

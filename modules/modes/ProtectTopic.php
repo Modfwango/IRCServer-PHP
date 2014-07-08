@@ -6,6 +6,17 @@
     private $channel = null;
     private $modes = null;
 
+    public function receiveChannelCreated($name, $id, $channel) {
+      if (!isset($channel["modes"])) {
+        $channel["modes"] = array();
+      }
+      $channel["modes"][] = array(
+        "name" => "ProtectTopic"
+      );
+      $this->channel->setChannel($channel);
+      return array(null, $channel);
+    }
+
     public function receiveChannelMode($name, $id, $data) {
       $source = $data[0];
       $channel = $data[1];
@@ -63,6 +74,8 @@
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->modes = ModuleManagement::getModuleByName("Modes");
       $this->modes->setMode(array("ProtectTopic", "t", "0", "0"));
+      EventHandling::registerAsEventPreprocessor("channelCreatedEvent", $this,
+        "receiveChannelCreated");
       EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
         "receiveChannelMode");
       EventHandling::registerAsEventPreprocessor("channelTopicEvent", $this,

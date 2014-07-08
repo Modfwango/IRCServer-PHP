@@ -7,15 +7,16 @@
     private $client = null;
     private $modes = null;
 
-    public function receiveChannelJoin($name, $data) {
-      $source = $data[0];
-      $channel = $data[1];
-
-      $c = $this->channel->getChannelByName($channel);
-      if ($c == false || (count($c["members"]) == 1
-          && $c["members"][0] == $source->getOption("id"))) {
-        Logger::info("Channel created:  ".$channel);
+    public function receiveChannelCreated($name, $id, $channel) {
+      $source = $this->client->getClientByID($channel["members"][0]);
+      if (!isset($channel["modes"])) {
+        $channel["modes"] = array();
       }
+      $channel["modes"][] = array(
+        "name" => "ChannelOperator",
+        "param" => $source->getOption("nick");
+      );
+      return array(null, $channel);
     }
 
     public function receiveChannelMode($name, $id, $data) {
@@ -130,10 +131,10 @@
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
       $this->modes->setMode(array("ChannelOperator", "o", "0", "4", "@", 1000));
+      EventHandling::registerAsEventPreprocessor("channelCreatedEvent", $this,
+        "receiveChannelCreated");
       EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
         "receiveChannelMode");
-      EventHandling::registerForEvent("channelJoinEvent", $this,
-        "receiveChannelJoin");
       EventHandling::registerForEvent("channelPartEvent", $this,
         "receiveChannelPart");
       EventHandling::registerForEvent("nickChangeEvent", $this,
