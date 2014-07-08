@@ -34,6 +34,41 @@
         }
       }
 
+      $cmodes = array();
+      foreach ($this->modes->getModesByType("0") as $mode) {
+        $cmodes[] = $mode[1];
+      }
+
+      $cmodess = array();
+      foreach ($this->modes->getModesByType("2") as $mode) {
+        $cmodess[] = $mode[1];
+      }
+
+      $cmodesb = array();
+      foreach ($this->modes->getModesByType("3") as $mode) {
+        $cmodesb[] = $mode[1];
+      }
+
+      $cmodesk = array();
+      foreach ($this->modes->getModesByType("5") as $mode) {
+        $cmodesk[] = $mode[1];
+      }
+
+      $cmodesp = array();
+      $cmodesp = array_merge($cmodesp, $cmodess);
+      foreach ($this->modes->getModesByType("4") as $mode) {
+        $cmodesp[] = $mode[1];
+      }
+      $cmodesp = array_merge($cmodesp, $cmodesk);
+
+      $cmodespp = array();
+      $cmodespp = array_merge($cmodespp, $cmodess);
+      $cmodespp = array_merge($cmodespp, $cmodesb);
+      foreach ($this->modes->getModesByType("4") as $mode) {
+        $cmodespp[] = $mode[1];
+      }
+      $cmodespp = array_merge($cmodespp, $cmodesk);
+
       $connection->send(":".__SERVERDOMAIN__." 001 ".
         $connection->getOption("nick")." :Welcome to the ".__NETNAME__.
         " Internet Relay Chat Network ".$connection->getOption("nick"));
@@ -46,13 +81,15 @@
         "D M d Y", __STARTTIME__)." at ".date("H:i:s e", __STARTTIME__));
       $connection->send(":".__SERVERDOMAIN__." 004 ".
         $connection->getOption("nick")." ".__SERVERDOMAIN__." ".
-        __PROJECTVERSION__." oiwszcrkfydnxbauglZCD biklmnopstveIrS bkloveI");
+        __PROJECTVERSION__." oiwszcrkfydnxbauglZCD ".implode($cmodes).
+        " ".implode($cmodespp));
       $connection->send(":".__SERVERDOMAIN__." 005 ".
         $connection->getOption("nick").
-        " CHANTYPES=&# EXCEPTS INVEX CHANMODES=eIb,k,l,imnpstS CHANLIMIT=&#:15".
-        " PREFIX=(".implode(null, $pmodes).")".implode(null, $pprefixes)." ".
-        "MAXLIST=beI:25 MODES=4 NETWORK=".__NETNAME__." KNOCK STATUSMSG=@+ ".
-        "CALLERID=g :are supported by this server");
+        " CHANTYPES=&# EXCEPTS INVEX CHANMODES=".implode($cmodesb).",".
+        implode($cmodesk).",".implodes($cmodess).",".implode($cmodesp).
+        " CHANLIMIT=&#:15". " PREFIX=(".implode(null, $pmodes).")".implode(
+        $pprefixes)." MAXLIST=beI:25 MODES=4 NETWORK=".__NETNAME__." KNOCK".
+        " STATUSMSG=@+ CALLERID=g :are supported by this server");
       $connection->send(":".__SERVERDOMAIN__." 005 ".
         $connection->getOption("nick").
         " SAFELIST ELIST=U CASEMAPPING=rfc1459 CHARSET=ascii NICKLEN=9".
