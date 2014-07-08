@@ -35,39 +35,44 @@
       }
 
       $cmodes = array();
-      foreach ($this->modes->getModesByType("0") as $mode) {
-        $cmodes[] = $mode[1];
+      if ($this->modes->getModesByType("0") != false) {
+        foreach ($this->modes->getModesByType("0") as $mode) {
+          $cmodes[] = $mode[1];
+        }
       }
 
       $cmodess = array();
-      foreach ($this->modes->getModesByType("2") as $mode) {
-        $cmodess[] = $mode[1];
+      if ($this->modes->getModesByType("2") != false) {
+        foreach ($this->modes->getModesByType("2") as $mode) {
+          $cmodess[] = $mode[1];
+        }
       }
 
       $cmodesb = array();
-      foreach ($this->modes->getModesByType("3") as $mode) {
-        $cmodesb[] = $mode[1];
+      if ($this->modes->getModesByType("3") != false) {
+        foreach ($this->modes->getModesByType("3") as $mode) {
+          $cmodesb[] = $mode[1];
+        }
       }
 
       $cmodesk = array();
-      foreach ($this->modes->getModesByType("5") as $mode) {
-        $cmodesk[] = $mode[1];
+      if ($this->modes->getModesByType("5") != false) {
+        foreach ($this->modes->getModesByType("5") as $mode) {
+          $cmodesk[] = $mode[1];
+        }
       }
 
       $cmodesp = array();
       $cmodesp = array_merge($cmodesp, $cmodess);
-      foreach ($this->modes->getModesByType("4") as $mode) {
-        $cmodesp[] = $mode[1];
+      if ($this->modes->getModesByType("4") != false) {
+        foreach ($this->modes->getModesByType("4") as $mode) {
+          $cmodesp[] = $mode[1];
+        }
       }
       $cmodesp = array_merge($cmodesp, $cmodesk);
 
       $cmodespp = array();
-      $cmodespp = array_merge($cmodespp, $cmodess);
-      $cmodespp = array_merge($cmodespp, $cmodesb);
-      foreach ($this->modes->getModesByType("4") as $mode) {
-        $cmodespp[] = $mode[1];
-      }
-      $cmodespp = array_merge($cmodespp, $cmodesk);
+      $cmodespp = array_merge($cmodesp, $cmodesb);
 
       $connection->send(":".__SERVERDOMAIN__." 001 ".
         $connection->getOption("nick")." :Welcome to the ".__NETNAME__.
