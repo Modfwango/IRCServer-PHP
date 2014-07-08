@@ -7,6 +7,14 @@
     private $client = null;
     private $modes = null;
 
+    public function receiveChannelJoin($name, $data) {
+      $source = $data[0];
+      $channel = $data[1];
+
+      $c = $this->channel->getChannelByName($channel);
+      Logger::info(var_export($c, true));
+    }
+
     public function receiveChannelMode($name, $id, $data) {
       $source = $data[0];
       $channel = $data[1];
@@ -121,6 +129,8 @@
       $this->modes->setMode(array("ChannelOperator", "o", "0", "4", "@", 1000));
       EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
         "receiveChannelMode");
+      EventHandling::registerForEvent("channelJoinEvent", $this,
+        "receiveChannelJoin");
       EventHandling::registerForEvent("channelPartEvent", $this,
         "receiveChannelPart");
       EventHandling::registerForEvent("nickChangeEvent", $this,
