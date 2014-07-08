@@ -149,15 +149,17 @@
               if ($channel != false) {
                 $modes = array();
                 $params = array();
-                foreach ($channel["modes"] as $mode) {
-                  $m = $this->modes->getModeByName($mode["name"]);
-                  if ($m != false) {
-                    if ($m == "0") {
-                      $modes[] = $m[1];
-                    }
-                    if ($m == "1" || $m == "2") {
-                      $modes[] = $m[1];
-                      $params[] = $mode["param"];
+                if (isset($channel["modes"]) && count($channel["modes"]) > 1) {
+                  foreach ($channel["modes"] as $mode) {
+                    $m = $this->modes->getModeByName($mode["name"]);
+                    if ($m != false) {
+                      if ($m == "0") {
+                        $modes[] = $m[1];
+                      }
+                      if ($m == "1" || $m == "2") {
+                        $modes[] = $m[1];
+                        $params[] = $mode["param"];
+                      }
                     }
                   }
                 }
@@ -176,15 +178,17 @@
                     == $connection->getOption("nick")) {
                   $modes = array();
                   $params = array();
-                  foreach ($client->getOption("modes") as $mode) {
-                    $m = $this->modes->getModeByName($mode["name"]);
-                    if ($m != false) {
-                      if ($m == "0") {
-                        $modes[] = $m[1];
-                      }
-                      if ($m == "1" || $m == "2") {
-                        $modes[] = $m[1];
-                        $params[] = $mode["param"];
+                  if (is_array($client->getOption("modes"))) {
+                    foreach ($client->getOption("modes") as $mode) {
+                      $m = $this->modes->getModeByName($mode["name"]);
+                      if ($m != false) {
+                        if ($m == "0") {
+                          $modes[] = $m[1];
+                        }
+                        if ($m == "1" || $m == "2") {
+                          $modes[] = $m[1];
+                          $params[] = $mode["param"];
+                        }
                       }
                     }
                   }
