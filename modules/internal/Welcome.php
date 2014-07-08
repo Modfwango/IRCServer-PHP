@@ -33,6 +33,8 @@
           $pprefixes[] = $mode[4];
         }
       }
+      $pmodes = array_reverse($pmodes);
+      $pprefixes = array_reverse($pprefixes);
 
       $cmodes = array();
       if ($this->modes->getModesByType("0") != false) {
