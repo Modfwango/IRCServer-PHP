@@ -12,7 +12,10 @@
       $channel = $data[1];
 
       $c = $this->channel->getChannelByName($channel);
-      Logger::info(var_export($c, true));
+      if ($c == false || (count($c["members"]) == 1
+          && $c["members"][0] == $source->getOption("id"))) {
+        Logger::info("Channel created:  ".$channel);
+      }
     }
 
     public function receiveChannelMode($name, $id, $data) {
