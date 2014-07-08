@@ -169,14 +169,11 @@
                 $connection->send(":".__SERVERDOMAIN__." 324 ".
                   $connection->getOption("nick")." ".$channel["name"]." ".
                   $modeString);
-                if (isset($channel["modetime"])) {
+                if (!isset($data[2])) {
                   $connection->send(":".__SERVERDOMAIN__." 329 ".
                     $connection->getOption("nick")." ".$channel["name"]." ".
-                    $channel["modetime"]);
-                }
-                else {
-                  $channel["modetime"] = $channel["created"];
-                  $this->channel->setChannel($channel);
+                    (isset($channel["modetime"]) ? $channel["modetime"] :
+                    $channel["created"]));
                 }
               }
               elseif ($client != false) {

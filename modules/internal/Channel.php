@@ -124,10 +124,12 @@
           $channel["name"]);
         $event = EventHandling::getEventByName("commandEvent");
         if ($event != false) {
-          foreach ($event[2] as $id => $registration) {
-            // Trigger the commandEvent event for each registered module.
-            EventHandling::triggerEvent("commandEvent", $id,
-                array($source, array("MODE", $channel["name"]), true));
+          if (count($channel["modes"]) > 0) {
+            foreach ($event[2] as $id => $registration) {
+              // Trigger the commandEvent event for each registered module.
+              EventHandling::triggerEvent("commandEvent", $id,
+                  array($source, array("MODE", $channel["name"], true), true));
+            }
           }
           foreach ($event[2] as $id => $registration) {
             // Trigger the commandEvent event for each registered module.
