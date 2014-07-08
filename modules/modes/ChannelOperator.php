@@ -14,8 +14,9 @@
       }
       $channel["modes"][] = array(
         "name" => "ChannelOperator",
-        "param" => $source->getOption("nick");
+        "param" => $source->getOption("nick")
       );
+      $this->channel->setChannel($channel);
       return array(null, $channel);
     }
 
