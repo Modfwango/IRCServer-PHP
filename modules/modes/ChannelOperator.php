@@ -16,6 +16,8 @@
         "name" => "ChannelOperator",
         "param" => $source->getOption("nick")
       );
+      Logger::info("Channel Created:  ".$channel["name"]."  by:  ".
+        $source->getOption("nick"));
       $this->channel->setChannel($channel);
       return array(null, $channel);
     }
