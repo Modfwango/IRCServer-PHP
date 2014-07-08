@@ -47,15 +47,17 @@
       if ($modes != false) {
         $modes = $this->channel->hasModes($channel["name"],
           array("ChannelVoice", "ChannelOperator"));
-        foreach ($modes as $mode) {
-          if ($mode["param"] == $source->getOption("nick")) {
-            return array(true);
+        if ($modes != false) {
+          foreach ($modes as $mode) {
+            if ($mode["param"] == $source->getOption("nick")) {
+              return array(true);
+            }
           }
         }
+        $source->send(":".__SERVERDOMAIN__." 404 ".$source->getOption("nick").
+          " ".$channel["name"]." :Cannot send to channel");
+        return array(false);
       }
-      $source->send(":".__SERVERDOMAIN__." 404 ".$source->getOption("nick").
-        " ".$channel["name"]." :Cannot send to channel");
-      return array(false);
     }
 
     public function isInstantiated() {
