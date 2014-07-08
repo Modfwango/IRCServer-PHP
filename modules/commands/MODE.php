@@ -149,7 +149,7 @@
               if ($channel != false) {
                 $modes = array();
                 $params = array();
-                if (isset($channel["modes"]) && count($channel["modes"]) > 1) {
+                if (isset($channel["modes"]) && is_array($channel["modes"])) {
                   foreach ($channel["modes"] as $mode) {
                     $m = $this->modes->getModeByName($mode["name"]);
                     if ($m != false) {
