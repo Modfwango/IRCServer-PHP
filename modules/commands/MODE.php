@@ -115,7 +115,7 @@
                   $okay = true;
                   $ms = $this->modes->getModeNamesByType("3");
                   foreach (str_split($command[2]) as $mode) {
-                    $m = $this->modes->getModeByChar($mode);
+                    $m = $this->modes->getModeByChar("0", $mode);
                     if (!in_array($m["name"], $ms)) {
                       $okay = false;
                     }
