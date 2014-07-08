@@ -1,11 +1,8 @@
 Make configuration class
 Web interface for configuration
 Check max targets for PRIVMSG
-Check if there is an "already on channel" numeric
 Consider finding a way to remove Channel and Client dependencies from PRIVMSG
 Consider finding a way to remove Channel and Client dependencies from WHO
 Consider moving Welcome triggers of MOTD and LUSERS
-Think of a creative way to preprocess WHO with oper prefixes
 Make PING trigger after no data received
-Add a way to check that modes will not be overwritten
 Burst mode on channel join

@@ -168,11 +168,12 @@
           }
         }
       }
-      $source->setOption("modes", $cl);
 
       if (count($modesdone) == 0) {
         return;
       }
+
+      $source->setOption("modes", $cl);
 
       $modes = null;
       $params = null;

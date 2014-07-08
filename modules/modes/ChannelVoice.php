@@ -118,8 +118,7 @@
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
-      $this->modes->setMode(array("ChannelVoice", "v", "0", "4"));
-      $this->modes->setPrefix(array("+", "v", 500));
+      $this->modes->setMode(array("ChannelVoice", "v", "0", "4", "+", 500));
       EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
         "receiveChannelMode");
       EventHandling::registerForEvent("channelPartEvent", $this,

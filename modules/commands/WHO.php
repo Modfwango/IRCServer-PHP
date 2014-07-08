@@ -6,28 +6,6 @@
     private $client = null;
     private $modes = null;
 
-    private function getHighestPrefix($prefixes, $modenames, $channel, $c) {
-      $p = array();
-      $has = $this->channel->hasModes($channel["name"], $modenames);
-      if ($has != false) {
-        foreach ($has as $m) {
-          if ($m["param"] == $c->getOption("nick")
-              && isset($prefixes[$m["name"]])) {
-            if (!isset($p[$prefixes[$m["name"]][1]])) {
-              $p[$prefixes[$m["name"]][1]] = array();
-            }
-            $p[$prefixes[$m["name"]][1]][] =
-              $prefixes[$m["name"]][0];
-          }
-        }
-      }
-      ksort($p);
-      end($p);
-      $weight = key($p);
-      $p = array_pop($p);
-      return array($weight => $p[0]);
-    }
-
     public function receiveCommand($name, $data) {
       $connection = $data[0];
       $command = $data[1];
@@ -44,11 +22,10 @@
           if (count($command) > 1) {
             $modenames = array();
             $prefixes = array();
-            foreach ($this->modes->getPrefixes() as $prefix) {
-              $name = $this->modes->getModeNameByChar("0", $prefix[1]);
-              if ($name != false) {
-                $modenames[] = $name;
-                $prefixes[$name] = array($prefix[0], $prefix[2]);
+            foreach ($this->modes->getModesAndWeight() as $weight => $modes) {
+              foreach ($modes as $mode) {
+                $modenames[] = $mode[0];
+                $prefixes[$mode[0]] = array($mode[4], $mode[5]);
               }
             }
             $match = "*";
@@ -58,9 +35,25 @@
               $match = $command[1];
               foreach ($channel["members"] as $member) {
                 $c = $this->client->getClientByID($member);
-                $prefix = $this->getHighestPrefix($prefixes, $modenames,
-                  $channel, $c);
-                $users[] = array($c, array_shift($prefix));
+                $p = array();
+                $has = $this->channel->hasModes($channel["name"], $modenames);
+                if ($has != false) {
+                  foreach ($has as $m) {
+                    if ($m["param"] == $c->getOption("nick")
+                        && isset($prefixes[$m["name"]])) {
+                      if (!isset($p[$prefixes[$m["name"]][1]])) {
+                        $p[$prefixes[$m["name"]][1]] = array();
+                      }
+                      $p[$prefixes[$m["name"]][1]][] =
+                        $prefixes[$m["name"]][0];
+                    }
+                  }
+                }
+                ksort($p);
+                end($p);
+                $weight = key($p);
+                $p = array_pop($p);
+                $users[] = array($c, array_shift($p));
               }
             }
             else {

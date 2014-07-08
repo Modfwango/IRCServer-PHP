@@ -26,12 +26,10 @@
             }
             $modenames = array();
             $prefixes = array();
-            foreach ($this->modes->getPrefixes() as $prefix) {
-              Logger::info(var_export($prefix, true));
-              $name = $this->modes->getModeNameByChar("0", $prefix[1]);
-              if ($name != false) {
-                $modenames[] = $name;
-                $prefixes[$name] = array($prefix[0], $prefix[2]);
+            foreach ($this->modes->getModesAndWeight() as $weight => $modes) {
+              foreach ($modes as $mode) {
+                $modenames[] = $mode[0];
+                $prefixes[$mode[0]] = array($mode[4], $mode[5]);
               }
             }
             foreach ($channels as $channel) {
@@ -59,7 +57,7 @@
                     ksort($p);
                     Logger::info(var_export($p, true));
                     $p = array_pop($p);
-                    $members[] = $p[0].$c->getOption("nick");
+                    $members[] = array_shift($p).$c->getOption("nick");
                   }
                 }
 

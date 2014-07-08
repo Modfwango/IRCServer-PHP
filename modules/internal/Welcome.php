@@ -27,9 +27,11 @@
     public function receiveUserRegistration($name, $connection) {
       $pmodes = array();
       $pprefixes = array();
-      foreach ($this->modes->getPrefixes() as $prefix) {
-        $pprefixes[] = $prefix[0];
-        $pmodes[] = $prefix[1];
+      foreach ($this->modes->getModesAndWeight() as $modes) {
+        foreach ($modes as $mode) {
+          $pmodes[] = $mode[1];
+          $pprefixes[] = $mode[4];
+        }
       }
 
       $connection->send(":".__SERVERDOMAIN__." 001 ".
