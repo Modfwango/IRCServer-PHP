@@ -114,8 +114,9 @@
                 if ($opped == false) {
                   $okay = true;
                   $ms = $this->modes->getModeNamesByType("3");
-                  foreach ($modes as $mode) {
-                    if (!in_array($mode["name"], $ms)) {
+                  foreach (str_split($command[2]) as $mode) {
+                    $m = $this->modes->getModeByChar($mode);
+                    if (!in_array($m["name"], $ms)) {
                       $okay = false;
                     }
                   }
