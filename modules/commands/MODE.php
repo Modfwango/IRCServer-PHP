@@ -146,6 +146,7 @@
             }
             else {
               $channel = $this->channel->getChannelByName($command[1]);
+              Logger::info(var_export($channel, true));
               $client = $this->client->getClientByNick($command[1]);
               if ($channel != false) {
                 $modes = array();
