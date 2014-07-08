@@ -1,21 +1,10 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Channel", "ChannelCreatedEvent",
-      "ChannelMessageEvent", "ChannelModeEvent", "Modes");
-    public $name = "NoExternalMessages";
+    public $depend = array("Channel", "ChannelMessageEvent", "ChannelModeEvent",
+      "Modes");
+    public $name = "Moderated";
     private $channel = null;
     private $modes = null;
-
-    public function receiveChannelCreated($name, $id, $channel) {
-      if (!isset($channel["modes"])) {
-        $channel["modes"] = array();
-      }
-      $channel["modes"][] = array(
-        "name" => "NoExternalMessages"
-      );
-      $this->channel->setChannel($channel);
-      return array(null, $channel);
-    }
 
     public function receiveChannelMode($name, $id, $data) {
       $source = $data[0];
@@ -23,9 +12,9 @@
       $modes = $data[2];
 
       $has = $this->channel->hasModes($channel["name"],
-        array("NoExternalMessages"));
+        array("Moderated"));
       foreach ($modes as $key => $mode) {
-        if ($mode["name"] == "NoExternalMessages") {
+        if ($mode["name"] == "Moderated") {
           if ($mode["operation"] == "+") {
             if ($has != false) {
               unset($modes[$key]);
@@ -54,22 +43,25 @@
       $message = $data[2];
 
       $modes = $this->channel->hasModes($channel["name"],
-        array("NoExternalMessages"));
-      if ($modes != false &&
-          !$this->channel->clientIsOnChannel($source->getOption("id"),
-          $channel["name"])) {
-        $source->send(":".__SERVERDOMAIN__." 404 ".$source->getOption("nick").
-          " ".$channel["name"]." :Cannot send to channel");
-        return array(false);
+        array("Moderated"));
+      if ($modes != false) {
+        $modes = $this->channel->hasModes($channel["name"],
+          array("ChannelVoice", "ChannelOperator"));
+        foreach ($modes as $mode) {
+          if ($mode["param"] == $source->getOption("nick")) {
+            return array(true);
+          }
+        }
       }
+      $source->send(":".__SERVERDOMAIN__." 404 ".$source->getOption("nick").
+        " ".$channel["name"]." :Cannot send to channel");
+      return array(false);
     }
 
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->modes = ModuleManagement::getModuleByName("Modes");
-      $this->modes->setMode(array("NoExternalMessages", "n", "0", "0"));
-      EventHandling::registerAsEventPreprocessor("channelCreatedEvent", $this,
-        "receiveChannelCreated");
+      $this->modes->setMode(array("Moderated", "m", "0", "0"));
       EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
         "receiveChannelMode");
       EventHandling::registerAsEventPreprocessor("channelMessageEvent", $this,
