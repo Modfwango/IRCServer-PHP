@@ -91,7 +91,7 @@
       $connection->send(":".__SERVERDOMAIN__." 005 ".
         $connection->getOption("nick").
         " CHANTYPES=&# EXCEPTS INVEX CHANMODES=".implode($cmodesb).",".
-        implode($cmodesk).",".implodes($cmodess).",".implode($cmodesp).
+        implode($cmodesk).",".implode($cmodess).",".implode($cmodesp).
         " CHANLIMIT=&#:15". " PREFIX=(".implode(null, $pmodes).")".implode(
         $pprefixes)." MAXLIST=beI:25 MODES=4 NETWORK=".__NETNAME__." KNOCK".
         " STATUSMSG=@+ CALLERID=g :are supported by this server");
