@@ -113,6 +113,7 @@
               EventHandling::triggerEvent("channelCreatedEvent", $id, $channel);
             }
           }
+          $channel = $this->getChannelByName($channel["name"]);
         }
         $this->broadcast($channel["name"], ":".$source->getOption("nick")."!".
           $source->getOption("ident")."@".$source->getHost()." JOIN ".
