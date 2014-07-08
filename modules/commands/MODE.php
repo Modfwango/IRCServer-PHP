@@ -1,6 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Channel", "Client", "CommandEvent", "Modes");
+    public $depend = array("Channel", "ChannelOperator", "Client",
+      "CommandEvent", "Modes");
     public $name = "MODE";
     private $channel = null;
     private $client = null;
@@ -89,15 +90,31 @@
               $channel = $this->channel->getChannelByName($command[1]);
               $client = $this->client->getClientByNick($command[1]);
               if ($channel != false) {
-                $modes = $this->parseModes("0", $command[2]);
-                $event = EventHandling::getEventByName("channelModeEvent");
-                if ($event != false) {
-                  foreach ($event[2] as $id => $registration) {
-                    // Trigger the channelModeEvent event for each registered
-                    // module.
-                    EventHandling::triggerEvent("channelModeEvent", $id,
-                        array($connection, $channel, $modes));
+                $opped = false;
+                $has = $this->channel->hasModes($channel["name"],
+                  array("ChannelOperator"));
+                if (is_array($has)) {
+                  foreach ($has as $m) {
+                    if ($m["param"] == $connection->getOption("nick")) {
+                      $opped = true;
+                      $modes = $this->parseModes("0", $command[2]);
+                      $event = EventHandling::getEventByName(
+                        "channelModeEvent");
+                      if ($event != false) {
+                        foreach ($event[2] as $id => $registration) {
+                          // Trigger the channelModeEvent event for each
+                          // registered module.
+                          EventHandling::triggerEvent("channelModeEvent", $id,
+                              array($connection, $channel, $modes));
+                        }
+                      }
+                    }
                   }
+                }
+                if ($opped == false) {
+                  $connection->send(":".__SERVERDOMAIN__." 482 ".
+                    $connection->getOption("nick")." ".$channel["name"].
+                    " :You're not a channel operator");
                 }
               }
               elseif ($client != false) {
