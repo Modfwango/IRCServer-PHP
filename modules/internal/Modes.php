@@ -138,7 +138,7 @@
         if ($m[1] == $mode[1]) {
           $names[] = $m[0];
         }
-        if ($m[4] == $mode[4]) {
+        if (isset($m[4]) && isset($mode[4]) && $m[4] == $mode[4]) {
           $names[] = $m[0];
         }
       }
