@@ -153,10 +153,10 @@
                   foreach ($channel["modes"] as $mode) {
                     $m = $this->modes->getModeByName($mode["name"]);
                     if ($m != false) {
-                      if ($m == "0") {
+                      if ($m[3] == "0") {
                         $modes[] = $m[1];
                       }
-                      if ($m == "1" || $m == "2") {
+                      if ($m[3] == "1" || $m[3] == "2") {
                         $modes[] = $m[1];
                         $params[] = $mode["param"];
                       }
