@@ -55,7 +55,6 @@
                       }
                     }
                     ksort($p);
-                    Logger::info(var_export($p, true));
                     $p = array_pop($p);
                     if (is_array($p)) {
                       $p = array_shift($p);
