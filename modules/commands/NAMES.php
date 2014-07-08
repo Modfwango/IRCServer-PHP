@@ -57,7 +57,10 @@
                     ksort($p);
                     Logger::info(var_export($p, true));
                     $p = array_pop($p);
-                    $members[] = array_shift($p).$c->getOption("nick");
+                    if (is_array($p)) {
+                      $p = array_shift($p);
+                    }
+                    $members[] = $p.$c->getOption("nick");
                   }
                 }
 

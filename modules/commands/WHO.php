@@ -53,7 +53,10 @@
                 end($p);
                 $weight = key($p);
                 $p = array_pop($p);
-                $users[] = array($c, array_shift($p));
+                if (is_array($p)) {
+                  $p = array_shift($p);
+                }
+                $users[] = array($c, $p);
               }
             }
             else {
