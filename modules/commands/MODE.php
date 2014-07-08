@@ -112,9 +112,21 @@
                   }
                 }
                 if ($opped == false) {
-                  $connection->send(":".__SERVERDOMAIN__." 482 ".
-                    $connection->getOption("nick")." ".$channel["name"].
-                    " :You're not a channel operator");
+                  $okay = true;
+                  $ms = $this->modes->getModeNamesByType("3");
+                  foreach ($modes as $mode) {
+                    if (!in_array($mode["name"], $ms)) {
+                      $okay = false;
+                    }
+                  }
+                  if ($okay == false) {
+                    $connection->send(":".__SERVERDOMAIN__." 482 ".
+                      $connection->getOption("nick")." ".$channel["name"].
+                      " :You're not a channel operator");
+                  }
+                  else {
+                    // Use as a filter to list modes for this channel.
+                  }
                 }
               }
               elseif ($client != false) {
