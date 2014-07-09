@@ -22,6 +22,7 @@
         $connection->setOption("id", hash("sha256", rand().$host));
       }
       $this->client->setClient($connection);
+      return true;
     }
 
     public function receiveUserRegistration($name, $connection) {
