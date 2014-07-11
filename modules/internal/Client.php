@@ -102,9 +102,9 @@
       if ($c != false) {
         $return = array();
         foreach ($modes as $mode) {
-          if (isset($c["modes"]) && is_array($c["modes"])
-              && count($c["modes"]) > 0) {
-            foreach ($c["modes"] as $cm) {
+          if (is_array($c->getOption("modes"))
+              && count($c->getOption("modes")) > 0) {
+            foreach ($c->getOption("modes") as $cm) {
               if ($cm["name"] == $mode) {
                 $return[] = $cm;
               }
