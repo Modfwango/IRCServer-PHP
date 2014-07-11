@@ -97,6 +97,27 @@
       return $clients;
     }
 
+    public function hasModes($id, $modes) {
+      $c = $this->getClientByID($id);
+      if ($c != false) {
+        $return = array();
+        foreach ($modes as $mode) {
+          if (isset($c["modes"]) && is_array($c["modes"])
+              && count($c["modes"]) > 0) {
+            foreach ($c["modes"] as $cm) {
+              if ($cm["name"] == $mode) {
+                $return[] = $cm;
+              }
+            }
+          }
+        }
+        if (count($return) > 0) {
+          return $return;
+        }
+      }
+      return false;
+    }
+
     private function matchGlob($pattern, $string) {
        $regex = str_replace(array("*", "?"), array(".*", "."),
          preg_quote($pattern));
