@@ -40,14 +40,18 @@
       $cmodes = array();
       if ($this->modes->getModesByType("0") != false) {
         foreach ($this->modes->getModesByType("0") as $mode) {
-          $cmodes[] = $mode[1];
+          if ($mode[2] == "0") {
+            $cmodes[] = $mode[1];
+          }
         }
       }
 
       $cmodess = array();
       if ($this->modes->getModesByType("2") != false) {
         foreach ($this->modes->getModesByType("2") as $mode) {
-          $cmodess[] = $mode[1];
+          if ($mode[2] == "0") {
+            $cmodess[] = $mode[1];
+          }
         }
       }
 
