@@ -6,6 +6,10 @@
     private $client = null;
 
     private function nicknameAvailable($nick) {
+      if ($this->client->getClientByNick($nick) == true) {
+        return false;
+      }
+
       foreach (ConnectionManagement::getConnections() as $connection) {
         if (strtolower($connection->getOption("nick")) == strtolower($nick)) {
           return false;
