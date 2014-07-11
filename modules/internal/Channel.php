@@ -63,6 +63,16 @@
         $this->channels[strtolower($name)] : false);
     }
 
+    public function getChannelMembers($name) {
+      $ch = $this->getChannelByName($name);
+      if ($ch != false) {
+        if (count($ch["members"]) > 1) {
+          return $ch["members"];
+        }
+      }
+      return false;
+    }
+
     public function getChannels() {
       return $this->channels;
     }
@@ -149,19 +159,27 @@
       $source = $data[0];
       $target = $data[1];
       $message = $data[2];
+
+      if (isset($data[3])) {
+        $exceptions = $data[3];
+      }
+      else {
+        $exceptions = array();
+      }
+
+      $exceptions[] = $source->getOption("id");
+      $exceptions = array_unique($exceptions);
       $base = ":".$source->getOption("nick")."!".$source->getOption("ident").
         "@".$source->getHost()." PRIVMSG ".$target["name"]." :";
 
       if (strlen($base.$message) > 510) {
         $chunks = str_split($message, (510 - strlen($base)));
         foreach ($chunks as $chunk) {
-          $this->broadcast($target["name"], $base.$chunk,
-            $source->getOption("id"));
+          $this->broadcast($target["name"], $base.$chunk, $exceptions);
         }
       }
       else {
-        $this->broadcast($target["name"], $base.$message,
-          $source->getOption("id"));
+        $this->broadcast($target["name"], $base.$message, $exceptions);
       }
     }
 
