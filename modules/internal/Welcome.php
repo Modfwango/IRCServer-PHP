@@ -37,6 +37,15 @@
       $pmodes = array_reverse($pmodes);
       $pprefixes = array_reverse($pprefixes);
 
+      $umodes = array();
+      if ($this->modes->getModesByType("0") != false) {
+        foreach ($this->modes->getModesByType("0") as $mode) {
+          if ($mode[2] == "1") {
+            $umodes[] = $mode[1];
+          }
+        }
+      }
+
       $cmodes = array();
       if ($this->modes->getModesByType("0") != false) {
         foreach ($this->modes->getModesByType("0") as $mode) {
@@ -78,7 +87,6 @@
       }
       $cmodesp = array_merge($cmodesp, $cmodesk);
 
-      $cmodespp = array();
       $cmodespp = array_merge($cmodesp, $cmodesb);
 
       $connection->send(":".__SERVERDOMAIN__." 001 ".
@@ -93,7 +101,7 @@
         "D M d Y", __STARTTIME__)." at ".date("H:i:s e", __STARTTIME__));
       $connection->send(":".__SERVERDOMAIN__." 004 ".
         $connection->getOption("nick")." ".__SERVERDOMAIN__." ".
-        __PROJECTVERSION__." oiwszcrkfydnxbauglZCD ".implode($cmodes).
+        __PROJECTVERSION__." ".implode($umodes)." ".implode($cmodes).
         " ".implode($cmodespp));
       $connection->send(":".__SERVERDOMAIN__." 005 ".
         $connection->getOption("nick")." CHANTYPES=# CHANMODES=".
