@@ -52,7 +52,7 @@
     public function isInstantiated() {
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
-      $this->modes->setMode(array("Deaf", "c", "1", "0"));
+      $this->modes->setMode(array("Deaf", "d", "1", "0"));
       EventHandling::registerAsEventPreprocessor("userModeEvent", $this,
         "receiveUserMode");
       EventHandling::registerAsEventPreprocessor("channelMessageEvent", $this,
