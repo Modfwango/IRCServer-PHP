@@ -49,7 +49,7 @@
         $exceptions = array();
       }
 
-      $members = $this->channel->getChannelMembers($channel["name"]));
+      $members = $this->channel->getChannelMembers($channel["name"]);
       if (is_array($members)) {
         foreach ($members as $member) {
           $modes = $this->client->hasModes($member, array("Deaf"));
