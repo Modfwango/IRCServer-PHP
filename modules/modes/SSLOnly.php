@@ -69,11 +69,10 @@
       $channel = $data[1];
       $message = $data[2];
 
-      $modes = $this->channel->hasModes($channel["name"],
-        array("SSLOnly"));
+      $modes = $this->channel->hasModes($channel, array("SSLOnly"));
       if ($modes != false && $source->getSSL() == false) {
         $source->send(":".__SERVERDOMAIN__." 489 ".$source->getOption("nick").
-          " ".$channel["name"]." :Cannot join channel; SSL users only (+z)");
+          " ".$channel." :Cannot join channel; SSL users only (+z)");
         return array(false);
       }
     }
