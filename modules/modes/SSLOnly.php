@@ -19,13 +19,15 @@
         if ($source->getSSL() == false) {
           $channelHasPTClients = true;
         }
-        $members = $this->channel->getChannelMembers($channel["name"]);
-        if (is_array($members)) {
-          foreach ($members as $member) {
-            $client = $this->client->getClientByID($member);
-            if ($client->getSSL() == false) {
-              $channelHasPTClients = true;
-              break;
+        else {
+          $members = $this->channel->getChannelMembers($channel["name"]);
+          if (is_array($members)) {
+            foreach ($members as $member) {
+              $client = $this->client->getClientByID($member);
+              if ($client->getSSL() == false) {
+                $channelHasPTClients = true;
+                break;
+              }
             }
           }
         }
