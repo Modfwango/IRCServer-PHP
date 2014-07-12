@@ -16,6 +16,9 @@
 
       $channelHasPTClients = false;
       if ($has == false) {
+        if ($source->getSSL() == false) {
+          $channelHasPTClients = true;
+        }
         $members = $this->channel->getChannelMembers($channel["name"]);
         if (is_array($members)) {
           foreach ($members as $member) {
