@@ -67,7 +67,6 @@
     public function receiveChannelJoin($name, $id, $data) {
       $source = $data[0];
       $channel = $data[1];
-      $message = $data[2];
 
       $modes = $this->channel->hasModes($channel, array("SSLOnly"));
       if ($modes != false && $source->getSSL() == false) {
