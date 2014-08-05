@@ -45,9 +45,11 @@
     }
 
     public function receiveUserRegistration($name, $connection) {
-      $this->responses[$connection->getOption("id")] = true;
-      ModuleManagement::getModuleByName("Timer")->newTimer(__PINGTIME__, $this,
-        "sendPingRequest", $connection);
+      if ($connection->getType() != "2") {
+        $this->responses[$connection->getOption("id")] = true;
+        ModuleManagement::getModuleByName("Timer")->newTimer(__PINGTIME__, $this,
+          "sendPingRequest", $connection);
+      }
       return true;
     }
 
