@@ -16,6 +16,8 @@
     }
 
     public function isInstantiated() {
+      EventHandling::registerForEvent("privateMessageEvent", $this,
+        "receivePrivateMessage");
       return true;
     }
   }
