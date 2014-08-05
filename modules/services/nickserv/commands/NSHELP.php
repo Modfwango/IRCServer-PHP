@@ -1,7 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("NSClient");
-    public $name = "HELP";
+    public $name = "NSHELP";
 
     public function receivePrivateMessage($name, $data) {
       $source = $data[0];
