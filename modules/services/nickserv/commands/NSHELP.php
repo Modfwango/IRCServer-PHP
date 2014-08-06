@@ -9,7 +9,33 @@
       $params = $data[2];
 
       if (count($params) > 0) {
+        $command = null;
+        $event = EventHandling::getEventByName("nsCommandEvent");
+        if ($event != false) {
+          foreach ($event[2] as $id => $registration) {
+            if ($registration[2] == null || count($registration[2]) < 3 ||
+                strtolower(trim($registration[2][0]))
+                != strtolower(trim($cmd))) {
+              continue;
+            }
+            $command = $registration[2];
+          }
+        }
 
+        if (is_array($command)) {
+          $title = "\002".strtoupper($command[0])."\002 Command Help";
+          $message = "|".str_repeat("=", ceil((56 - strlen($title)) / 2))."[ ".
+            $title." ]".str_repeat("=", floor((56 - strlen($title)) / 2)).
+            "|\r\n";
+          $message .= $this->util->prettyStrChunk($command[1]."\r\n".
+            $command[2], 64, "\r\n");
+          $lines = explode("\r\n", trim($message));
+          foreach ($lines as $line) {
+            $source->send(":".$target->getOption("nick")."!".
+              $target->getOption("ident")."@".$target->getHost()." PRIVMSG ".
+              $source->getOption("nick")." :".$line);
+          }
+        }
       }
       else {
         $commands = array();
