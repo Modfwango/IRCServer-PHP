@@ -4,40 +4,25 @@
     public $name = "Util";
 
     public function prettyStrChunk($string, $size, $ending) {
-      $message = null;
-      $line = array();
-      $helptext = explode("\n", $string);
-      foreach ($helptext as &$hline) {
-        $hline = str_split(trim($hline), ($size - (strlen($ending) + 1)));
-        foreach ($hline as $l) {
-          $line[] = $l;
+      $ret = array();
+      $string = explode(" ", $string);
+      $line = 0;
+      while (count($string) > 0) {
+        $line++;
+        $lastCount = count($string);
+        while ((strlen($ret[$line]) + (strlen($string) +
+                (strlen($ending) + 2))) < ($size + 1)) {
+          $ret[$line] .= " ".array_shift($string);
+          $ret[$line] = trim($ret[$line]);
         }
-        $line[] = null;
-      }
-      while (trim(end($line)) == null) {
-        array_pop($line);
-      }
-      foreach ($line as $k => $l) {
-        if (strlen($l) == 1) {
-          $message = substr($message, 0, (strlen($message) - (strlen(
-            $ending) + 1))).$l."\r\n";
-        }
-        else {
-          if ($k !== (count($line) - 1) && strlen($l) == ($size - (strlen(
-              $ending) + 1)) && substr($l, -1) != " "
-              && substr($line[$k + 1], 1) != " ") {
-            $l .= "-";
-          }
-          $l .= "\r\n";
-          if (strlen(trim($l)) > 0) {
-            $message .= $l;
-          }
-          else {
-            $message = substr($message, 0, (0 - (strlen($ending) + 1))).$ending;
+        if (count($string) == $lastCount) {
+          if (strlen($string[0]) > ($size - strlen($ending))) {
+            $string = chunk_split(array_shift($string),
+              ($size - (strlen($ending) + 1)), "-".$ending);
           }
         }
       }
-      return $message;
+      return implode("\r\n", $ret);
     }
 
     public function isInstantiated() {
