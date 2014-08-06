@@ -21,6 +21,7 @@
             $ret[$line] .= " ".array_shift($string);
             $ret[$line] = trim($ret[$line]);
           }
+          $line++;
           if (count($string) == $lastCount) {
             if (strlen($string[0]) > ($size - strlen($ending))) {
               $str = chunk_split(array_shift($string),
@@ -31,7 +32,6 @@
             }
           }
         }
-        $line++;
       }
       Logger::info(var_export($ret, true));
       return implode("\r\n", $ret);
