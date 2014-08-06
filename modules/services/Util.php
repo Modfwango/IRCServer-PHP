@@ -6,8 +6,8 @@
     public function prettyStrChunk($string, $size, $ending) {
       $ret = array();
       $s = explode("\n", $string);
-      foreach ($s as &$string) {
-        $string = explode(" ", trim($string));
+      foreach ($s as &$stringf) {
+        $stringf = explode(" ", trim($stringf));
       }
       Logger::info(var_export($s, true));
       $line = 0;
