@@ -16,18 +16,21 @@
         while (count($string) > 0) {
           $line++;
           $ret[$line] = null;
-          if (count($string) == $lastCount) {
-            if (strlen($string[0]) > ($size - strlen($ending))) {
-              $string = chunk_split(array_shift($string),
-                ($size - (strlen($ending) + 1)), "-".$ending);
-            }
-          }
+          $lastCount = count($string);
           while (isset($string[0]) && (strlen($ret[$line]) +
                   (strlen($string[0]) + (strlen($ending) + 2))) < ($size + 1)) {
             $ret[$line] .= " ".array_shift($string);
             $ret[$line] = trim($ret[$line]);
           }
-          $lastCount = count($string);
+          if (count($string) == $lastCount) {
+            if (strlen($string[0]) > ($size - strlen($ending))) {
+              $str = chunk_split(array_shift($string),
+                ($size - (strlen($ending) + 1)), "-".$ending);
+              foreach ($str as $substr) {
+                array_unshift($string, $substr);
+              }
+            }
+          }
         }
       }
       Logger::info(var_export($ret, true));
