@@ -39,7 +39,7 @@
             }
           }
           foreach ($line as $l) {
-            if (substr($l, -1) != " " && strlen($l) == 62) {
+            if (substr($l, -1) != " " && strlen($l) == 61) {
               $l .= "-";
             }
             $l .= "\r\n";
