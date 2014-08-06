@@ -27,6 +27,9 @@
           if (strlen(trim($l)) > 0) {
             $message .= $l;
           }
+          else {
+            $message = substr($message, 0, -1);
+          }
         }
       }
       return $message;
