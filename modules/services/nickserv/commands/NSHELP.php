@@ -34,7 +34,7 @@
         $title = "Here is a list of NickServ commands:";
         $message = str_repeat("=", 96)."\n";
         $message .= "|".str_repeat(" ", floor((94 - strlen($title)) / 2)).
-          $title."|";
+          $title."|\n";
         $message .= str_repeat("=", 96)."\n";
         $message .= implode("\n", $lines);
         $lines = explode("\n", $message);
