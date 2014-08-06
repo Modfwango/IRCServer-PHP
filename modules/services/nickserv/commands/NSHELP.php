@@ -33,7 +33,7 @@
             $lines[] = trim($curLine);
           }
         }
-        $title = "Here is a list of NickServ commands:";
+        $title = "| List of NickServ Commands |";
         $message .= "|".str_repeat("=", floor((94 - strlen($title)) / 2)).
           $title.str_repeat("=", ceil((94 - strlen($title)) / 2))."|\n";
         $message .= implode("\n", $lines);
