@@ -11,7 +11,7 @@
     }
 
     public function isInstantiated() {
-      EventHandling::registerForEvent("nickServCommandEvent", $this,
+      EventHandling::registerForEvent("nsCommandEvent", $this,
         "receiveNickServCommand", "help");
       return true;
     }

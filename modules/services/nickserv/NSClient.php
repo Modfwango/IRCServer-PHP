@@ -1,7 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Client", "PseudoConnection", "Quit",
-      "UserRegistrationEvent");
+    public $depend = array("Client", "NSCommandEvent", "PseudoConnection",
+      "Quit", "UserRegistrationEvent");
     public $name = "NSClient";
     private $pclient = null;
 
@@ -15,17 +15,17 @@
 
       if (strtolower($target->getOption("nick")) == "nickserv") {
         $count = 0;
-        $event = EventHandling::getEventByName("nickServCommandEvent");
+        $event = EventHandling::getEventByName("nsCommandEvent");
         if ($event != false) {
           foreach ($event[2] as $id => $registration) {
             if ($registration[2] != null && strtolower(trim($registration[2]))
                 != strtolower(trim($cmd))) {
               continue;
             }
-            // Trigger the nickServCommandEvent event for each
+            // Trigger the nsCommandEvent event for each
             // registered module.
             $count++;
-            EventHandling::triggerEvent("nickServCommandEvent", $id,
+            EventHandling::triggerEvent("nsCommandEvent", $id,
               array($source, $ex));
           }
         }
