@@ -13,11 +13,11 @@
       $line = 0;
       foreach ($s as $string) {
         while (count($string) > 0) {
-          Logger::info(var_export($s, true));
           $ret[$line] = null;
           $lastCount = count($string);
           while (isset($string[0]) && (strlen($ret[$line]) +
                   (strlen($string[0]) + (strlen($ending) + 2))) <= $size) {
+            Logger::info(var_export($s, true));
             $ret[$line] .= " ".array_shift($string);
             $ret[$line] = trim($ret[$line]);
           }
