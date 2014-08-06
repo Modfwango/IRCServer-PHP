@@ -36,6 +36,12 @@
               $source->getOption("nick")." :".$line);
           }
         }
+        else {
+          $source->send(":".$target->getOption("nick")."!".
+            $target->getOption("ident")."@".$target->getHost()." PRIVMSG ".
+            $source->getOption("nick")." :That command doesn't exist.  For ".
+              "help, type /msg NickServ help");
+        }
       }
       else {
         $commands = array();
