@@ -10,7 +10,7 @@
       while (count($string) > 0) {
         $line++;
         $lastCount = count($string);
-        while ((strlen($ret[$line]) + (strlen($string[0]) +
+        while (isset($string[0]) && (strlen($ret[$line]) + (strlen($string[0]) +
                 (strlen($ending) + 2))) < ($size + 1)) {
           $ret[$line] .= " ".array_shift($string);
           $ret[$line] = trim($ret[$line]);
