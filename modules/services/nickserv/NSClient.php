@@ -26,7 +26,7 @@
             // registered module.
             $count++;
             EventHandling::triggerEvent("nsCommandEvent", $id,
-              array($source, $ex));
+              array($source, $target, $ex));
           }
         }
         if ($count == 0) {
