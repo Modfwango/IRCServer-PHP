@@ -25,7 +25,7 @@
         else {
           if ($k !== (count($line) - 1) && strlen($l) == ($size - (strlen(
               $ending) + 1)) && substr($l, -1) != " "
-              && substr($line[$k], 1) != " ") {
+              && substr($line[$k + 1], 1) != " ") {
             $l .= "-";
           }
           $l .= "\r\n";
