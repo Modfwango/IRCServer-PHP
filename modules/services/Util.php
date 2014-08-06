@@ -28,7 +28,7 @@
             $message .= $l;
           }
           else {
-            $message = substr($message, 0, -1);
+            $message = substr($message, 0, (0 - (strlen($ending) + 1))).$ending;
           }
         }
       }
