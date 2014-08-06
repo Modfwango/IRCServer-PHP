@@ -16,29 +16,33 @@
         $event = EventHandling::getEventByName("nsCommandEvent");
         if ($event != false) {
           foreach ($event[2] as $id => $registration) {
-            $commands[] = $registration[2];
+            if ($registration[2] == null || count($registration[2]) < 3 ||
+                strtolower(trim($registration[2][0]))
+                != strtolower(trim($cmd))) {
+              continue;
+            }
+            $commands[strtoupper($registration[2][0])] = $registration[2];
           }
         }
-        sort($commands);
-        $lines = array();
-        while (count($commands) > 0) {
-          if (strlen($commands[0]) > 63) {
-            array_shift($commands);
+        ksort($commands);
+
+        $title = "List of NickServ Commands";
+        $message .= "|".str_repeat("=", floor((57 - strlen($title)) / 2))."| ".
+          $title." |".str_repeat("=", floor((57 - strlen($title)) / 2))."|\r\n";
+        foreach ($commands as $name => $command) {
+          $line = str_split("\002".$name."\002 - ".$command[1], 61);
+          foreach ($line as $l) {
+            if (substr($l, -1) != " ") {
+              $l .= "-";
+            }
+            $l .= "\r\n";
+            if (strlen(trim($l)) > 0) {
+              $message .= $l;
+            }
           }
-          $curLine = null;
-          while (isset($commands[0]) &&
-                  strlen($curLine." ".$commands[0]) < 65) {
-            $curLine .= " ".strtoupper(array_shift($commands));
-          }
-          if ($curLine != null) {
-            $lines[] = trim($curLine);
-          }
+          $message .= str_repeat("=", 62)."\r\n";
         }
-        $title = "| List of NickServ Commands |";
-        $message .= "|".str_repeat("=", floor((64 - strlen($title)) / 2)).
-          $title.str_repeat("=", ceil((64 - strlen($title)) / 2))."|\n";
-        $message .= implode("\n", $lines);
-        $lines = explode("\n", $message);
+        $lines = explode("\r\n", $message);
         foreach ($lines as $line) {
           $source->send(":".$target->getOption("nick")."!".
             $target->getOption("ident")."@".$target->getHost()." PRIVMSG ".
@@ -49,7 +53,10 @@
 
     public function isInstantiated() {
       EventHandling::registerForEvent("nsCommandEvent", $this,
-        "receiveNickServCommand", "help");
+        "receiveNickServCommand", array("help", "Shows a list of commands ".
+        "when no parameter is provided and shows more detail about a command ".
+        "when a parameter is provided.\n\nUsage: /msg NickServ HELP ".
+        "[command]", null));
       return true;
     }
   }
