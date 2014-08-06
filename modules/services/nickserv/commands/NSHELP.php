@@ -27,8 +27,8 @@
           $message = "|".str_repeat("=", ceil((56 - strlen($title)) / 2))."[ ".
             $title." ]".str_repeat("=", floor((56 - strlen($title)) / 2)).
             "|\r\n";
-          $message .= $this->util->prettyStrChunk($command[1]."\r\n".
-            $command[2], 64, "\r\n");
+          $message .= $this->util->prettyStrChunk($command[1]."\n".$command[2],
+            64, "\r\n");
           $lines = explode("\r\n", trim($message));
           foreach ($lines as $line) {
             $source->send(":".$target->getOption("nick")."!".
