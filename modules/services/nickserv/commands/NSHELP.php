@@ -31,7 +31,6 @@
             64, "\r\n");
           $lines = explode("\r\n", trim($message));
           foreach ($lines as $line) {
-            Logger::info($line);
             $source->send(":".$target->getOption("nick")."!".
               $target->getOption("ident")."@".$target->getHost()." PRIVMSG ".
               $source->getOption("nick")." :".$line);

@@ -9,7 +9,6 @@
       foreach ($s as &$stringf) {
         $stringf = explode(" ", trim($stringf));
       }
-      Logger::info(var_export($s, true));
       $line = 0;
       foreach ($s as $string) {
         while (count($string) > 0) {
@@ -17,7 +16,6 @@
           $lastCount = count($string);
           while (isset($string[0]) && (strlen($ret[$line]) +
                   (strlen($string[0]) + (strlen($ending) + 2))) <= $size) {
-            Logger::info(var_export($s, true));
             $ret[$line] .= " ".array_shift($string);
             $ret[$line] = trim($ret[$line]);
           }
@@ -33,7 +31,6 @@
           }
         }
       }
-      Logger::info(var_export($ret, true));
       return implode("\r\n", $ret);
     }
 
