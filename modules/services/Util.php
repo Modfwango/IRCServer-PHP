@@ -4,6 +4,7 @@
     public $name = "Util";
 
     public function prettyStrChunk($string, $size, $ending) {
+      Logger::info($string);
       $ret = array();
       $s = explode("\n", $string);
       foreach ($s as &$string) {
