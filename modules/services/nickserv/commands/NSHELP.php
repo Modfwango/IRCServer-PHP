@@ -26,14 +26,14 @@
         $commands = array_values($commands);
 
         $title = "List of NickServ Commands";
-        $message .= "|".str_repeat("=", floor((57 - strlen($title)) / 2))."[ ".
-          $title." ]".str_repeat("=", floor((57 - strlen($title)) / 2))."|\r\n";
+        $message .= "|".str_repeat("=", floor((56 - strlen($title)) / 2))."[ ".
+          $title." ]".str_repeat("=", floor((56 - strlen($title)) / 2))."|\r\n";
         foreach ($commands as $key => $command) {
           $message .= $this->prettyStrChunk("\002".strtoupper($command[0]).
             "\002 - ".$command[1], 64, "\r\n");
-          //if ($key != (count($commands) - 1)) {
+          if ($key != (count($commands) - 1)) {
             $message .= str_repeat("=", 62)."\r\n";
-          //}
+          }
         }
         $lines = explode("\r\n", trim($message));
         foreach ($lines as $line) {
