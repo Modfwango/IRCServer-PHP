@@ -26,7 +26,7 @@
         $commands = array_values($commands);
 
         $title = "List of NickServ Commands";
-        $message .= "|".str_repeat("=", floor((56 - strlen($title)) / 2))."[ ".
+        $message .= "|".str_repeat("=", ceil((56 - strlen($title)) / 2))."[ ".
           $title." ]".str_repeat("=", floor((56 - strlen($title)) / 2))."|\r\n";
         foreach ($commands as $key => $command) {
           $message .= $this->prettyStrChunk("\002".strtoupper($command[0]).
