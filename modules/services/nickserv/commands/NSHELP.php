@@ -29,9 +29,12 @@
         $message .= "|".str_repeat("=", floor((57 - strlen($title)) / 2))."[ ".
           $title." ]".str_repeat("=", floor((57 - strlen($title)) / 2))."|\r\n";
         foreach ($commands as $key => $command) {
-          $line = str_split("\002".strtoupper($command[0])."\002 - ".
-            $command[1], 61);
-          foreach ($line as $l) {
+          $helptext = explode("\r\n", $command[1]);
+          $helptext[0] .= "\002".strtoupper($command[0])."\002 - ";
+          foreach ($helptext as &$hline) {
+            $hline = chunk_split($hline, 61, null);
+          }
+          foreach ($helptext as $l) {
             if (substr($l, -1) != " ") {
               $l .= "-";
             }
@@ -57,7 +60,7 @@
       EventHandling::registerForEvent("nsCommandEvent", $this,
         "receiveNickServCommand", array("help", "Shows a list of commands ".
         "when no parameter is provided and shows more detail about a command ".
-        "when a parameter is provided.\r\n\r\nUsage: /msg NickServ HELP ".
+        "when a parameter is provided.\r\nUsage: /msg NickServ HELP ".
         "[command]", null));
       return true;
     }
