@@ -15,7 +15,7 @@
           foreach ($event[2] as $id => $registration) {
             if ($registration[2] == null || count($registration[2]) < 3 ||
                 strtolower(trim($registration[2][0]))
-                != strtolower(trim($cmd))) {
+                != strtolower(trim($param[0]))) {
               continue;
             }
             $command = $registration[2];
