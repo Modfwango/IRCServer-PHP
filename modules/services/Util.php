@@ -12,6 +12,7 @@
       Logger::info(var_export($s, true));
       $line = 0;
       foreach ($s as $string) {
+        Logger::info(var_export($string, true));
         while (count($string) > 0) {
           $line++;
           $ret[$line] = null;
