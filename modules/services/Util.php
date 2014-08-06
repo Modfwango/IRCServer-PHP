@@ -22,7 +22,7 @@
             $ret[$line] .= " ".array_shift($string);
             $ret[$line] = trim($ret[$line]);
           }
-          if (count($string) == $lastCount) {
+          if (count($string) === $lastCount) {
             if (strlen($string[0]) > ($size - strlen($ending))) {
               $string = chunk_split(array_shift($string),
                 ($size - (strlen($ending) + 1)), "-".$ending);
