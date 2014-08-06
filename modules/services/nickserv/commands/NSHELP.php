@@ -29,26 +29,9 @@
         $message .= "|".str_repeat("=", floor((57 - strlen($title)) / 2))."[ ".
           $title." ]".str_repeat("=", floor((57 - strlen($title)) / 2))."|\r\n";
         foreach ($commands as $key => $command) {
-          $line = array();
-          $helptext = explode("\r\n", $command[1]);
-          $helptext[0] = "\002".strtoupper($command[0])."\002 - ".$helptext[0];
-          foreach ($helptext as &$hline) {
-            $hline = str_split($hline, 61);
-            foreach ($hline as $l) {
-              $line[] = $l;
-            }
-          }
-          foreach ($line as $k => $l) {
-            if ($k !== (count($line) - 1) && strlen($l) == 61
-                && substr($l, -1) != " ") {
-              $l .= "-";
-            }
-            $l .= "\r\n";
-            if (strlen(trim($l)) > 0) {
-              $message .= $l;
-            }
-          }
-          if ($key !== (count($commands) - 1)) {
+          $message .= $this->prettyStrChunk("\002".$command[0]."\002 - ".
+            $command[1], 64, "\r\n");
+          if ($key != (count($commands) - 1)) {
             $message .= str_repeat("=", 62)."\r\n";
           }
         }
@@ -59,6 +42,35 @@
             $source->getOption("nick")." :".$line);
         }
       }
+    }
+
+    private function prettyStrChunk($string, $size, $ending) {
+      $message = null;
+      $line = array();
+      $helptext = explode("\r\n", $string);
+      foreach ($helptext as &$hline) {
+        $hline = str_split($hline, ($size - (strlen($ending) + 1)));
+        foreach ($hline as $l) {
+          $line[] = $l;
+        }
+      }
+      foreach ($line as $k => $l) {
+        if (strlen($l) == 1) {
+          $message = substr($message, 0, (strlen($message) - (strlen(
+            $ending) + 1))).$l."\r\n";
+        }
+        else {
+          if ($k !== (count($line) - 1) && strlen($l) == ($size - (strlen(
+              $ending) + 1)) && substr($l, -1) != " ") {
+            $l .= "-";
+          }
+          $l .= "\r\n";
+          if (strlen(trim($l)) > 0) {
+            $message .= $l;
+          }
+        }
+      }
+      return $message;
     }
 
     public function isInstantiated() {
