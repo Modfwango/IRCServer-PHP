@@ -4,12 +4,12 @@
     public $name = "Util";
 
     public function prettyStrChunk($string, $size, $ending) {
-      Logger::info($string);
       $ret = array();
       $s = explode("\n", $string);
       foreach ($s as &$string) {
         $string = explode(" ", trim($string));
       }
+      Logger::info(var_export($s, true));
       $line = 0;
       foreach ($s as $string) {
         while (count($string) > 0) {
