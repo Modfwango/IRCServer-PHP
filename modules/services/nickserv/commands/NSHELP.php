@@ -26,7 +26,7 @@
             array_shift($commands);
           }
           $curLine = null;
-          while (isset($command[0]) && strlen($curLine." ".$commands[0]) < 97) {
+          while (isset($commands[0]) && strlen($curLine." ".$commands[0]) < 97) {
             $curLine .= " ".strtoupper(array_shift($commands));
           }
           if ($curLine != null) {
