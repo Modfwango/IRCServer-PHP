@@ -13,6 +13,7 @@
       foreach ($s as $string) {
         while (count($string) > 0) {
           $line++;
+          $ret[$line] = null;
           $lastCount = count($string);
           while (isset($string[0]) && (strlen($ret[$line]) + (strlen($string[0]) +
                   (strlen($ending) + 2))) < ($size + 1)) {
