@@ -30,6 +30,7 @@
         $message .= "|".str_repeat("=", floor((57 - strlen($title)) / 2))."| ".
           $title." |".str_repeat("=", floor((57 - strlen($title)) / 2))."|\r\n";
         foreach ($commands as $name => $command) {
+          $message .= str_repeat("=", 62)."\r\n";
           $line = str_split("\002".$name."\002 - ".$command[1], 61);
           foreach ($line as $l) {
             if (substr($l, -1) != " ") {
