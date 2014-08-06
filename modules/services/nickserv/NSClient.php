@@ -12,6 +12,7 @@
       $ex = explode(" ", $message);
       $cmd = $ex[0];
       unset($ex[0]);
+      $ex = array_values($ex);
 
       if (strtolower($target->getOption("nick")) == "nickserv") {
         $count = 0;
