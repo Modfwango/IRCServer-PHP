@@ -1,6 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("NSClient");
+    public $depend = array("NSClient", "Util");
     public $name = "NSHELP";
 
     public function receiveNickServCommand($name, $data) {
@@ -29,8 +29,8 @@
         $message = "|".str_repeat("=", ceil((56 - strlen($title)) / 2))."[ ".
           $title." ]".str_repeat("=", floor((56 - strlen($title)) / 2))."|\r\n";
         foreach ($commands as $key => $command) {
-          $message .= $this->prettyStrChunk("\002".strtoupper($command[0]).
-            "\002 - ".$command[1], 64, "\r\n");
+          $message .= $this->util->prettyStrChunk("\002".strtoupper(
+            $command[0])."\002 - ".$command[1], 64, "\r\n");
           if ($key != (count($commands) - 1)) {
             $message .= str_repeat("=", 62)."\r\n";
           }
@@ -44,36 +44,8 @@
       }
     }
 
-    private function prettyStrChunk($string, $size, $ending) {
-      $message = null;
-      $line = array();
-      $helptext = explode("\n", $string);
-      foreach ($helptext as &$hline) {
-        $hline = str_split(trim($hline), ($size - (strlen($ending) + 1)));
-        foreach ($hline as $l) {
-          $line[] = $l;
-        }
-      }
-      foreach ($line as $k => $l) {
-        if (strlen($l) == 1) {
-          $message = substr($message, 0, (strlen($message) - (strlen(
-            $ending) + 1))).$l."\r\n";
-        }
-        else {
-          if ($k !== (count($line) - 1) && strlen($l) == ($size - (strlen(
-              $ending) + 1)) && substr($l, -1) != " ") {
-            $l .= "-";
-          }
-          $l .= "\r\n";
-          if (strlen(trim($l)) > 0) {
-            $message .= $l;
-          }
-        }
-      }
-      return $message;
-    }
-
     public function isInstantiated() {
+      $this->util = ModuleManagement::getModuleByName("Util");
       EventHandling::registerForEvent("nsCommandEvent", $this,
         "receiveNickServCommand", array("help", "Shows a list of commands ".
         "when no parameter is provided and shows more detail about a command ".
