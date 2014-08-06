@@ -49,7 +49,7 @@
       $line = array();
       $helptext = explode("\n", $string);
       foreach ($helptext as &$hline) {
-        $hline = str_split($hline, ($size - (strlen($ending) + 1)));
+        $hline = str_split(trim($hline), ($size - (strlen($ending) + 1)));
         foreach ($hline as $l) {
           $line[] = $l;
         }
@@ -65,7 +65,7 @@
             $l .= "-";
           }
           $l .= "\r\n";
-          if (strlen($l) > 0) {
+          if (strlen(trim($l)) > 0) {
             $message .= $l;
           }
         }
@@ -77,7 +77,7 @@
       EventHandling::registerForEvent("nsCommandEvent", $this,
         "receiveNickServCommand", array("help", "Shows a list of commands ".
         "when no parameter is provided and shows more detail about a command ".
-        "when a parameter is provided.\n\0\nUsage: /msg NickServ HELP ".
+        "when a parameter is provided.\nUsage: /msg NickServ HELP ".
         "[command]", null));
       return true;
     }
