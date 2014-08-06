@@ -70,7 +70,7 @@
         }
       }
 
-      EventHandling::regsiterForEvent("privateMessageEvent", $this,
+      EventHandling::registerForEvent("privateMessageEvent", $this,
         "receivePrivateMessage");
       return true;
     }
