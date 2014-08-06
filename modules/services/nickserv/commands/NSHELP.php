@@ -47,9 +47,9 @@
     private function prettyStrChunk($string, $size, $ending) {
       $message = null;
       $line = array();
-      $helptext = explode("\r\n", $string);
+      $helptext = explode("\n", $string);
       foreach ($helptext as &$hline) {
-        $hline = str_split($hline, ($size - (strlen($ending) + 1)));
+        $hline = str_split(trim($hline), ($size - (strlen($ending) + 1)));
         foreach ($hline as $l) {
           $line[] = $l;
         }
@@ -77,7 +77,7 @@
       EventHandling::registerForEvent("nsCommandEvent", $this,
         "receiveNickServCommand", array("help", "Shows a list of commands ".
         "when no parameter is provided and shows more detail about a command ".
-        "when a parameter is provided.\r\nUsage: /msg NickServ HELP ".
+        "when a parameter is provided.\nUsage: /msg NickServ HELP ".
         "[command]", null));
       return true;
     }
