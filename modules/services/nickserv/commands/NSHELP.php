@@ -77,7 +77,7 @@
       EventHandling::registerForEvent("nsCommandEvent", $this,
         "receiveNickServCommand", array("help", "Shows a list of commands ".
         "when no parameter is provided and shows more detail about a command ".
-        "when a parameter is provided.\nUsage: /msg NickServ HELP ".
+        "when a parameter is provided.\n\0\nUsage: /msg NickServ HELP ".
         "[command]", null));
       return true;
     }
