@@ -26,10 +26,12 @@
             array_shift($commands);
           }
           $curLine = null;
-          while (isset($command[0]) && strlen($curLine." ".$commands[0]) < 96) {
+          while (isset($command[0]) && strlen($curLine." ".$commands[0]) < 97) {
             $curLine .= " ".strtoupper(array_shift($commands));
           }
-          $lines[] = $curLine;
+          if ($curLine != null) {
+            $lines[] = trim($curLine);
+          }
         }
         $title = "Here is a list of NickServ commands:";
         $message = str_repeat("=", 96)."\n";
