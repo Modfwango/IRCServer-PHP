@@ -82,8 +82,7 @@
         "receiveNickServCommand", array("help", "Shows a list of commands ".
         "when no parameter is provided and shows more detail about a command ".
         "when a parameter is provided.\nUsage: /msg NickServ HELP ".
-        "[command]", "This is a test of extra examples even though the help ".
-        "command doesn't have any examples"));
+        "[command]", null));
       return true;
     }
   }
