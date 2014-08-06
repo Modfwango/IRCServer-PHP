@@ -14,7 +14,6 @@
       foreach ($s as $string) {
         while (count($string) > 0) {
           Logger::info(var_export($s, true));
-          $line++;
           $ret[$line] = null;
           $lastCount = count($string);
           while (isset($string[0]) && (strlen($ret[$line]) +
@@ -31,6 +30,7 @@
               }
             }
           }
+          $line++;
         }
       }
       Logger::info(var_export($ret, true));
