@@ -11,8 +11,8 @@
         $hline = str_split(trim($hline), ($size - (strlen($ending) + 1)));
         foreach ($hline as $l) {
           $line[] = $l;
-          $line[] = null;
         }
+        $line[] = null;
       }
       array_pop($helptext);
       foreach ($line as $k => $l) {
