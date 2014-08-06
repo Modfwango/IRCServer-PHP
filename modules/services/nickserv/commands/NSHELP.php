@@ -16,9 +16,7 @@
         $event = EventHandling::getEventByName("nsCommandEvent");
         if ($event != false) {
           foreach ($event[2] as $id => $registration) {
-            if ($registration[2] == null || count($registration[2]) < 3 ||
-                strtolower(trim($registration[2][0]))
-                != strtolower(trim($cmd))) {
+            if ($registration[2] == null || count($registration[2]) < 3) {
               continue;
             }
             $commands[strtoupper($registration[2][0])] = $registration[2];
