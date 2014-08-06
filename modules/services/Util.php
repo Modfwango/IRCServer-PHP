@@ -5,7 +5,7 @@
 
     public function prettyStrChunk($string, $size, $ending) {
       $ret = array();
-      $s = explode("\n", $s);
+      $s = explode("\n", $string);
       foreach ($s as &$string) {
         $string = explode(" ", $string);
       }
