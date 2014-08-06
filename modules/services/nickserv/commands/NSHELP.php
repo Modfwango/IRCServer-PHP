@@ -25,13 +25,14 @@
           }
         }
         ksort($commands);
+        $commands = array_values($commands);
 
         $title = "List of NickServ Commands";
         $message .= "|".str_repeat("=", floor((57 - strlen($title)) / 2))."| ".
           $title." |".str_repeat("=", floor((57 - strlen($title)) / 2))."|\r\n";
-        foreach ($commands as $name => $command) {
-          $message .= str_repeat("=", 62)."\r\n";
-          $line = str_split("\002".$name."\002 - ".$command[1], 61);
+        foreach ($commands as $key => $command) {
+          $line = str_split("\002".strtoupper($command[0])."\002 - ".
+            $command[1], 61);
           foreach ($line as $l) {
             if (substr($l, -1) != " ") {
               $l .= "-";
@@ -41,7 +42,9 @@
               $message .= $l;
             }
           }
-          $message .= str_repeat("=", 62)."\r\n";
+          if ($key !== (count($commands) - 1)) {
+            $message .= str_repeat("=", 62)."\r\n";
+          }
         }
         $lines = explode("\r\n", $message);
         foreach ($lines as $line) {
