@@ -5,27 +5,25 @@
 
     public function prettyStrChunk($string, $size, $ending) {
       $ret = array();
-      $string = array();
-      $st = explode("\n", $string);
-      foreach ($string as &$s) {
-        $s = explode(" ", $s);
-        foreach ($s as $ss) {
-          $string[] = $ss;
-        }
+      $s = explode("\n", $s);
+      foreach ($s as &$string) {
+        $string = explode(" ", $string);
       }
       $line = 0;
-      while (count($string) > 0) {
-        $line++;
-        $lastCount = count($string);
-        while (isset($string[0]) && (strlen($ret[$line]) + (strlen($string[0]) +
-                (strlen($ending) + 2))) < ($size + 1)) {
-          $ret[$line] .= " ".array_shift($string);
-          $ret[$line] = trim($ret[$line]);
-        }
-        if (count($string) == $lastCount) {
-          if (strlen($string[0]) > ($size - strlen($ending))) {
-            $string = chunk_split(array_shift($string),
-              ($size - (strlen($ending) + 1)), "-".$ending);
+      foreach ($s as $string) {
+        while (count($string) > 0) {
+          $line++;
+          $lastCount = count($string);
+          while (isset($string[0]) && (strlen($ret[$line]) + (strlen($string[0]) +
+                  (strlen($ending) + 2))) < ($size + 1)) {
+            $ret[$line] .= " ".array_shift($string);
+            $ret[$line] = trim($ret[$line]);
+          }
+          if (count($string) == $lastCount) {
+            if (strlen($string[0]) > ($size - strlen($ending))) {
+              $string = chunk_split(array_shift($string),
+                ($size - (strlen($ending) + 1)), "-".$ending);
+            }
           }
         }
       }
