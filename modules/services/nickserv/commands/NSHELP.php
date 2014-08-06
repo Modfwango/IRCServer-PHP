@@ -29,12 +29,16 @@
         $message .= "|".str_repeat("=", floor((57 - strlen($title)) / 2))."[ ".
           $title." ]".str_repeat("=", floor((57 - strlen($title)) / 2))."|\r\n";
         foreach ($commands as $key => $command) {
+          $line = array();
           $helptext = explode("\r\n", $command[1]);
-          $helptext[0] .= "\002".strtoupper($command[0])."\002 - ";
+          $helptext[0] = "\002".strtoupper($command[0])."\002 - ".$helptext[0];
           foreach ($helptext as &$hline) {
-            $hline = chunk_split($hline, 61, null);
+            $hline = str_split($hline, 61);
+            foreach ($hline as $l) {
+              $line[] = $l;
+            }
           }
-          foreach ($helptext as $l) {
+          foreach ($line as $l) {
             if (substr($l, -1) != " ") {
               $l .= "-";
             }
