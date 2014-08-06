@@ -2,6 +2,7 @@
   class @@CLASSNAME@@ {
     public $depend = array("NSClient", "Util");
     public $name = "NSHELP";
+    private $util = null;
 
     public function receiveNickServCommand($name, $data) {
       $source = $data[0];

@@ -1,6 +1,5 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array();
     public $name = "Util";
 
     public function prettyStrChunk($string, $size, $ending) {
@@ -32,6 +31,50 @@
         }
       }
       return implode("\r\n", $ret);
+    }
+
+    public function validateEmail($email) {
+      $atIndex = strrpos($email, "@");
+      if (is_bool($atIndex) && !$atIndex) {
+        return false;
+      }
+      else {
+        $domain = substr($email, $atIndex + 1);
+        $local = substr($email, 0, $atIndex);
+        $localLen = strlen($local);
+        $domainLen = strlen($domain);
+
+        if ($localLen < 1 || $localLen > 64) {
+          return false;
+        }
+        else if ($domainLen < 1 || $domainLen > 255) {
+          return false;
+        }
+        else if ($local[0] == '.' || $local[$localLen - 1] == '.'
+                  || $domain[0] == '.' || $domain[$domainLen - 1] == '.') {
+          return false;
+        }
+        else if (preg_match('/\\.\\./', $local)) {
+          return false;
+        }
+        else if (!preg_match('/^[A-Za-z0-9\\-\\.]+$/', $domain)) {
+          return false;
+        }
+        else if (preg_match('/\\.\\./', $domain)) {
+          return false;
+        }
+        else if (!preg_match('/^(\\\\.|[A-Za-z0-9!#%&`_=\\/$\'*+?^{}|~.-])+$/',
+                  str_replace("\\\\", null, $local))) {
+          if (!preg_match('/^"(\\\\"|[^"])+"$/',
+              str_replace("\\\\", null, $local))) {
+            return false;
+          }
+        }
+        if (!(checkdnsrr($domain, "MX") || checkdnsrr($domain, "A"))) {
+          return false;
+        }
+      }
+      return true;
     }
 
     public function isInstantiated() {

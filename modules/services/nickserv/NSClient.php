@@ -3,6 +3,7 @@
     public $depend = array("Client", "NSCommandEvent", "PseudoConnection",
       "Quit", "UserRegistrationEvent");
     public $name = "NSClient";
+    private $db = null;
     private $pclient = null;
 
     public function receivePrivateMessage($name, $data) {
