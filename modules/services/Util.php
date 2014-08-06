@@ -14,7 +14,9 @@
         }
         $line[] = null;
       }
-      array_pop($helptext);
+      while (trim(end($line)) == null) {
+        array_pop($line);
+      }
       foreach ($line as $k => $l) {
         if (strlen($l) == 1) {
           $message = substr($message, 0, (strlen($message) - (strlen(
