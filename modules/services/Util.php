@@ -7,7 +7,7 @@
       $ret = array();
       $s = explode("\n", $string);
       foreach ($s as &$string) {
-        $string = explode(" ", $string);
+        $string = explode(" ", trim($string));
       }
       $line = 0;
       foreach ($s as $string) {
@@ -15,8 +15,8 @@
           $line++;
           $ret[$line] = null;
           $lastCount = count($string);
-          while (isset($string[0]) && (strlen($ret[$line]) + (strlen($string[0]) +
-                  (strlen($ending) + 2))) < ($size + 1)) {
+          while (isset($string[0]) && (strlen($ret[$line]) +
+                  (strlen($string[0]) + (strlen($ending) + 2))) < ($size + 1)) {
             $ret[$line] .= " ".array_shift($string);
             $ret[$line] = trim($ret[$line]);
           }
