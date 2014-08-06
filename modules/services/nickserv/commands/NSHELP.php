@@ -49,7 +49,7 @@
       $line = array();
       $helptext = explode("\n", $string);
       foreach ($helptext as &$hline) {
-        $hline = str_split(trim($hline), ($size - (strlen($ending) + 1)));
+        $hline = str_split($hline, ($size - (strlen($ending) + 1)));
         foreach ($hline as $l) {
           $line[] = $l;
         }
@@ -65,7 +65,7 @@
             $l .= "-";
           }
           $l .= "\r\n";
-          if (strlen(trim($l)) > 0) {
+          if (strlen($l) > 0) {
             $message .= $l;
           }
         }
