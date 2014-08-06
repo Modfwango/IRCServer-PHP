@@ -33,13 +33,13 @@
           $helptext = explode("\r\n", $command[1]);
           $helptext[0] = "\002".strtoupper($command[0])."\002 - ".$helptext[0];
           foreach ($helptext as &$hline) {
-            $hline = str_split($hline, 61);
+            $hline = str_split($hline, 60);
             foreach ($hline as $l) {
               $line[] = $l;
             }
           }
           foreach ($line as $l) {
-            if (substr($l, -1) != " ") {
+            if (substr($l, -1) != " " && strlen($l) == 62) {
               $l .= "-";
             }
             $l .= "\r\n";
