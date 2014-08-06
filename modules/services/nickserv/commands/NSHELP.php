@@ -46,7 +46,7 @@
             $message .= str_repeat("=", 62)."\r\n";
           }
         }
-        $lines = explode("\r\n", $message);
+        $lines = explode("\r\n", trim($message));
         foreach ($lines as $line) {
           $source->send(":".$target->getOption("nick")."!".
             $target->getOption("ident")."@".$target->getHost()." PRIVMSG ".
