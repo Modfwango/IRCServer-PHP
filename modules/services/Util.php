@@ -5,7 +5,14 @@
 
     public function prettyStrChunk($string, $size, $ending) {
       $ret = array();
-      $string = explode(" ", $string);
+      $string = array();
+      $st = explode("\n", $string);
+      foreach ($string as &$s) {
+        $s = explode(" ", $s);
+        foreach ($s as $ss) {
+          $string[] = $ss;
+        }
+      }
       $line = 0;
       while (count($string) > 0) {
         $line++;
