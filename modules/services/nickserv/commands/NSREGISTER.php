@@ -1,6 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Database", "NSClient");
+    public $depend = array("Database", "NSClient", "Util");
     public $name = "NSREGISTER";
     private $db = null;
     private $util = null;
