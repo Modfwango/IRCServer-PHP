@@ -30,8 +30,8 @@
               }
             }
           }
-          $line++;
         }
+        $line++;
       }
       Logger::info(var_export($ret, true));
       return implode("\r\n", $ret);
