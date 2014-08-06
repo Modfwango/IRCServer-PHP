@@ -3,21 +3,16 @@
     public $depend = array("NSClient");
     public $name = "NSHELP";
 
-    public function receivePrivateMessage($name, $data) {
+    public function receiveNickServCommand($name, $data) {
       $source = $data[0];
-      $target = $data[1];
-      $message = $data[2];
-      $ex = explode(" ", trim($message));
+      $params = $data[1];
 
-      if (strtolower($target->getOption("nick")) == "nickserv") {
-        Logger::info($source->getOption("nick")." Requesting command \n".
-          var_export($ex, true));
-      }
+      Logger::info("Command:  HELP, Params:  ".var_export($params, true));
     }
 
     public function isInstantiated() {
-      EventHandling::registerForEvent("privateMessageEvent", $this,
-        "receivePrivateMessage");
+      EventHandling::registerForEvent("nickServCommandEvent", $this,
+        "receiveNickServCommand", "help");
       return true;
     }
   }
