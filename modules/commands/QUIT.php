@@ -15,25 +15,21 @@
       }
       $command = array_values($command);
 
-      if (strtolower($command[0]) == "quit") {
-        $message = "Client Quit";
-        if (count($command) > 1) {
-          $message = "Quit: ".$command[1];
-        }
-
-        if ($connection->getOption("registered") == true) {
-          $connection->send(":".$connection->getOption("nick")."!".
-            $connection->getOption("ident")."@".$connection->getHost().
-            " QUIT :".$message);
-        }
-        $connection->send("ERROR :Closing Link: ".$connection->getHost()." (".
-          $message.")");
-        $this->notifyQuit(null, $connection, $message);
-        $connection->setOption("registered", false);
-        $connection->disconnect();
-        return true;
+      $message = "Client Quit";
+      if (count($command) > 0) {
+        $message = "Quit: ".$command[0];
       }
-      return false;
+
+      if ($connection->getOption("registered") == true) {
+        $connection->send(":".$connection->getOption("nick")."!".
+          $connection->getOption("ident")."@".$connection->getHost().
+          " QUIT :".$message);
+      }
+      $connection->send("ERROR :Closing Link: ".$connection->getHost()." (".
+        $message.")");
+      $this->notifyQuit(null, $connection, $message);
+      $connection->setOption("registered", false);
+      $connection->disconnect();
     }
 
     public function notifyQuit($name, $connection, $message = null) {
@@ -52,7 +48,8 @@
     }
 
     public function isInstantiated() {
-      EventHandling::registerForEvent("commandEvent", $this, "receiveCommand");
+      EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
+        "quit");
       EventHandling::registerForEvent("connectionDisconnectedEvent", $this,
         "notifyQuit");
       return true;

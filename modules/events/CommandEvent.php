@@ -3,16 +3,16 @@
     public $name = "CommandEvent";
 
     public function preprocessEvent($name, $registrations, $connection, $data) {
-      $data = trim($data);
+      $params = trim($data);
 
-      if (stristr($data, " :")) {
-        $cex = explode(" :", trim($data));
-        $data = $cex[0];
+      if (stristr($params, " :")) {
+        $cex = explode(" :", trim($params));
+        $params = $cex[0];
         unset($cex[0]);
         $cex = implode(" :", $cex);
       }
-      if (stristr($data, " ")) {
-        $ex = explode(" ", trim($data));
+      if (stristr($params, " ")) {
+        $ex = explode(" ", trim($params));
         foreach ($ex as $key => $item) {
           if (trim($item) == null) {
             unset($ex[$key]);
@@ -21,38 +21,41 @@
         if (isset($cex)) {
           $ex[] = $cex;
         }
-        $data = array_values($ex);
+        $params = array_values($ex);
       }
       else {
-        $data = array($data);
+        $params = array($params);
         if (isset($cex)) {
-          $data[] = $cex;
+          $params[] = $cex;
         }
       }
 
-      if (substr($data[0], 0, 1) == ":") {
-        unset($data[0]);
-        $data = array_values($data);
+      if (substr($params[0], 0, 1) == ":") {
+        unset($params[0]);
+        $params = array_values($params);
       }
 
-      if (count($data) == 0) {
+      if (count($params) == 0) {
         return true;
       }
+      $cmd = array_shift($params);
 
-      $found = false;
-      // Iterate through each registration.
+      $count = 0;
       foreach ($registrations as $id => $registration) {
-        // Trigger the event for a certain registration.
-        if (EventHandling::triggerEvent($name, $id, array($connection,
-            $data))) {
-          $found = true;
+        if ($registration[2] == null || strtolower(trim($registration[2]))
+            != strtolower(trim($cmd))) {
+          continue;
         }
+        // Trigger the nsCommandEvent event for each
+        // registered module.
+        $count++;
+        EventHandling::triggerEvent($name, $id, array($connection, $params));
       }
-
-      if ($found == false) {
+      if ($count == 0) {
+        // Command doesn't exist.
         $connection->send(":".__SERVERDOMAIN__." 421 ".(
           $connection->getOption("nick") ? $connection->getOption("nick") :
-          "*")." ".$data[0]." :Unknown command");
+          "*")." ".$cmd." :Unknown command");
       }
 
       return true;

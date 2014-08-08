@@ -77,102 +77,133 @@
       }
       $command = array_values($command);
 
-      if (strtolower($command[0]) == "mode") {
-        if ($connection->getOption("registered") == true) {
+      if ($connection->getOption("registered") == true) {
+        if (count($command) > 0) {
           if (count($command) > 1) {
             if (count($command) > 2) {
-              if (count($command) > 3) {
-                for ($i = 3; $i < count($command); $i++) {
-                  $command[2] .= " ".$command[$i];
-                }
+              for ($i = 3; $i < count($command); $i++) {
+                $command[1] .= " ".$command[$i];
               }
+            }
 
-              $channel = $this->channel->getChannelByName($command[1]);
-              $client = $this->client->getClientByNick($command[1]);
-              if ($channel != false) {
-                $opped = false;
-                $has = $this->channel->hasModes($channel["name"],
-                  array("ChannelOperator"));
-                if (is_array($has)) {
-                  foreach ($has as $m) {
-                    if ($m["param"] == $connection->getOption("nick")) {
-                      $opped = true;
-                      $modes = $this->parseModes("0", $command[2]);
-                      $event = EventHandling::getEventByName(
-                        "channelModeEvent");
-                      if ($event != false) {
-                        foreach ($event[2] as $id => $registration) {
-                          // Trigger the channelModeEvent event for each
-                          // registered module.
-                          EventHandling::triggerEvent("channelModeEvent", $id,
-                              array($connection, $channel, $modes));
-                        }
+            $channel = $this->channel->getChannelByName($command[0]);
+            $client = $this->client->getClientByNick($command[0]);
+            if ($channel != false) {
+              $opped = false;
+              $has = $this->channel->hasModes($channel["name"],
+                array("ChannelOperator"));
+              if (is_array($has)) {
+                foreach ($has as $m) {
+                  if ($m["param"] == $connection->getOption("nick")) {
+                    $opped = true;
+                    $modes = $this->parseModes("0", $command[1]);
+                    $event = EventHandling::getEventByName(
+                      "channelModeEvent");
+                    if ($event != false) {
+                      foreach ($event[2] as $id => $registration) {
+                        // Trigger the channelModeEvent event for each
+                        // registered module.
+                        EventHandling::triggerEvent("channelModeEvent", $id,
+                            array($connection, $channel, $modes));
                       }
                     }
                   }
                 }
-                if ($opped == false) {
-                  $okay = true;
-                  $ms = $this->modes->getModeNamesByType("3");
-                  foreach (str_split($command[2]) as $mode) {
-                    $m = $this->modes->getModeByChar("0", $mode);
-                    if ($m != false && !in_array($m["name"], $ms)) {
-                      $okay = false;
-                    }
-                  }
-                  if ($okay == false) {
-                    $connection->send(":".__SERVERDOMAIN__." 482 ".
-                      $connection->getOption("nick")." ".$channel["name"].
-                      " :You're not a channel operator");
-                  }
-                  else {
-                    // Use as a filter to list modes for this channel.
-                    $connection->send(":".__SERVERDOMAIN__." 368 ".
-                      $connection->getOption("nick")." ".$channel["name"].
-                      " :End of Channel Ban List");
+              }
+              if ($opped == false) {
+                $okay = true;
+                $ms = $this->modes->getModeNamesByType("3");
+                foreach (str_split($command[1]) as $mode) {
+                  $m = $this->modes->getModeByChar("0", $mode);
+                  if ($m != false && !in_array($m["name"], $ms)) {
+                    $okay = false;
                   }
                 }
-              }
-              elseif ($client != false) {
-                if ($client->getOption("nick")
-                    == $connection->getOption("nick")) {
-                  $modes = $this->parseModes("1", $command[2]);
-                  $event = EventHandling::getEventByName("userModeEvent");
-                  if ($event != false) {
-                    foreach ($event[2] as $id => $registration) {
-                      // Trigger the userModeEvent event for each registered
-                      // module.
-                      EventHandling::triggerEvent("userModeEvent", $id,
-                          array($connection, $modes));
-                    }
-                  }
+                if ($okay == false) {
+                  $connection->send(":".__SERVERDOMAIN__." 482 ".
+                    $connection->getOption("nick")." ".$channel["name"].
+                    " :You're not a channel operator");
                 }
                 else {
-                  $connection->send(":".__SERVERDOMAIN__." 502 ".
-                    $connection->getOption("nick").
-                    " :Can't change mode for other users");
+                  // Use as a filter to list modes for this channel.
+                  $connection->send(":".__SERVERDOMAIN__." 368 ".
+                    $connection->getOption("nick")." ".$channel["name"].
+                    " :End of Channel Ban List");
+                }
+              }
+            }
+            elseif ($client != false) {
+              if ($client->getOption("nick")
+                  == $connection->getOption("nick")) {
+                $modes = $this->parseModes("1", $command[1]);
+                $event = EventHandling::getEventByName("userModeEvent");
+                if ($event != false) {
+                  foreach ($event[2] as $id => $registration) {
+                    // Trigger the userModeEvent event for each registered
+                    // module.
+                    EventHandling::triggerEvent("userModeEvent", $id,
+                        array($connection, $modes));
+                  }
                 }
               }
               else {
-                $connection->send(":".__SERVERDOMAIN__." 403 ".
-                  $connection->getOption("nick")." ".$command[1].
-                  " :No such channel");
+                $connection->send(":".__SERVERDOMAIN__." 502 ".
+                  $connection->getOption("nick").
+                  " :Can't change mode for other users");
               }
             }
             else {
-              $channel = $this->channel->getChannelByName($command[1]);
-              $client = $this->client->getClientByNick($command[1]);
-              if ($channel != false) {
+              $connection->send(":".__SERVERDOMAIN__." 403 ".
+                $connection->getOption("nick")." ".$command[0].
+                " :No such channel");
+            }
+          }
+          else {
+            $channel = $this->channel->getChannelByName($command[0]);
+            $client = $this->client->getClientByNick($command[0]);
+            if ($channel != false) {
+              $modes = array();
+              $params = array();
+              if (isset($channel["modes"]) && is_array($channel["modes"])) {
+                foreach ($channel["modes"] as $mode) {
+                  $m = $this->modes->getModeByName($mode["name"]);
+                  if ($m != false) {
+                    if ($m[3] == "0") {
+                      $modes[] = $m[1];
+                    }
+                    if ($m[3] == "1" || $m[3] == "2") {
+                      $modes[] = $m[1];
+                      $params[] = $mode["param"];
+                    }
+                  }
+                }
+              }
+              $modes = "+".implode($modes);
+              $params = implode(" ", $params);
+              $modeString = $modes." ".$params;
+              $connection->send(":".__SERVERDOMAIN__." 324 ".
+                $connection->getOption("nick")." ".$channel["name"]." ".
+                $modeString);
+              if (!isset($data[2])) {
+                $connection->send(":".__SERVERDOMAIN__." 329 ".
+                  $connection->getOption("nick")." ".$channel["name"]." ".
+                  (isset($channel["modetime"]) ? $channel["modetime"] :
+                  $channel["created"]));
+              }
+            }
+            elseif ($client != false) {
+              if ($client->getOption("nick")
+                  == $connection->getOption("nick")) {
                 $modes = array();
                 $params = array();
-                if (isset($channel["modes"]) && is_array($channel["modes"])) {
-                  foreach ($channel["modes"] as $mode) {
+                if (is_array($client->getOption("modes"))) {
+                  foreach ($client->getOption("modes") as $mode) {
                     $m = $this->modes->getModeByName($mode["name"]);
                     if ($m != false) {
-                      if ($m[3] == "0") {
+                      if ($m == "0") {
                         $modes[] = $m[1];
                       }
-                      if ($m[3] == "1" || $m[3] == "2") {
+                      if ($m == "1" || $m == "2") {
                         $modes[] = $m[1];
                         $params[] = $mode["param"];
                       }
@@ -182,74 +213,40 @@
                 $modes = "+".implode($modes);
                 $params = implode(" ", $params);
                 $modeString = $modes." ".$params;
-                $connection->send(":".__SERVERDOMAIN__." 324 ".
-                  $connection->getOption("nick")." ".$channel["name"]." ".
-                  $modeString);
-                if (!isset($data[2])) {
-                  $connection->send(":".__SERVERDOMAIN__." 329 ".
-                    $connection->getOption("nick")." ".$channel["name"]." ".
-                    (isset($channel["modetime"]) ? $channel["modetime"] :
-                    $channel["created"]));
-                }
-              }
-              elseif ($client != false) {
-                if ($client->getOption("nick")
-                    == $connection->getOption("nick")) {
-                  $modes = array();
-                  $params = array();
-                  if (is_array($client->getOption("modes"))) {
-                    foreach ($client->getOption("modes") as $mode) {
-                      $m = $this->modes->getModeByName($mode["name"]);
-                      if ($m != false) {
-                        if ($m == "0") {
-                          $modes[] = $m[1];
-                        }
-                        if ($m == "1" || $m == "2") {
-                          $modes[] = $m[1];
-                          $params[] = $mode["param"];
-                        }
-                      }
-                    }
-                  }
-                  $modes = "+".implode($modes);
-                  $params = implode(" ", $params);
-                  $modeString = $modes." ".$params;
-                  $connection->send(":".__SERVERDOMAIN__." 221 ".
-                    $connection->getOption("nick")." ".$modeString);
-                }
-                else {
-                  $connection->send(":".__SERVERDOMAIN__." 502 ".
-                    $connection->getOption("nick").
-                    " :Can't change mode for other users");
-                }
+                $connection->send(":".__SERVERDOMAIN__." 221 ".
+                  $connection->getOption("nick")." ".$modeString);
               }
               else {
-                $connection->send(":".__SERVERDOMAIN__." 403 ".
-                  $connection->getOption("nick")." ".$command[1].
-                  " :No such channel");
+                $connection->send(":".__SERVERDOMAIN__." 502 ".
+                  $connection->getOption("nick").
+                  " :Can't change mode for other users");
               }
             }
-          }
-          else {
-            $connection->send(":".__SERVERDOMAIN__." 461 ".
-              $connection->getOption("nick")." MODE :Not enough parameters");
+            else {
+              $connection->send(":".__SERVERDOMAIN__." 403 ".
+                $connection->getOption("nick")." ".$command[0].
+                " :No such channel");
+            }
           }
         }
         else {
-          $connection->send(":".__SERVERDOMAIN__." 451 ".(
-            $connection->getOption("nick") ? $connection->getOption("nick") :
-            "*")." :You have not registered");
+          $connection->send(":".__SERVERDOMAIN__." 461 ".
+            $connection->getOption("nick")." MODE :Not enough parameters");
         }
-        return true;
       }
-      return false;
+      else {
+        $connection->send(":".__SERVERDOMAIN__." 451 ".(
+          $connection->getOption("nick") ? $connection->getOption("nick") :
+          "*")." :You have not registered");
+      }
     }
 
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
-      EventHandling::registerForEvent("commandEvent", $this, "receiveCommand");
+      EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
+        "mode");
       return true;
     }
   }

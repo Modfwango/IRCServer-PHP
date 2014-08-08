@@ -17,99 +17,96 @@
       }
       $command = array_values($command);
 
-      if (strtolower($command[0]) == "names") {
-        if ($connection->getOption("registered") == true) {
-          if (count($command) > 1) {
-            $channels = array($command[1]);
-            if (stristr($command[1], ",")) {
-              $channels = explode(",", $command[1]);
-            }
-            $modenames = array();
-            $prefixes = array();
-            foreach ($this->modes->getModesAndWeight() as $weight => $modes) {
-              foreach ($modes as $mode) {
-                $modenames[] = $mode[0];
-                $prefixes[$mode[0]] = array($mode[4], $mode[5]);
-              }
-            }
-            foreach ($channels as $channel) {
-              $channel = $this->channel->getChannelByName($channel);
-              if ($channel != false) {
-                $members = array();
-                foreach ($channel["members"] as $id) {
-                  $c = $this->client->getClientByID($id);
-                  if ($c != false) {
-                    $p = array();
-                    $has = $this->channel->hasModes($channel["name"],
-                      $modenames);
-                    if ($has != false) {
-                      foreach ($has as $m) {
-                        if ($m["param"] == $c->getOption("nick")
-                            && isset($prefixes[$m["name"]])) {
-                          if (!isset($p[$prefixes[$m["name"]][1]])) {
-                            $p[$prefixes[$m["name"]][1]] = array();
-                          }
-                          $p[$prefixes[$m["name"]][1]][] =
-                            $prefixes[$m["name"]][0];
-                        }
-                      }
-                    }
-                    ksort($p);
-                    $p = array_pop($p);
-                    if (is_array($p)) {
-                      $p = array_shift($p);
-                    }
-                    $members[] = $p.$c->getOption("nick");
-                  }
-                }
-
-                $base = ":".__SERVERDOMAIN__." 353 ".
-                  $connection->getOption("nick")." = ".$channel["name"]." :";
-                $remaining = (510 - strlen($base));
-                foreach ($members as $member) {
-                  $remaining -= (strlen($member) + 1);
-                  if ($remaining > -2) {
-                    if (!isset($items)) {
-                      $items = array();
-                    }
-                    $items[] = $member;
-                  }
-                  else {
-                    $remaining = (510 - strlen($base));
-                    $connection->send($base.implode(" ", $items));
-                    unset($items);
-                  }
-                }
-                if (isset($items)) {
-                  $connection->send($base.implode(" ", $items));
-                }
-              }
-            }
-            if (count($channels) == 1) {
-              $connection->send(":".__SERVERDOMAIN__." 366 ".
-                $connection->getOption("nick")." ".$channels[0].
-                " :End of /NAMES list.");
-              return true;
+      if ($connection->getOption("registered") == true) {
+        if (count($command) > 0) {
+          $channels = array($command[0]);
+          if (stristr($command[0], ",")) {
+            $channels = explode(",", $command[0]);
+          }
+          $modenames = array();
+          $prefixes = array();
+          foreach ($this->modes->getModesAndWeight() as $weight => $modes) {
+            foreach ($modes as $mode) {
+              $modenames[] = $mode[0];
+              $prefixes[$mode[0]] = array($mode[4], $mode[5]);
             }
           }
-          $connection->send(":".__SERVERDOMAIN__." 366 ".
-            $connection->getOption("nick")." * :End of /NAMES list.");
+          foreach ($channels as $channel) {
+            $channel = $this->channel->getChannelByName($channel);
+            if ($channel != false) {
+              $members = array();
+              foreach ($channel["members"] as $id) {
+                $c = $this->client->getClientByID($id);
+                if ($c != false) {
+                  $p = array();
+                  $has = $this->channel->hasModes($channel["name"],
+                    $modenames);
+                  if ($has != false) {
+                    foreach ($has as $m) {
+                      if ($m["param"] == $c->getOption("nick")
+                          && isset($prefixes[$m["name"]])) {
+                        if (!isset($p[$prefixes[$m["name"]][1]])) {
+                          $p[$prefixes[$m["name"]][1]] = array();
+                        }
+                        $p[$prefixes[$m["name"]][1]][] =
+                          $prefixes[$m["name"]][0];
+                      }
+                    }
+                  }
+                  ksort($p);
+                  $p = array_pop($p);
+                  if (is_array($p)) {
+                    $p = array_shift($p);
+                  }
+                  $members[] = $p.$c->getOption("nick");
+                }
+              }
+
+              $base = ":".__SERVERDOMAIN__." 353 ".
+                $connection->getOption("nick")." = ".$channel["name"]." :";
+              $remaining = (510 - strlen($base));
+              foreach ($members as $member) {
+                $remaining -= (strlen($member) + 1);
+                if ($remaining > -2) {
+                  if (!isset($items)) {
+                    $items = array();
+                  }
+                  $items[] = $member;
+                }
+                else {
+                  $remaining = (510 - strlen($base));
+                  $connection->send($base.implode(" ", $items));
+                  unset($items);
+                }
+              }
+              if (isset($items)) {
+                $connection->send($base.implode(" ", $items));
+              }
+            }
+          }
+          if (count($channels) == 1) {
+            $connection->send(":".__SERVERDOMAIN__." 366 ".
+              $connection->getOption("nick")." ".$channels[0].
+              " :End of /NAMES list.");
+            return true;
+          }
         }
-        else {
-          $connection->send(":".__SERVERDOMAIN__." 451 ".(
-            $connection->getOption("nick") ? $connection->getOption("nick") :
-            "*")." :You have not registered");
-        }
-        return true;
+        $connection->send(":".__SERVERDOMAIN__." 366 ".
+          $connection->getOption("nick")." * :End of /NAMES list.");
       }
-      return false;
+      else {
+        $connection->send(":".__SERVERDOMAIN__." 451 ".(
+          $connection->getOption("nick") ? $connection->getOption("nick") :
+          "*")." :You have not registered");
+      }
     }
 
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
-      EventHandling::registerForEvent("commandEvent", $this, "receiveCommand");
+      EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
+        "names");
       return true;
     }
   }

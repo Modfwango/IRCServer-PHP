@@ -29,46 +29,43 @@
       }
       $command = array_values($command);
 
-      if (strtolower($command[0]) == "user") {
-        if (count($command) >= 5) {
-          if (count($command) > 5) {
-            for ($i = (count($command) - 1); $i > 5; $i--) {
-              $command[$i - 1] = $command[$i - 1]." ".$command[$i];
-            }
+      if (count($command) >= 4) {
+        if (count($command) > 4) {
+          for ($i = (count($command) - 1); $i > 4; $i--) {
+            $command[$i - 1] = $command[$i - 1]." ".$command[$i];
           }
-          if ($connection->getOption("ident") == false) {
-            $connection->setOption("ident", substr($command[1], 0, 10));
-            $connection->setOption("realname", substr($command[4], 0, 50));
-            if ($connection->getOption("nick")) {
-              $connection->setOption("registered", true);
-              $event = EventHandling::getEventByName("userRegistrationEvent");
-              if ($event != false) {
-                foreach ($event[2] as $id => $registration) {
-                  // Trigger the userRegistrationEvent event for each registered
-                  // module.
-                  EventHandling::triggerEvent("userRegistrationEvent", $id,
-                      $connection);
-                }
+        }
+        if ($connection->getOption("ident") == false) {
+          $connection->setOption("ident", substr($command[0], 0, 10));
+          $connection->setOption("realname", substr($command[3], 0, 50));
+          if ($connection->getOption("nick")) {
+            $connection->setOption("registered", true);
+            $event = EventHandling::getEventByName("userRegistrationEvent");
+            if ($event != false) {
+              foreach ($event[2] as $id => $registration) {
+                // Trigger the userRegistrationEvent event for each registered
+                // module.
+                EventHandling::triggerEvent("userRegistrationEvent", $id,
+                    $connection);
               }
             }
           }
-          elseif ($connection->getOption("nick") != false) {
-            $connection->send(":".__SERVERDOMAIN__." 462 ".
-              $connection->getOption("nick")." :You may not reregister");
-          }
         }
-        else {
-          $connection->send(":".__SERVERDOMAIN__." 461 ".(
-            $connection->getOption("nick") ? $connection->getOption("nick") :
-            "*")." USER :Not enough parameters");
+        elseif ($connection->getOption("nick") != false) {
+          $connection->send(":".__SERVERDOMAIN__." 462 ".
+            $connection->getOption("nick")." :You may not reregister");
         }
-        return true;
       }
-      return false;
+      else {
+        $connection->send(":".__SERVERDOMAIN__." 461 ".(
+          $connection->getOption("nick") ? $connection->getOption("nick") :
+          "*")." USER :Not enough parameters");
+      }
     }
 
     public function isInstantiated() {
-      EventHandling::registerForEvent("commandEvent", $this, "receiveCommand");
+      EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
+        "user");
       EventHandling::registerAsEventPreprocessor("userRegistrationEvent", $this,
         "preprocessUserRegistration");
       return true;
