@@ -9,46 +9,45 @@
       return ":".$server." PONG ".$server." :".$subject;
     }
 
-    public function receiveCommand($name, $data) {
+    public function receivePingCommand($name, $data) {
       $connection = $data[0];
       $command = $data[1];
 
-      if (strtolower($command[0]) == "ping") {
-        if (count($command) == 2) {
+      if (count($command) == 1) {
+        $connection->send(
+          $this->getPingResponse(__SERVERDOMAIN__, $command[0]));
+      }
+      elseif (count($command) > 1) {
+        if (strtolower($command[1]) == strtolower(__SERVERDOMAIN__)) {
           $connection->send(
-            $this->getPingResponse(__SERVERDOMAIN__, $command[1]));
-        }
-        elseif (count($command) > 2) {
-          if (strtolower($command[2]) == strtolower(__SERVERDOMAIN__)) {
-            $connection->send(
-              $this->getPingResponse(__SERVERDOMAIN__, $command[1]));
-          }
-          else {
-            $connection->send(":".__SERVERDOMAIN__." 402 ".
-              $connection->getOption("nick")." ".$command[2].
-              " :No such server");
-          }
+            $this->getPingResponse(__SERVERDOMAIN__, $command[0]));
         }
         else {
-          $connection->send(":".__SERVERDOMAIN__." 409 ".
-            $connection->getOption("nick")." :No origin specified");
+          $connection->send(":".__SERVERDOMAIN__." 402 ".
+            $connection->getOption("nick")." ".$command[1].
+            " :No such server");
         }
-        return true;
       }
-      if (strtolower($command[0]) == "pong") {
-        if (strtolower($command[1]) == strtolower(__SERVERDOMAIN__)) {
-          $this->responses[$connection->getOption("id")] = true;
-        }
-        return true;
+      else {
+        $connection->send(":".__SERVERDOMAIN__." 409 ".
+          $connection->getOption("nick")." :No origin specified");
       }
-      return false;
+    }
+
+    public function receivePongCommand($name, $data) {
+      $connection = $data[0];
+      $command = $data[1];
+
+      if (strtolower($command[0]) == strtolower(__SERVERDOMAIN__)) {
+        $this->responses[$connection->getOption("id")] = true;
+      }
     }
 
     public function receiveUserRegistration($name, $connection) {
       if ($connection->getType() != "2") {
         $this->responses[$connection->getOption("id")] = true;
-        ModuleManagement::getModuleByName("Timer")->newTimer(__PINGTIME__, $this,
-          "sendPingRequest", $connection);
+        ModuleManagement::getModuleByName("Timer")->newTimer(__PINGTIME__,
+          $this, "sendPingRequest", $connection);
       }
       return true;
     }
@@ -77,7 +76,10 @@
 
     public function isInstantiated() {
       $this->quit = ModuleManagement::getModuleByName("QUIT");
-      EventHandling::registerForEvent("commandEvent", $this, "receiveCommand");
+      EventHandling::registerForEvent("commandEvent", $this,
+        "receivePingCommand", "ping");
+      EventHandling::registerForEvent("commandEvent", $this,
+        "receivePongCommand", "pong");
       EventHandling::registerForEvent("userRegistrationEvent", $this,
         "receiveUserRegistration");
       return true;
