@@ -58,7 +58,7 @@
           if (isset($row[$by]) && (($ci == false && $row[$by] === $value)
               || ($ci == true && strtolower($row[$by]) ===
               strtolower($value)))) {
-            $ret[] = array();
+            $ret[] = $row;
           }
         }
         return $ret;
