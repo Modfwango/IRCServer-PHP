@@ -21,16 +21,16 @@
                 $source->send(":".$target->getOption("nick")."!".
                   $target->getOption("ident")."@".$target->getHost()." ".
                   "PRIVMSG ".$source->getOption("nick")." :Your current ".
-                  "nickname is now registered with the email address \"".
-                  $params[1]."\"");
+                  "nickname is now registered with the email address \002".
+                  $params[1]."\002.");
               }
               else {
                 // Problem registering account.
                 $source->send(":".$target->getOption("nick")."!".
                   $target->getOption("ident")."@".$target->getHost()." ".
                   "PRIVMSG ".$source->getOption("nick")." :Unfortunately, ".
-                  "there was a problem registering your account.  Please try ".
-                  "again later.");
+                  "there was an internal problem registering your account.  ".
+                  "Please try again later.");
               }
             }
             else {
@@ -56,6 +56,14 @@
             $source->getOption("nick")." :This nickname is already ".
             "registered.");
         }
+      }
+      else {
+        // Not enough parameters.
+        $source->send(":".$target->getOption("nick")."!".
+          $target->getOption("ident")."@".$target->getHost()." ".
+          "PRIVMSG ".$source->getOption("nick")." :This command requires more ".
+          "parameters.  Refer to /msg NickServ HELP <command> for correct ".
+          "usage.");
       }
     }
 
@@ -85,6 +93,7 @@
     private function registerAccount($name, $password, $email) {
       // Prepare the row.
       $account = array(
+        "guid" => $this->util->genUUID(),
         "name" => $name,
         "nicks" => array($name),
         "password" => $password,
