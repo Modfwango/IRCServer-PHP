@@ -98,7 +98,11 @@
       }
     }
 
-    public function getAccount($account) {
+    public function receiveUserQuit($name, $data) {
+      $data[0]->setOption("loggedin", false);
+    }
+
+    private function getAccount($account) {
       // Load a list of accounts with provided account name.
       $accounts = $this->db->getRows("nickserv", "accounts", "name", $account,
         true);
@@ -123,7 +127,7 @@
       return false;
     }
 
-    public function getAccountByID($id) {
+    private function getAccountByID($id) {
       // Load a list of accounts with provided account id.
       $accounts = $this->db->getRows("nickserv", "accounts", "guid", $id, true);
       // If a result was found, return it.
@@ -156,6 +160,8 @@
       EventHandling::registerForEvent("nsCommandEvent", $this,
         "receiveNickServCommand", array("login", "A command alias for ".
           "IDENTIFY.", null));
+      EventHandling::registerForEvent("userQuitEvent", $this,
+        "receiveUserQuit");
       return true;
     }
   }
