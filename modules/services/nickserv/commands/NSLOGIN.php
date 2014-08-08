@@ -1,9 +1,8 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Database", "NSClient", "Util");
+    public $depend = array("Database", "NSClient");
     public $name = "NSLOGIN";
     private $db = null;
-    private $util = null;
 
     public function receiveNickServCommand($name, $data) {
       $source = $data[0];
@@ -148,7 +147,6 @@
       if (!$this->db->tableExists("nickserv", "accounts")) {
         $this->db->createTable("nickserv", "accounts");
       }
-      $this->util = ModuleManagement::getModuleByName("Util");
       EventHandling::registerForEvent("nsCommandEvent", $this,
         "receiveNickServCommand", array("identify", "Allows you to login to ".
           "your account.\nUsage: /msg NickServ IDENTIFY [account] <password>",
