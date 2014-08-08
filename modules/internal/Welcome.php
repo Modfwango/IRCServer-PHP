@@ -114,10 +114,11 @@
       if ($event != false) {
         foreach ($event[2] as $id => $registration) {
           // Trigger the commandEvent event for each registered module.
-          EventHandling::triggerEvent("commandEvent", $id, array($connection,
-            array("LUSERS")));
-          EventHandling::triggerEvent("commandEvent", $id, array($connection,
-            array("MOTD")));
+          if (in_array(strtolower(trim($registration[2])),
+              array("lusers", "motd"))) {
+            EventHandling::triggerEvent("commandEvent", $id, array($connection,
+              array()));
+          }
         }
       }
     }
