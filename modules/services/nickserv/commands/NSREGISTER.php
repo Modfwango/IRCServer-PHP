@@ -15,9 +15,11 @@
           if (strlen($params[0]) > 7) {
             if ($this->util->validateEmail($params[1])) {
               // Register the nickname.
-              if ($this->registerAccount($source->getOption("nick"),
-                password_hash($params[0], PASSWORD_BCRYPT), $params[1])) {
+              $account = $this->registerAccount($source->getOption("nick"),
+                password_hash($params[0], PASSWORD_BCRYPT), $params[1]);
+              if ($account != false) {
                 // Success!
+                $source->setOption("loggedin", $account);
                 $source->send(":".$target->getOption("nick")."!".
                   $target->getOption("ident")."@".$target->getHost()." ".
                   "PRIVMSG ".$source->getOption("nick")." :Your current ".
@@ -102,7 +104,7 @@
       // Attempt to add the row to the accounts table.
       if ($this->db->addRow("nickserv", "accounts", $account)) {
         // Success!
-        return true;
+        return $account["guid"];
       }
       // Failure.
       return false;
