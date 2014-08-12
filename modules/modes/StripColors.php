@@ -45,8 +45,8 @@
       $modes = $this->channel->hasModes($channel["name"],
         array("StripColors"));
       if ($modes != false) {
-        $message = preg_replace("/[\x02\x1F\x0F\x16]|\x03(\d\d?(,\d\d?)?)?/",
-          null, $message);
+        $message = preg_replace("/((\x03(?:\d{1,2}(?:,\d{1,2})?)?)|([\x00\x02".
+          "\x03\x04\x06\x07\x0F\x16\x17\x1B\x1D\x1F\x20]))/", null, $message);
         $data[2] = $message;
         return array(null, $data);
       }
