@@ -269,7 +269,9 @@
       Logger::info(var_export($string, true));
       $regex = str_replace(array("*", "?"), array(".*", "."),
         preg_quote($pattern));
-      return preg_match('/^'.$regex.'$/i', $string);
+      $ret = preg_match('/^'.$regex.'$/i', $string);
+      Logger::info(var_export($ret, true));
+      return $ret;
     }
 
     public function receiveNickChange($name, $data) {
