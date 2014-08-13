@@ -51,19 +51,23 @@
       $source = $data[0];
       $channel = $data[1];
 
-      $modes = $this->channel->hasModes($channel["name"],
+      if (is_array($channel)) {
+        $channel = $channel["name"];
+      }
+
+      $modes = $this->channel->hasModes($channel,
         array("ChannelBan"));
       if ($modes != false) {
         foreach ($modes as $mode) {
           if ($this->client->clientMatchesMask($source, $mode["param"])) {
             if ($name == "channelMessageEvent") {
               $source->send(":".__SERVERDOMAIN__." 404 ".
-                $source->getOption("nick")." ".$channel["name"].
+                $source->getOption("nick")." ".$channel.
                 " :Cannot send to channel");
             }
             if ($name == "channelJoinEvent") {
               $source->send(":".__SERVERDOMAIN__." 474 ".
-                $source->getOption("nick")." ".$channel["name"].
+                $source->getOption("nick")." ".$channel.
                 " :Cannot join channel (+b) - you are banned");
             }
             return array(false);
