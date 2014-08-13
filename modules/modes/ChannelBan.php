@@ -1,6 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Channel", "Client", "ChannelModeEvent", "Modes");
+    public $depend = array("Channel", "Client", "ChannelJoinEvent",
+      "ChannelMessageEvent", "ChannelModeEvent", "Modes");
     public $name = "ChannelBan";
     private $channel = null;
     private $client = null;
@@ -60,6 +61,21 @@
       if ($modes != false) {
         foreach ($modes as $mode) {
           if ($this->client->clientMatchesMask($source, $mode["param"])) {
+            // Allow for dynamic ban exceptions.
+            $event = EventHandling::getEventByName(
+              "banShouldPreventActionEvent");
+            if ($event != false) {
+              foreach ($event[2] as $id => $registration) {
+                // Trigger the channelJoinEvent event for each registered
+                // module.
+                if (!EventHandling::triggerEvent("banShouldPreventActionEvent",
+                    $id, array($name, $connection, $channel))) {
+                  return array(true);
+                }
+              }
+            }
+
+            // Prevent the action, and inform the user.
             if ($name == "channelMessageEvent") {
               $source->send(":".__SERVERDOMAIN__." 404 ".
                 $source->getOption("nick")." ".$channel.
@@ -83,6 +99,7 @@
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
       $this->modes->setMode(array("ChannelBan", "b", "0", "3"));
+      EventHandling::createEvent("banShouldPreventActionEvent", $this);
       EventHandling::registerAsEventPreprocessor("channelJoinEvent", $this,
         "receiveChannelEvent");
       EventHandling::registerAsEventPreprocessor("channelMessageEvent", $this,
