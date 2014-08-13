@@ -70,6 +70,7 @@
     public function receiveCommand($name, $data) {
       $connection = $data[0];
       $command = $data[1];
+      Logger::info(var_export($command, true));
 
       foreach ($command as $key => $param) {
         if (trim($param) == null) {
