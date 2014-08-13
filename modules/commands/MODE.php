@@ -82,7 +82,7 @@
         if (count($command) > 0) {
           if (count($command) > 1) {
             if (count($command) > 2) {
-              for ($i = 3; $i < count($command); $i++) {
+              for ($i = 2; $i < count($command); $i++) {
                 $command[1] .= " ".$command[$i];
               }
             }
