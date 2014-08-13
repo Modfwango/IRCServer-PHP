@@ -57,44 +57,149 @@
         $this->clients["byrealname"][strtolower($realname)] : false);
     }
 
-    public function getClientsByMatchingHost($pattern) {
+    public function getClientIDsByMatchingHost($pattern) {
       $clients = array();
       foreach ($this->clients["byhost"] as $host => $id) {
         if ($this->matchGlob($pattern, $host)) {
-          $clients[] = $this->getClientByID($id);
+          $clients[] = $id;
         }
+      }
+      return $clients;
+    }
+
+    public function getClientIDsByMatchingIdent($pattern) {
+      $clients = array();
+      foreach ($this->clients["byident"] as $ident => $id) {
+        if ($this->matchGlob($pattern, $ident)) {
+          $clients[] = $id;
+        }
+      }
+      return $clients;
+    }
+
+    public function getClientIDsByMatchingMask($mask) {
+      $mask = $this->getPrettyMask($mask);
+      $nick = explode("!", $mask);
+      $ident = explode("@", array_pop($nick));
+      $nick = array_shift($nick);
+      $host = array_pop($ident);
+      $ident = array_shift($ident);
+
+      $matches = array_unique(array_merge(
+        $this->getClientIDsByMatchingNick($nick),
+        $this->getClientIDsByMatchingIdent($ident),
+        $this->getClientIDsByMatchingHost($host)));
+      return $matches;
+    }
+
+    public function getClientIDsByMatchingNick($pattern) {
+      $clients = array();
+      foreach ($this->clients["bynick"] as $nick => $id) {
+        if ($this->matchGlob($pattern, $nick)) {
+          $clients[] = $id;
+        }
+      }
+      return $clients;
+    }
+
+    public function getClientIDsByMatchingRealname($pattern) {
+      $clients = array();
+      foreach ($this->clients["byrealname"] as $realname => $id) {
+        if ($this->matchGlob($pattern, $realname)) {
+          $clients[] = $id;
+        }
+      }
+      return $clients;
+    }
+
+    public function getClientsByMatchingHost($pattern) {
+      $clients = array();
+      foreach ($this->getClientIDsByMatchingHost($pattern) as $id) {
+        $clients[] = $this->getClientByID($id);
       }
       return $clients;
     }
 
     public function getClientsByMatchingIdent($pattern) {
       $clients = array();
-      foreach ($this->clients["byident"] as $ident => $id) {
-        if ($this->matchGlob($pattern, $ident)) {
-          $clients[] = $this->getClientByID($id);
-        }
+      foreach ($this->getClientIDsByMatchingIdent($pattern) as $id) {
+        $clients[] = $this->getClientByID($id);
+      }
+      return $clients;
+    }
+
+    public function getClientsByMatchingMask($pattern) {
+      $clients = array();
+      foreach ($this->getClientIDsByMatchingMask($pattern) as $id) {
+        $clients[] = $this->getClientByID($id);
       }
       return $clients;
     }
 
     public function getClientsByMatchingNick($pattern) {
       $clients = array();
-      foreach ($this->clients["bynick"] as $nick => $id) {
-        if ($this->matchGlob($pattern, $nick)) {
-          $clients[] = $this->getClientByID($id);
-        }
+      foreach ($this->getClientIDsByMatchingNick($pattern) as $id) {
+        $clients[] = $this->getClientByID($id);
       }
       return $clients;
     }
 
     public function getClientsByMatchingRealname($pattern) {
       $clients = array();
-      foreach ($this->clients["byrealname"] as $realname => $id) {
-        if ($this->matchGlob($pattern, $realname)) {
-          $clients[] = $this->getClientByID($id);
-        }
+      foreach ($this->getClientIDsByMatchingRealname($pattern) as $id) {
+        $clients[] = $this->getClientByID($id);
       }
       return $clients;
+    }
+
+    public function getPrettyMask($mask) {
+      $nick = "*";
+      $ident = "*";
+      $host = "*";
+      if (stristr($mask, "!") && stristr($mask, "@")) {
+        preg_match("/(.*)!(.*)@(.*)/i", $mask, $matches);
+        if (trim($matches[1]) != null) {
+          $nick = str_ireplace("!", null, str_ireplace("@", null, $matches[1]));
+        }
+        if (trim($matches[2]) != null) {
+          $ident = str_ireplace("!", null, str_ireplace("@", null,
+            $matches[2]));
+        }
+        if (trim($matches[3]) != null) {
+          $host = str_ireplace("!", null, str_ireplace("@", null, $matches[3]));
+        }
+      }
+      elseif (stristr($mask, "!")) {
+        preg_match("/(.*)!(.*)/i", $mask, $matches);
+        if (trim($matches[1]) != null) {
+          $nick = str_ireplace("!", null, str_ireplace("@", null, $matches[1]));
+        }
+        if (trim($matches[2]) != null) {
+          $ident = str_ireplace("!", null, str_ireplace("@", null,
+            $matches[2]));
+        }
+      }
+      elseif (stristr($mask, "@")) {
+        preg_match("/(.*)@(.*)/i", $mask, $matches);
+        if (trim($matches[1]) != null) {
+          $ident = str_ireplace("!", null, str_ireplace("@", null,
+            $matches[1]));
+        }
+        if (trim($matches[2]) != null) {
+          $host = str_ireplace("!", null, str_ireplace("@", null, $matches[2]));
+        }
+      }
+      else {
+        if (trim($mask) != null) {
+          if (stristr($mask, ".")) {
+            $host = str_ireplace("!", null, str_ireplace("@", null, $mask));
+          }
+          else {
+            $nick = str_ireplace("!", null, str_ireplace("@", null, $mask));
+          }
+        }
+      }
+      return $nick."!".$ident."@".$host;
     }
 
     public function hasModes($id, $modes) {
