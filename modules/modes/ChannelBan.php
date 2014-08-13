@@ -20,8 +20,8 @@
         }
       }
       foreach ($modes as $key => &$mode) {
-        $mode["param"] = $this->client->getPrettyMask($mode["param"]);
         if ($mode["name"] == "ChannelBan") {
+          $mode["param"] = $this->client->getPrettyMask($mode["param"]);
           if (!isset($h[strtolower($mode["param"])])) {
             $h[strtolower($mode["param"])] = false;
           }
