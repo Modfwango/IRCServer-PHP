@@ -63,6 +63,7 @@
           }
         }
       }
+      Logger::info(var_export($modes, true));
       return $modes;
     }
 
