@@ -69,7 +69,7 @@
                 // Trigger the channelJoinEvent event for each registered
                 // module.
                 if (!EventHandling::triggerEvent("banShouldPreventActionEvent",
-                    $id, array($name, $connection, $channel))) {
+                    $id, array($name, $source, $channel))) {
                   return array(true);
                 }
               }
