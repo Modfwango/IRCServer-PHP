@@ -29,8 +29,8 @@
       // If the client's nick, ident, and host match the provided mask,
       // return true.
       if ($this->matchGlob($nick, $client->getOption("nick"))
-          && $this->matchGlob($nick, $client->getOption("ident"))
-          && $this->matchGlob($nick, $client->getHost())) {
+          && $this->matchGlob($ident, $client->getOption("ident"))
+          && $this->matchGlob($host, $client->getHost())) {
         return true;
       }
       return false;
