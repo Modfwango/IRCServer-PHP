@@ -267,7 +267,7 @@
     private function matchGlob($pattern, $string) {
       Logger::info(var_export($pattern, true));
       Logger::info(var_export($string, true));
-      $regex = str_replace(array("*", "?"), array(".*", "."),
+      $regex = str_replace(array("\\*", "\\?"), array(".*", "."),
         preg_quote($pattern));
       Logger::info(var_export($regex, true));
       $ret = preg_match('/^'.$regex.'$/i', $string);
