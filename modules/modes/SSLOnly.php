@@ -76,7 +76,7 @@
       $modes = $this->channel->hasModes($channel, array("SSLOnly"));
       if ($modes != false && $source->getSSL() == false) {
         $source->send(":".__SERVERDOMAIN__." 489 ".$source->getOption("nick").
-          " ".$channel." :Cannot join channel; SSL users only (+z)");
+          " ".$channel." :Cannot join channel; SSL users only (+S)");
         return array(false);
       }
     }
@@ -85,7 +85,7 @@
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
-      $this->modes->setMode(array("SSLOnly", "z", "0", "0"));
+      $this->modes->setMode(array("SSLOnly", "S", "0", "0"));
       EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
         "receiveChannelMode");
       EventHandling::registerAsEventPreprocessor("channelJoinEvent", $this,
