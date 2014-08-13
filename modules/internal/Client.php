@@ -269,6 +269,7 @@
       Logger::info(var_export($string, true));
       $regex = str_replace(array("*", "?"), array(".*", "."),
         preg_quote($pattern));
+      Logger::info(var_export($regex, true));
       $ret = preg_match('/^'.$regex.'$/i', $string);
       Logger::info(($ret ? "true" : "false"));
       return $ret;
