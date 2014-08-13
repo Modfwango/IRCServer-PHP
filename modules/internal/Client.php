@@ -270,7 +270,7 @@
       $regex = str_replace(array("*", "?"), array(".*", "."),
         preg_quote($pattern));
       $ret = preg_match('/^'.$regex.'$/i', $string);
-      Logger::info(var_export($ret, true));
+      Logger::info(($ret ? "true" : "false"));
       return $ret;
     }
 
