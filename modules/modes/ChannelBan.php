@@ -43,6 +43,7 @@
           }
         }
       }
+      Logger::info(var_export($modes, true));
       $data[2] = $modes;
       return array(null, $data);
     }
