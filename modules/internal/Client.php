@@ -7,6 +7,47 @@
       "byid" => array(), "bynick" => array(), "byrealname" => array());
     private $modes = null;
 
+    public function clientHostMatchesPattern($client, $pattern) {
+      // Check if the client's host matches the provided glob pattern.
+      return ($this->matchGlob($pattern, $client->getHost()) ? true : false);
+    }
+
+    public function clientIdentMatchesPattern($client, $pattern) {
+      // Check if the client's ident matches the provided glob pattern.
+      return ($this->matchGlob($pattern, $client->getOption("ident")) ? true :
+        false);
+    }
+
+    public function clientMatchesMask($client, $mask) {
+      $mask = $this->getPrettyMask($mask);
+      $nick = explode("!", $mask);
+      $ident = explode("@", array_pop($nick));
+      $nick = array_shift($nick);
+      $host = array_pop($ident);
+      $ident = array_shift($ident);
+
+      // If the client's nick, ident, and host match the provided mask,
+      // return true.
+      if ($this->matchGlob($nick, $client->getOption("nick"))
+          && $this->matchGlob($nick, $client->getOption("ident"))
+          && $this->matchGlob($nick, $client->getHost())) {
+        return true;
+      }
+      return false;
+    }
+
+    public function clientNickMatchesPattern($client, $pattern) {
+      // Check if the client's nick matches the provided glob pattern.
+      return ($this->matchGlob($pattern, $client->getOption("nick")) ? true :
+        false);
+    }
+
+    public function clientRealnameMatchesPattern($client, $pattern) {
+      // Check if the client's realname matches the provided glob pattern.
+      return ($this->matchGlob($pattern, $client->getOption("realname")) ?
+        true : false);
+    }
+
     public function getClientByHost($host) {
       // Retrieve the requested client if it exists, otherwise return false.
       return $this->getClientByID($this->getClientIDByHost($host));

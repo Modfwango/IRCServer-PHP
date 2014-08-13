@@ -47,11 +47,42 @@
       return array(null, $data);
     }
 
+    public function receiveChannelEvent($name, $id, $data) {
+      $source = $data[0];
+      $channel = $data[1];
+
+      $modes = $this->channel->hasModes($channel["name"],
+        array("ChannelBan"));
+      if ($modes != false) {
+        foreach ($modes as $mode) {
+          if ($this->client->clientMatchesMask($source, $mode["param"])) {
+            if ($name == "channelMessageEvent") {
+              $source->send(":".__SERVERDOMAIN__." 404 ".
+                $source->getOption("nick")." ".$channel["name"].
+                " :Cannot send to channel");
+            }
+            if ($name == "channelJoinEvent") {
+              $source->send(":".__SERVERDOMAIN__." 474 ".
+                $source->getOption("nick")." ".$channel["name"].
+                " :Cannot join channel (+b) - you are banned");
+            }
+            return array(false);
+          }
+        }
+      }
+
+      return array(true);
+    }
+
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
       $this->modes->setMode(array("ChannelBan", "b", "0", "3"));
+      EventHandling::registerAsEventPreprocessor("channelJoinEvent", $this,
+        "receiveChannelEvent");
+      EventHandling::registerAsEventPreprocessor("channelMessageEvent", $this,
+        "receiveChannelEvent");
       EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
         "receiveChannelMode");
       return true;
