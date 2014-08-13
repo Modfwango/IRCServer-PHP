@@ -125,6 +125,7 @@
                     " :You're not a channel operator");
                 }
                 else {
+                  // TODO: Move this logic to individual list mode modules.
                   // Use as a filter to list modes for this channel.
                   $connection->send(":".__SERVERDOMAIN__." 368 ".
                     $connection->getOption("nick")." ".$channel["name"].
