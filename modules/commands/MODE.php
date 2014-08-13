@@ -63,7 +63,6 @@
           }
         }
       }
-      Logger::info(var_export($modes, true));
       return $modes;
     }
 
@@ -86,7 +85,6 @@
                 $command[1] .= " ".$command[$i];
               }
             }
-            Logger::info(var_export($command, true));
 
             $channel = $this->channel->getChannelByName($command[0]);
             $client = $this->client->getClientByNick($command[0]);

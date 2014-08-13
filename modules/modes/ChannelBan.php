@@ -21,9 +21,7 @@
       }
       foreach ($modes as $key => &$mode) {
         if ($mode["name"] == "ChannelBan") {
-          Logger::info(var_export($mode, true));
           $mode["param"] = $this->client->getPrettyMask($mode["param"]);
-          Logger::info(var_export($mode, true));
           if (!isset($h[strtolower($mode["param"])])) {
             $h[strtolower($mode["param"])] = false;
           }
@@ -45,7 +43,6 @@
           }
         }
       }
-      Logger::info(var_export($modes, true));
       $data[2] = $modes;
       return array(null, $data);
     }
