@@ -1,7 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("Channel", "ChannelOperator", "Client",
-      "CommandEvent");
+      "ChannelInviteEvent", "CommandEvent");
     public $name = "INVITE";
     private $channel = null;
     private $client = null;
@@ -38,8 +38,8 @@
                     if ($event != false) {
                       foreach ($event[2] as $id => $registration) {
                         // Trigger the
-                        // lackOfChannelOperatorShouldPreventInvitationEvent event
-                        // for each registered module.
+                        // lackOfChannelOperatorShouldPreventInvitationEvent
+                        // event for each registered module.
                         if (!EventHandling::triggerEvent(
                             "lackOfChannelOperatorShouldPreventInvitationEvent",
                             $id, array($connection, $recipient, $c))) {
@@ -58,13 +58,16 @@
                       }
                     }
                     if ($canInvite == true) {
-                      $recipient->send(":".$connection->getOption("nick")."!".
-                        $connection->getOption("ident")."@".
-                        $connection->getOption("nick")." INVITE ".
-                        $recipient->getOption("nick")." :".$target);
-                      $connection->send(":".__SERVERDOMAIN__." 341 ".
-                        $connection->getOption("nick")." ".
-                        $recipient->getOption("nick")." ".$target);
+                      $event = EventHandling::getEventByName(
+                        "channelInviteEvent");
+                      if ($event != false) {
+                        foreach ($event[2] as $id => $registration) {
+                          // Trigger the channelInviteEvent event for each
+                          // registered module.
+                          EventHandling::triggerEvent("channelInviteEvent", $id,
+                            array($connection, $recipient, $target));
+                        }
+                      }
                     }
                     else {
                       $connection->send(":".__SERVERDOMAIN__." 482 ".

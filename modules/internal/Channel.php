@@ -1,8 +1,9 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("ChannelJoinEvent", "ChannelMessageEvent",
-      "ChannelModeEvent", "ChannelPartEvent", "ChannelTopicEvent", "Client",
-      "Modes", "NickChangeEvent", "UserQuitEvent");
+    public $depend = array("ChannelCreatedEvent", "ChannelInviteEvent",
+      "ChannelJoinEvent", "ChannelMessageEvent", "ChannelModeEvent",
+      "ChannelPartEvent", "ChannelTopicEvent", "Client", "Modes",
+      "NickChangeEvent", "UserQuitEvent");
     public $name = "Channel";
     private $client = null;
     private $channels = array();
@@ -102,6 +103,28 @@
       return true;
     }
 
+    public function receiveChannelInvite($name, $data) {
+      $source = $data[0];
+      $recipient = $data[1];
+      $target = $data[2];
+
+      $channel = $this->getChannelByName($target);
+      if ($channel != false) {
+        if (!isset($channel["invites"])) {
+          $channel["invites"] = array();
+        }
+        $channel["invites"][] = $recipient->getOption("nick");
+        $this->setChannel($channel);
+        $recipient->send(":".$source->getOption("nick")."!".
+          $source->getOption("ident")."@".$source->getOption("nick")." INVITE ".
+          $recipient->getOption("nick")." :".$target);
+        $source->send(":".__SERVERDOMAIN__." 341 ".$source->getOption("nick").
+          " ".$recipient->getOption("nick")." ".$target);
+        return true;
+      }
+      return false;
+    }
+
     public function receiveChannelJoin($name, $data) {
       $source = $data[0];
       $target = $data[1];
@@ -109,12 +132,17 @@
       if (!$this->clientIsOnChannel($source->getOption("id"), $target)) {
         $channel = $this->getChannelByName($target);
         if ($channel != false) {
+          if (in_array($source->getOption("nick"), $channel["invites"])) {
+            $channel["invites"] = array_diff($channel["invites"],
+              array($source->getOption("nick")));
+          }
           $channel["members"][] = $source->getOption("id");
           $this->setChannel($channel);
         }
         else {
           $channel = array(
             "name" => $target,
+            "modes" => array(),
             "members" => array($source->getOption("id")),
             "created" => time()
           );
@@ -317,7 +345,12 @@
       $oldnick = $data[1];
 
       $targets = array();
-      foreach ($this->channels as $channel) {
+      foreach ($this->channels as &$channel) {
+        if (in_array($source->getOption("nick"), $channel["invites"])) {
+          $channel["invites"] = array_diff($channel["invites"],
+            array($oldnick));
+          $channel["invites"][] = $source->getOption("nick");
+        }
         if ($this->clientIsOnChannel($source->getOption("id"),
             $channel["name"])) {
           $targets = array_values(array_unique(array_merge(
@@ -346,10 +379,14 @@
 
       $targets = array();
       foreach ($this->channels as $key => &$channel) {
+        if (in_array($source->getOption("nick"), $channel["invites"])) {
+          $channel["invites"] = array_diff($channel["invites"],
+            array($source->getOption("nick")));
+        }
         if ($this->clientIsOnChannel($source->getOption("id"),
             $channel["name"])) {
           $channel["members"] = array_diff($channel["members"],
-            array($source->getOption("id")));
+            array($source->getOption("nick")));
           $targets = array_values(array_unique(array_merge(
             array_values($targets), array_values($channel["members"]))));
           if (count($channel["members"]) == 0) {
@@ -381,6 +418,8 @@
       $this->modes = ModuleManagement::getModuleByName("Modes");
       EventHandling::registerForEvent("channelCreatedEvent", $this,
         "receiveChannelCreated");
+      EventHandling::registerForEvent("channelInviteEvent", $this,
+        "receiveChannelInvite");
       EventHandling::registerForEvent("channelJoinEvent", $this,
         "receiveChannelJoin");
       EventHandling::registerForEvent("channelMessageEvent", $this,
