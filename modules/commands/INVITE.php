@@ -1,6 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Channel", "Client", "CommandEvent");
+    public $depend = array("Channel", "ChannelOperator", "Client",
+      "CommandEvent");
     public $name = "INVITE";
     private $channel = null;
     private $client = null;
@@ -47,6 +48,8 @@
                     }
                   }
                   if ($canInvite == false) {
+                    $has = $this->channel->hasModes($c["name"],
+                      array("ChannelOperator"));
                     foreach ($has as $mode) {
                       if ($mode["param"] == $connection->getOption("id")) {
                         $canInvite = true;
