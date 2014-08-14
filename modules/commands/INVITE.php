@@ -48,8 +48,6 @@
                   $has = $this->channel->hasModes($target,
                     array("ChannelOperator"));
                   foreach ($has as $mode) {
-                    Logger::info($mode["param"]);
-                    Logger::info($connection->getOption("nick"));
                     if ($mode["param"] == $connection->getOption("nick")) {
                       $canInvite = true;
                     }
@@ -118,8 +116,7 @@
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       EventHandling::createEvent(
-        "lackOfChannelOperatorShouldPreventInvitationEvent", $this,
-        "receiveBanShouldPreventAction");
+        "lackOfChannelOperatorShouldPreventInvitationEvent", $this);
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "invite");
       return true;
