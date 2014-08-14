@@ -116,7 +116,7 @@
         $channel["invites"][] = $recipient->getOption("nick");
         $this->setChannel($channel);
         $recipient->send(":".$source->getOption("nick")."!".
-          $source->getOption("ident")."@".$source->getOption("nick")." INVITE ".
+          $source->getOption("ident")."@".$source->getHost()." INVITE ".
           $recipient->getOption("nick")." :".$target);
         $source->send(":".__SERVERDOMAIN__." 341 ".$source->getOption("nick").
           " ".$recipient->getOption("nick")." ".$target);
