@@ -110,9 +110,6 @@
 
       $channel = $this->getChannelByName($target);
       if ($channel != false) {
-        if (!isset($channel["invites"])) {
-          $channel["invites"] = array();
-        }
         $channel["invites"][] = $recipient->getOption("nick");
         $this->setChannel($channel);
         $recipient->send(":".$source->getOption("nick")."!".
@@ -142,6 +139,7 @@
         else {
           $channel = array(
             "name" => $target,
+            "invites" => array(),
             "modes" => array(),
             "members" => array($source->getOption("id")),
             "created" => time()
