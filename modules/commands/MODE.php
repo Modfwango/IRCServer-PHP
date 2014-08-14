@@ -111,7 +111,8 @@
                 }
               }
               if ($opped == false) {
-                $okay = true;
+                // TODO: Move this logic to individual list mode modules.
+                $okay = false;
                 $ms = $this->modes->getModeNamesByType("3");
                 foreach (str_split($command[1]) as $mode) {
                   $m = $this->modes->getModeByChar("0", $mode);
@@ -125,7 +126,6 @@
                     " :You're not a channel operator");
                 }
                 else {
-                  // TODO: Move this logic to individual list mode modules.
                   // Use as a filter to list modes for this channel.
                   $connection->send(":".__SERVERDOMAIN__." 368 ".
                     $connection->getOption("nick")." ".$channel["name"].
