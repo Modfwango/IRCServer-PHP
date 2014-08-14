@@ -50,8 +50,9 @@
                   if ($canInvite == false) {
                     $has = $this->channel->hasModes($c["name"],
                       array("ChannelOperator"));
+                    Logger::info(var_export($has, true));
                     foreach ($has as $mode) {
-                      if ($mode["param"] == $connection->getOption("id")) {
+                      if ($mode["param"] == $connection->getOption("nick")) {
                         $canInvite = true;
                       }
                     }
