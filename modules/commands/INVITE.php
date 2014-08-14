@@ -28,46 +28,54 @@
             foreach ($targets as $target) {
               $c = $this->channel->getChannelByName($target);
               if ($c != false) {
-                if (!$this->channel->clientIsOnChannel(
+                if ($this->channel->clientIsOnChannel(
                     $connection->getOption("id"), $target)) {
-                  $canInvite = false;
-                  $event = EventHandling::getEventByName(
-                    "lackOfChannelOperatorShouldPreventInvitationEvent");
-                  if ($event != false) {
-                    foreach ($event[2] as $id => $registration) {
-                      // Trigger the
-                      // lackOfChannelOperatorShouldPreventInvitationEvent event
-                      // for each registered module.
-                      if (!EventHandling::triggerEvent(
-                          "lackOfChannelOperatorShouldPreventInvitationEvent",
-                          $id, array($connection, $recipient, $c))) {
-                        $canInvite = true;
-                        break;
+                  if (!$this->channel->clientIsOnChannel(
+                      $recipient->getOption("id"), $target)) {
+                    $canInvite = false;
+                    $event = EventHandling::getEventByName(
+                      "lackOfChannelOperatorShouldPreventInvitationEvent");
+                    if ($event != false) {
+                      foreach ($event[2] as $id => $registration) {
+                        // Trigger the
+                        // lackOfChannelOperatorShouldPreventInvitationEvent event
+                        // for each registered module.
+                        if (!EventHandling::triggerEvent(
+                            "lackOfChannelOperatorShouldPreventInvitationEvent",
+                            $id, array($connection, $recipient, $c))) {
+                          $canInvite = true;
+                          break;
+                        }
                       }
                     }
-                  }
-                  if ($canInvite == false) {
-                    $has = $this->channel->hasModes($target,
-                      array("ChannelOperator"));
-                    foreach ($has as $mode) {
-                      if ($mode["param"] == $connection->getOption("nick")) {
-                        $canInvite = true;
+                    if ($canInvite == false) {
+                      $has = $this->channel->hasModes($target,
+                        array("ChannelOperator"));
+                      foreach ($has as $mode) {
+                        if ($mode["param"] == $connection->getOption("nick")) {
+                          $canInvite = true;
+                        }
                       }
                     }
-                  }
-                  if ($canInvite == true) {
-                    $recipient->send(":".$connection->getOption("nick")."!".
-                      $connection->getOption("ident")."@".
-                      $connection->getOption("nick")." INVITE ".
-                      $recipient->getOption("nick")." :".$target);
-                    $connection->send(":".__SERVERDOMAIN__." 341 ".
-                      $connection->getOption("nick")." ".
-                      $recipient->getOption("nick")." ".$target);
+                    if ($canInvite == true) {
+                      $recipient->send(":".$connection->getOption("nick")."!".
+                        $connection->getOption("ident")."@".
+                        $connection->getOption("nick")." INVITE ".
+                        $recipient->getOption("nick")." :".$target);
+                      $connection->send(":".__SERVERDOMAIN__." 341 ".
+                        $connection->getOption("nick")." ".
+                        $recipient->getOption("nick")." ".$target);
+                    }
+                    else {
+                      $connection->send(":".__SERVERDOMAIN__." 482 ".
+                        $connection->getOption("nick")." ".$target.
+                        " :You're not a channel operator");
+                    }
                   }
                   else {
-                    $connection->send(":".__SERVERDOMAIN__." 482 ".
+                    $connection->send(":".__SERVERDOMAIN__." 442 ".
                       $connection->getOption("nick")." ".$target.
-                      " :You're not a channel operator");
+                      " :You're not on that channel");
                   }
                 }
                 else {
