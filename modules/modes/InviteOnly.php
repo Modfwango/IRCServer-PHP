@@ -41,34 +41,35 @@
       $source = $data[0];
       $channel = $data[1];
 
-      if (is_array($channel)) {
-        $channel = $channel["name"];
+      if (!is_array($channel)) {
+        $channel = $this->channel->getChannelByName($channel);
       }
 
       $modes = $this->channel->hasModes($channel,
         array("InviteOnly"));
       if ($modes != false) {
-        // TODO: Check for manual invites for this channel.
-        // Allow for dynamic invite exceptions.
-        $event = EventHandling::getEventByName(
-          "inviteOnlyShouldPreventJoinEvent");
-        if ($event != false) {
-          foreach ($event[2] as $id => $registration) {
-            // Trigger the inviteOnlyShouldPreventActionEvent event for each
-            // registered module.
-            if (!EventHandling::triggerEvent(
-                "inviteOnlyShouldPreventJoinEvent", $id, array($source,
-                $channel))) {
-              return array(true);
+        if (!in_array($source->getOption("nick"), $channel["invites"])) {
+          // Allow for dynamic invite exceptions.
+          $event = EventHandling::getEventByName(
+            "inviteOnlyShouldPreventJoinEvent");
+          if ($event != false) {
+            foreach ($event[2] as $id => $registration) {
+              // Trigger the inviteOnlyShouldPreventActionEvent event for each
+              // registered module.
+              if (!EventHandling::triggerEvent(
+                  "inviteOnlyShouldPreventJoinEvent", $id, array($source,
+                  $channel))) {
+                return array(true);
+              }
             }
           }
-        }
 
-        // Prevent the action, and inform the user.
-        $source->send(":".__SERVERDOMAIN__." 473 ".
-          $source->getOption("nick")." ".$channel.
-          " :Cannot join channel (+i) - you must be invited");
-        return array(false);
+          // Prevent the action, and inform the user.
+          $source->send(":".__SERVERDOMAIN__." 473 ".
+            $source->getOption("nick")." ".$channel.
+            " :Cannot join channel (+i) - you must be invited");
+          return array(false);
+        }
       }
 
       return array(true);
