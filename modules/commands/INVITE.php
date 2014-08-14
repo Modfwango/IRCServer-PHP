@@ -28,8 +28,8 @@
             foreach ($targets as $target) {
               $c = $this->channel->getChannelByName($target);
               if ($c != false) {
-                if (!$this->channel->clientIsOnChannel($client->getOption("id"),
-                    $target)) {
+                if (!$this->channel->clientIsOnChannel(
+                    $connection->getOption("id"), $target)) {
                   $canInvite = false;
                   $event = EventHandling::getEventByName(
                     "lackOfChannelOperatorShouldPreventInvitationEvent");
