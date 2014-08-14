@@ -120,7 +120,7 @@
         "lackOfChannelOperatorShouldPreventInvitationEvent", $this,
         "receiveBanShouldPreventAction");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
-        "part");
+        "invite");
       return true;
     }
   }
