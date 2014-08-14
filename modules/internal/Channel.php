@@ -384,7 +384,7 @@
         if ($this->clientIsOnChannel($source->getOption("id"),
             $channel["name"])) {
           $channel["members"] = array_diff($channel["members"],
-            array($source->getOption("nick")));
+            array($source->getOption("id")));
           $targets = array_values(array_unique(array_merge(
             array_values($targets), array_values($channel["members"]))));
           if (count($channel["members"]) == 0) {
