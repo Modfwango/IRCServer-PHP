@@ -51,13 +51,13 @@
         // TODO: Check for manual invites for this channel.
         // Allow for dynamic invite exceptions.
         $event = EventHandling::getEventByName(
-          "inviteOnlyShouldPreventActionEvent");
+          "inviteOnlyShouldPreventJoinEvent");
         if ($event != false) {
           foreach ($event[2] as $id => $registration) {
             // Trigger the inviteOnlyShouldPreventActionEvent event for each
             // registered module.
             if (!EventHandling::triggerEvent(
-                "inviteOnlyShouldPreventActionEvent", $id, array($source,
+                "inviteOnlyShouldPreventJoinEvent", $id, array($source,
                 $channel))) {
               return array(true);
             }
@@ -78,7 +78,7 @@
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->modes = ModuleManagement::getModuleByName("Modes");
       $this->modes->setMode(array("InviteOnly", "i", "0", "0"));
-      EventHandling::createEvent("inviteOnlyShouldPreventActionEvent", $this);
+      EventHandling::createEvent("inviteOnlyShouldPreventJoinEvent", $this);
       EventHandling::registerAsEventPreprocessor("channelJoinEvent", $this,
         "receiveChannelJoin");
       EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,

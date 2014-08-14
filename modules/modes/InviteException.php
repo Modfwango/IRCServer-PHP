@@ -52,6 +52,10 @@
       $source = $data[0];
       $channel = $data[1];
 
+      if (is_array($channel)) {
+        $channel = $channel["name"];
+      }
+
       $modes = $this->channel->hasModes($channel,
         array("InviteException"));
       if ($modes != false) {
@@ -75,7 +79,7 @@
         "3"));
       EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
         "receiveChannelMode");
-      EventHandling::registerForEvent("inviteOnlyShouldPreventActionEvent",
+      EventHandling::registerForEvent("inviteOnlyShouldPreventJoinEvent",
         $this, "receiveInviteOnlyShouldPreventAction");
       return true;
     }

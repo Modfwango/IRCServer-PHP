@@ -53,6 +53,10 @@
       $source = $data[1];
       $channel = $data[2];
 
+      if (is_array($channel)) {
+        $channel = $channel["name"];
+      }
+
       $modes = $this->channel->hasModes($channel,
         array("ChannelBanExemption"));
       if ($modes != false) {

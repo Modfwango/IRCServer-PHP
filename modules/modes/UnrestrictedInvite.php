@@ -36,6 +36,27 @@
       return array(null, $data);
     }
 
+    public function receiveLackOfChannelOperatorShouldPreventInvitation($name,
+        $data) {
+      $source = $data[0];
+      $target = $data[1];
+      $channel = $data[2];
+
+      if (is_array($channel)) {
+        $channel = $channel["name"];
+      }
+
+      $modes = $this->channel->hasModes($channel,
+        array("UnrestrictedInvite"));
+      if ($modes != false) {
+        // Ban is exempted.
+        return false;
+      }
+
+      // Ban is not exempted.
+      return true;
+    }
+
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->modes = ModuleManagement::getModuleByName("Modes");
