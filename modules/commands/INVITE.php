@@ -28,46 +28,41 @@
             foreach ($targets as $target) {
               $c = $this->channel->getChannelByName($target);
               if ($c != false) {
-                $has = $this->channel->hasModes($c["name"],
-                  array("ChannelOperator"));
-                if ($has != false) {
-                  $canInvite = false;
-                  $event = EventHandling::getEventByName(
-                    "lackOfChannelOperatorShouldPreventInvitationEvent");
-                  if ($event != false) {
-                    foreach ($event[2] as $id => $registration) {
-                      // Trigger the
-                      // lackOfChannelOperatorShouldPreventInvitationEvent event
-                      // for each registered module.
-                      if (!EventHandling::triggerEvent(
-                          "lackOfChannelOperatorShouldPreventInvitationEvent",
-                          $id, array($connection, $recipient, $c))) {
-                        $canInvite = true;
-                        break;
-                      }
+                $canInvite = false;
+                $event = EventHandling::getEventByName(
+                  "lackOfChannelOperatorShouldPreventInvitationEvent");
+                if ($event != false) {
+                  foreach ($event[2] as $id => $registration) {
+                    // Trigger the
+                    // lackOfChannelOperatorShouldPreventInvitationEvent event
+                    // for each registered module.
+                    if (!EventHandling::triggerEvent(
+                        "lackOfChannelOperatorShouldPreventInvitationEvent",
+                        $id, array($connection, $recipient, $c))) {
+                      $canInvite = true;
+                      break;
                     }
                   }
-                  if ($canInvite == false) {
-                    $has = $this->channel->hasModes($c["name"],
-                      array("ChannelOperator"));
-                    Logger::info(var_export($has, true));
-                    foreach ($has as $mode) {
-                      if ($mode["param"] == $connection->getOption("nick")) {
-                        $canInvite = true;
-                      }
+                }
+                if ($canInvite == false) {
+                  $has = $this->channel->hasModes($c["name"],
+                    array("ChannelOperator"));
+                  foreach ($has as $mode) {
+                    if ($mode["param"] == $connection->getOption("nick")) {
+                      $canInvite = true;
                     }
                   }
-                  if ($canInvite == true) {
-                    $recipient->send(":".$connection->getOption("nick")."!".
-                      $connection->getOption("ident")."@".
-                      $connection->getOption("nick")." INVITE ".
-                      $recipient->getOption("nick")." :".$c["name"]);
-                  }
-                  else {
-                    $connection->send(":".__SERVERDOMAIN__." 482 ".
-                      $connection->getOption("nick")." ".$target.
-                      " :You're not a channel operator");
-                  }
+                }
+                if ($canInvite == true) {
+                  $recipient->send(":".$connection->getOption("nick")."!".
+                    $connection->getOption("ident")."@".
+                    $connection->getOption("nick")." INVITE ".
+                    $recipient->getOption("nick")." :".$c["name"]);
+                }
+                else {
+                  $connection->send(":".__SERVERDOMAIN__." 482 ".
+                    $connection->getOption("nick")." ".$target.
+                    " :You're not a channel operator");
                 }
               }
               else {

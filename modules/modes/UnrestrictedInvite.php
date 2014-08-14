@@ -63,6 +63,9 @@
       $this->modes->setMode(array("UnrestrictedInvite", "g", "0", "0"));
       EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
         "receiveChannelMode");
+      EventHandling::registerForEvent(
+        "lackOfChannelOperatorShouldPreventInvitationEvent", $this,
+        "receiveLackOfChannelOperatorShouldPreventInvitation");
       return true;
     }
   }
