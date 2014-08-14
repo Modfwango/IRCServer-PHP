@@ -28,41 +28,53 @@
             foreach ($targets as $target) {
               $c = $this->channel->getChannelByName($target);
               if ($c != false) {
-                $canInvite = false;
-                $event = EventHandling::getEventByName(
-                  "lackOfChannelOperatorShouldPreventInvitationEvent");
-                if ($event != false) {
-                  foreach ($event[2] as $id => $registration) {
-                    // Trigger the
-                    // lackOfChannelOperatorShouldPreventInvitationEvent event
-                    // for each registered module.
-                    if (!EventHandling::triggerEvent(
-                        "lackOfChannelOperatorShouldPreventInvitationEvent",
-                        $id, array($connection, $recipient, $c))) {
-                      $canInvite = true;
-                      break;
+                if (!$this->channel->clientIsOnChannel($client->getOption("id"),
+                    $target)) {
+                  $canInvite = false;
+                  $event = EventHandling::getEventByName(
+                    "lackOfChannelOperatorShouldPreventInvitationEvent");
+                  if ($event != false) {
+                    foreach ($event[2] as $id => $registration) {
+                      // Trigger the
+                      // lackOfChannelOperatorShouldPreventInvitationEvent event
+                      // for each registered module.
+                      if (!EventHandling::triggerEvent(
+                          "lackOfChannelOperatorShouldPreventInvitationEvent",
+                          $id, array($connection, $recipient, $c))) {
+                        $canInvite = true;
+                        break;
+                      }
                     }
                   }
-                }
-                if ($canInvite == false) {
-                  $has = $this->channel->hasModes($target,
-                    array("ChannelOperator"));
-                  foreach ($has as $mode) {
-                    if ($mode["param"] == $connection->getOption("nick")) {
-                      $canInvite = true;
+                  if ($canInvite == false) {
+                    $has = $this->channel->hasModes($target,
+                      array("ChannelOperator"));
+                    foreach ($has as $mode) {
+                      if ($mode["param"] == $connection->getOption("nick")) {
+                        $canInvite = true;
+                      }
                     }
                   }
-                }
-                if ($canInvite == true) {
-                  $recipient->send(":".$connection->getOption("nick")."!".
-                    $connection->getOption("ident")."@".
-                    $connection->getOption("nick")." INVITE ".
-                    $recipient->getOption("nick")." :".$target);
+                  if ($canInvite == true) {
+                    $recipient->send(":".$connection->getOption("nick")."!".
+                      $connection->getOption("ident")."@".
+                      $connection->getOption("nick")." INVITE ".
+                      $recipient->getOption("nick")." :".$target);
+                    $connection->send(":".__SERVERDOMAIN__." 341 ".
+                      $connection->getOption("nick")." ".
+                      $recipient->getOption("nick")." ".$target);
+                  }
+                  else {
+                    $connection->send(":".__SERVERDOMAIN__." 482 ".
+                      $connection->getOption("nick")." ".$target.
+                      " :You're not a channel operator");
+                  }
                 }
                 else {
-                  $connection->send(":".__SERVERDOMAIN__." 482 ".
-                    $connection->getOption("nick")." ".$target.
-                    " :You're not a channel operator");
+                  $connection->send(":".__SERVERDOMAIN__." 443 ".
+                    $connection->getOption("nick")." ".
+                    $recipient->getOption("nick")." ".$target.
+                    " :is already on channel");
                 }
               }
               else {
@@ -91,28 +103,6 @@
     }
 
     public function isInstantiated() {
-      /*
-       *  Invite command examples:
-       *
-       *  INVITE OperServ #test
-       *  :oxygen.arinity.org 442 lol #test :You're not on that channel
-       *
-       *    JOIN #test
-       *    :lol!lol@199.68.xkl.qkq JOIN #test
-       *    :oxygen.arinity.org 353 lol = #test :lol @clayfreeman
-       *    :oxygen.arinity.org 366 lol #test :End of /NAMES list.
-       *
-       *  INVITE OperServ #test
-       *  :kelabs.arinity.org 482 lol #test :You're not a channel operator
-       *
-       *    :clayfreeman!clay@clayfreeman.com MODE #test +g
-       *
-       *  INVITE OperServ #test
-       *  :kelabs.arinity.org 341 lol OperServ #test
-       *
-       *  INVITE bobby #test
-       *  :kelabs.arinity.org 401 lol bobby :No such nick/channel
-       */
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       EventHandling::createEvent(
