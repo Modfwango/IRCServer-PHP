@@ -45,7 +45,7 @@
                   }
                 }
                 if ($canInvite == false) {
-                  $has = $this->channel->hasModes($c["name"],
+                  $has = $this->channel->hasModes($target,
                     array("ChannelOperator"));
                   foreach ($has as $mode) {
                     if ($mode["param"] == $connection->getOption("nick")) {
@@ -57,7 +57,7 @@
                   $recipient->send(":".$connection->getOption("nick")."!".
                     $connection->getOption("ident")."@".
                     $connection->getOption("nick")." INVITE ".
-                    $recipient->getOption("nick")." :".$c["name"]);
+                    $recipient->getOption("nick")." :".$target);
                 }
                 else {
                   $connection->send(":".__SERVERDOMAIN__." 482 ".
