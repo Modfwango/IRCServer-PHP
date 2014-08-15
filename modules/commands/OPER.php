@@ -18,39 +18,45 @@
 
       if ($connection->getOption("registered") == true) {
         if (count($command) > 1) {
-          foreach ($this->opers as $oname => $oper) {
-            if (strtolower($oname) == strtolower($command[0])) {
-              if (isset($oper["mask"])) {
-                if (!is_array($oper["mask"])) {
-                  $oper["mask"] = array($oper["mask"]);
-                }
-                $matches = false;
-                foreach ($oper["mask"] as $mask) {
-                  if ($this->client->clientMatchesMask($connection, $mask)) {
-                    $matches = true;
-                    break;
+          if ($connection->getOption("operator") != true) {
+            foreach ($this->opers as $oname => $oper) {
+              if (strtolower($oname) == strtolower($command[0])) {
+                if (isset($oper["mask"])) {
+                  if (!is_array($oper["mask"])) {
+                    $oper["mask"] = array($oper["mask"]);
                   }
-                }
-                if ($matches == true) {
-                  if (password_verify($command[1], $oper["hash"])) {
-                    $connection->setOption("operator", true);
-                    $connection->send(":".__SERVERDOMAIN__." 381 ".
-                      $connection->getOption("nick")." :You are now an IRC ".
-                      "operator");
-                    return;
+                  $matches = false;
+                  foreach ($oper["mask"] as $mask) {
+                    if ($this->client->clientMatchesMask($connection, $mask)) {
+                      $matches = true;
+                      break;
+                    }
                   }
-                  else {
-                    $connection->send(":".__SERVERDOMAIN__." 464 ".
-                      $connection->getOption("nick")." :Password Incorrect");
-                    return;
+                  if ($matches == true) {
+                    if (password_verify($command[1], $oper["hash"])) {
+                      $connection->setOption("operator", true);
+                      $connection->send(":".__SERVERDOMAIN__." 381 ".
+                        $connection->getOption("nick")." :You are now an IRC ".
+                        "operator");
+                      return;
+                    }
+                    else {
+                      $connection->send(":".__SERVERDOMAIN__." 464 ".
+                        $connection->getOption("nick")." :Password Incorrect");
+                      return;
+                    }
                   }
                 }
               }
             }
+            $connection->send(":".__SERVERDOMAIN__." 491 ".
+              $connection->getOption("nick")." :No appropriate operator blocks ".
+              "were found for your host");
           }
-          $connection->send(":".__SERVERDOMAIN__." 491 ".
-            $connection->getOption("nick")." :No appropriate operator blocks ".
-            "were found for your host");
+          else {
+            $connection->send(":".__SERVERDOMAIN__." 381 ".
+              $connection->getOption("nick")." :You are now an IRC operator");
+          }
         }
         else {
           $connection->send(":".__SERVERDOMAIN__." 461 ".
