@@ -85,7 +85,7 @@
           ),
           "matthew" => array(
             "mask" => "*@mattwb65.com",
-            "hash" => "$2y$10$.vGA1O9wmRjrwAVXD98HNOgsNpDczlqm3Jq7KnEd1rVAGv3F".
+            "hash" => "$2y$10$.vGn1O9wmRjrwAVXD98HNOgsNpDczlqm3Jq7KnEd1rVAGv3F".
               "ykk1a"
           )
         );
