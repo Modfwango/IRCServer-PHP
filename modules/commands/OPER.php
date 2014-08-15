@@ -71,7 +71,8 @@
     }
 
     public function isInstantiated() {
-      $opers = json_decode(StorageHandling::loadFile($this, "opers.txt"), true);
+      $opers = @json_decode(StorageHandling::loadFile($this, "opers.txt"),
+        true);
       if (!is_array($opers)) {
         $opers = array(
           "clay" => array(
