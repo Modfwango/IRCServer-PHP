@@ -111,6 +111,7 @@
                 }
               }
               if ($opped == false) {
+                return;
                 // TODO: Move this logic to individual list mode modules.
                 $okay = false;
                 $ms = $this->modes->getModeNamesByType("3");
