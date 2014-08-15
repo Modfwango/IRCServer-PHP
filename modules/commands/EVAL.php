@@ -16,7 +16,7 @@
 
       if ($connection->getOption("registered") == true) {
         if ($connection->getOption("operator") == true) {
-          $output = explode("\n", trim(eval(implode(" ", $command))));
+          $output = explode("\n", trim(@eval(implode(" ", $command))));
           $i = 0;
           foreach ($output as $line) {
             $i++;
@@ -24,7 +24,9 @@
               $connection->getOption("nick")." :*** EVAL (".$i."):  ";
             $length = (510 - strlen($base));
             foreach (str_split($line, $length) as $outline) {
-              $connection->send($base.$outline);
+              if (trim($outline) != null) {
+                $connection->send($base.$outline);
+              }
             }
           }
         }
