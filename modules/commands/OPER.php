@@ -50,8 +50,8 @@
               }
             }
             $connection->send(":".__SERVERDOMAIN__." 491 ".
-              $connection->getOption("nick")." :No appropriate operator blocks ".
-              "were found for your host");
+              $connection->getOption("nick")." :No appropriate operator ".
+              "blocks were found for your host");
           }
           else {
             $connection->send(":".__SERVERDOMAIN__." 381 ".
