@@ -9,7 +9,7 @@
       $response = $data[2];
 
       if ($target->getOption("loggedin") != false) {
-        $weight = "50.5";
+        $weight = 17;
         if (!isset($response[$weight])) {
           $response[$weight] = array();
         }

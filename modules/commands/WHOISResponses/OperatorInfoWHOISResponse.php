@@ -9,7 +9,7 @@
       $response = $data[2];
 
       if ($target->getOption("operator") == true) {
-        $weight = "50.5";
+        $weight = 59;
         if (!isset($response[$weight])) {
           $response[$weight] = array();
         }
