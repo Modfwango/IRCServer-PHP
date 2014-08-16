@@ -273,6 +273,8 @@
       $source = $data[0];
       $oldnick = $data[1];
 
+      $source->setOption("idle", time());
+
       $source->send(":".$oldnick."!".$source->getOption("ident").
         "@".$source->getHost()." NICK ".$source->getOption("nick"));
       $this->setClient($source);
@@ -284,6 +286,8 @@
       $message = $data[2];
       $base = ":".$source->getOption("nick")."!".$source->getOption("ident").
         "@".$source->getHost()." PRIVMSG ".$target->getOption("nick")." :";
+
+      $source->setOption("idle", time());
 
       if (strlen($base.$message) > 510) {
         $chunks = str_split($message, (510 - strlen($base)));
@@ -299,6 +303,8 @@
     public function receiveUserMode($name, $data) {
       $source = $data[0];
       $modes = $data[1];
+
+      $source->setOption("idle", time());
 
       if (count($modes) == 0) {
         return;

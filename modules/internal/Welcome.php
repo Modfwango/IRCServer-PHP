@@ -22,6 +22,7 @@
         $connection->setOption("id", hash("sha256", rand().$host));
       }
       $connection->setOption("signon", time());
+      $connection->setOption("idle", time());
       $this->client->setClient($connection);
       return true;
     }

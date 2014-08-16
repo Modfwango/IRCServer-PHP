@@ -118,6 +118,8 @@
       $recipient = $data[1];
       $target = $data[2];
 
+      $source->setOption("idle", time());
+
       $channel = $this->getChannelByName($target);
       if ($channel != false) {
         $channel["invites"][] = $recipient->getOption("nick");
@@ -135,6 +137,8 @@
     public function receiveChannelJoin($name, $data) {
       $source = $data[0];
       $target = $data[1];
+
+      $source->setOption("idle", time());
 
       if (!$this->clientIsOnChannel($source->getOption("id"), $target)) {
         $channel = $this->getChannelByName($target);
@@ -202,6 +206,8 @@
       $target = $data[1];
       $message = $data[2];
 
+      $source->setOption("idle", time());
+
       if (isset($data[3])) {
         $exceptions = $data[3];
       }
@@ -229,6 +235,8 @@
       $source = $data[0];
       $channel = $data[1];
       $modes = $data[2];
+
+      $source->setOption("idle", time());
 
       if (count($modes) == 0) {
         return;
@@ -298,6 +306,8 @@
       $channel = $data[1];
       $message = $data[2];
 
+      $source->setOption("idle", time());
+
       if (!$this->clientIsOnChannel($source->getOption("id"),
           $channel["name"])) {
         return;
@@ -333,6 +343,8 @@
       $channel = $data[1];
       $message = $data[2];
 
+      $source->setOption("idle", time());
+
       $ch = $this->getChannelByName($channel["name"]);
       if ($ch != false) {
         if (!isset($ch["topic"])) {
@@ -351,6 +363,8 @@
     public function receiveNickChange($name, $data) {
       $source = $data[0];
       $oldnick = $data[1];
+
+      $source->setOption("idle", time());
 
       $targets = array();
       foreach ($this->channels as &$channel) {
@@ -384,6 +398,8 @@
     public function receiveUserQuit($name, $data) {
       $source = $data[0];
       $message = $data[1];
+
+      $source->setOption("idle", time());
 
       $targets = array();
       foreach ($this->channels as $key => &$channel) {
