@@ -7,7 +7,7 @@
       $source = $data[0];
       $target = $data[1];
       $response = $data[2];
-
+      Logger::info(var_export($target, true));
       if ($target->getOption("loggedin") != false) {
         $weight = "50.5";
         if (!isset($response[$weight])) {
