@@ -9,7 +9,7 @@
       $response = $data[2];
 
       if ($target->getSSL() == true) {
-        $weight = 42;
+        $weight = "41.5";
         if (!isset($response[$weight])) {
           $response[$weight] = array();
         }

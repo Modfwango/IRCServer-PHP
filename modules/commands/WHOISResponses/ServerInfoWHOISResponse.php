@@ -8,7 +8,7 @@
       $target = $data[1];
       $response = $data[2];
 
-      $weight = 67;
+      $weight = "66.666";
       if (!isset($response[$weight])) {
         $response[$weight] = array();
       }

@@ -10,7 +10,7 @@
       $target = $data[1];
       $response = $data[2];
 
-      $weight = 84;
+      $weight = "83.5";
       if (!isset($response[$weight])) {
         $response[$weight] = array();
       }
@@ -20,7 +20,7 @@
       if (count($membership) > 0) {
         $modenames = array();
         $prefixes = array();
-        foreach ($this->modes->getModesAndWeight() as $weight => $modes) {
+        foreach ($this->modes->getModesAndWeight() as $modes) {
           foreach ($modes as $mode) {
             $modenames[] = $mode[0];
             $prefixes[$mode[0]] = array($mode[4], $mode[5]);
