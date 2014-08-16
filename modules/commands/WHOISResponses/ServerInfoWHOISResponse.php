@@ -14,7 +14,7 @@
       }
       $response[$weight][] = ":".__SERVERDOMAIN__." 312 ".
         $source->getOption("nick")." ".$target->getOption("nick")." ".
-        __SERVERDOMAIN__." :".__SERVERDESCRIPTION__);
+        __SERVERDOMAIN__." :".__SERVERDESCRIPTION__;
       $data[2] = $response;
       return array(null, $data);
     }

@@ -14,7 +14,7 @@
       }
       $response[$weight][] = ":".__SERVERDOMAIN__." 317 ".
         $source->getOption("nick")." ".$target->getOption("nick")." 0 ".
-        $target->getOption("signon")." :seconds idle, signon time");
+        $target->getOption("signon")." :seconds idle, signon time";
       $data[2] = $response;
       return array(null, $data);
     }

@@ -15,7 +15,7 @@
         }
         $response[$weight][] = ":".__SERVERDOMAIN__." 671 ".
           $source->getOption("nick")." ".$target->getOption("nick")." :is ".
-          "using a secure connection");
+          "using a secure connection";
         $data[2] = $response;
         return array(null, $data);
       }

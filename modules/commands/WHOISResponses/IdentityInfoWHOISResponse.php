@@ -15,7 +15,7 @@
         }
         $response[$weight][] = ":".__SERVERDOMAIN__." 313 ".
           $source->getOption("nick")." ".$target->getOption("nick")." ".
-          $target->getOption("loggedin")." :is logged in as");
+          $target->getOption("loggedin")." :is logged in as";
         $data[2] = $response;
         return array(null, $data);
       }

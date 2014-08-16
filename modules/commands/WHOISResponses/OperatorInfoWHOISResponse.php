@@ -15,7 +15,7 @@
         }
         $response[$weight][] = ":".__SERVERDOMAIN__." 313 ".
           $source->getOption("nick")." ".$target->getOption("nick")." :is an ".
-          "IRC Operator");
+          "IRC Operator";
         $data[2] = $response;
         return array(null, $data);
       }
