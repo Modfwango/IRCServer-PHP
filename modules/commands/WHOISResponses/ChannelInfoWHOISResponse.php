@@ -2,6 +2,8 @@
   class @@CLASSNAME@@ {
     public $depend = array("Channel", "Modes", "WHOISResponseEvent");
     public $name = "ChannelInfoWHOISResponse";
+    private $channel = null;
+    private $modes = null;
 
     public function receiveWHOISResponse($name, $data) {
       $source = $data[0];
