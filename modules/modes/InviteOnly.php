@@ -1,7 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("Channel", "ChannelJoinEvent", "ChannelModeEvent",
-      "Modes");
+      "InviteOnlyShouldPreventJoinEvent", "Modes");
     public $name = "InviteOnly";
     private $channel = null;
     private $modes = null;
@@ -78,7 +78,6 @@
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->modes = ModuleManagement::getModuleByName("Modes");
       $this->modes->setMode(array("InviteOnly", "i", "0", "0"));
-      EventHandling::createEvent("inviteOnlyShouldPreventJoinEvent", $this);
       EventHandling::registerAsEventPreprocessor("channelJoinEvent", $this,
         "receiveChannelJoin");
       EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,

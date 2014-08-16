@@ -1,7 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Channel", "Client", "ChannelJoinEvent",
-      "ChannelMessageEvent", "ChannelModeEvent", "Modes");
+    public $depend = array("BanShouldPreventActionEvent", "Channel", "Client",
+      "ChannelJoinEvent", "ChannelMessageEvent", "ChannelModeEvent", "Modes");
     public $name = "ChannelBan";
     private $channel = null;
     private $client = null;
@@ -99,7 +99,6 @@
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
       $this->modes->setMode(array("ChannelBan", "b", "0", "3"));
-      EventHandling::createEvent("banShouldPreventActionEvent", $this);
       EventHandling::registerAsEventPreprocessor("channelJoinEvent", $this,
         "receiveChannelEvent");
       EventHandling::registerAsEventPreprocessor("channelMessageEvent", $this,

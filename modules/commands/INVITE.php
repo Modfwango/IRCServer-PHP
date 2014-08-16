@@ -1,7 +1,8 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("Channel", "ChannelOperator", "Client",
-      "ChannelInviteEvent", "CommandEvent");
+      "ChannelInviteEvent", "CommandEvent",
+      "LackOfChannelOperatorShouldPreventInvitationEvent");
     public $name = "INVITE";
     private $channel = null;
     private $client = null;
@@ -116,8 +117,6 @@
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
-      EventHandling::createEvent(
-        "lackOfChannelOperatorShouldPreventInvitationEvent", $this);
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "invite");
       return true;

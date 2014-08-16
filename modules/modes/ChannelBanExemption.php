@@ -1,6 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Channel", "Client", "ChannelBan",
+    public $depend = array("BanShouldPreventActionEvent", "Channel", "Client",
       "ChannelModeEvent", "Modes");
     public $name = "ChannelBanExemption";
     private $channel = null;

@@ -21,6 +21,7 @@
           " NOTICE * :*** Found your hostname");
         $connection->setOption("id", hash("sha256", rand().$host));
       }
+      $connection->setOption("signon", time());
       $this->client->setClient($connection);
       return true;
     }

@@ -74,6 +74,16 @@
       return false;
     }
 
+    public function getChannelMembershipByID($id) {
+      $channels = array();
+      foreach ($this->getChannels() as $channel) {
+        if (in_array($id, $channel["members"])) {
+          $channels[] = $channel["name"];
+        }
+      }
+      return $channels;
+    }
+
     public function getChannels() {
       return $this->channels;
     }
