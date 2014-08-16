@@ -9,7 +9,7 @@
       $response = $data[2];
 
       $membership = $this->channel->getChannelMembershipByID(
-        $target->getOption("id")));
+        $target->getOption("id"));
       $ret = array();
       if (count($membership) > 0) {
         $weight = "83.5";
