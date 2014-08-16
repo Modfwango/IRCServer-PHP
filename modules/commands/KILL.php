@@ -17,7 +17,7 @@
       if ($connection->getOption("registered") == true) {
         if ($connection->getOption("operator") == true) {
           if (count($command) > 1) {
-            $nick = array_shift($command[0]);
+            $nick = array_shift($command);
             $client = $this->client->getClientByNick($nick);
             if ($client != false) {
               $message = "Killed";
