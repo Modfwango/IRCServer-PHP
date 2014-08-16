@@ -3,7 +3,7 @@
     public $depend = array("WHOISResponseEvent");
     public $name = "IdleInfoWHOISResponse";
 
-    public function receiveWHOISResponse($name, $data) {
+    public function receiveWHOISResponse($name, $id, $data) {
       $source = $data[0];
       $target = $data[1];
       $response = $data[2];
@@ -21,8 +21,8 @@
     }
 
     public function isInstantiated() {
-      /*EventHandling::registerAsEventPreprocessor("WHOISResponseEvent", $this,
-        "receiveWHOISResponse");*/
+      EventHandling::registerAsEventPreprocessor("WHOISResponseEvent", $this,
+        "receiveWHOISResponse");
       return true;
     }
   }

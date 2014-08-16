@@ -5,7 +5,7 @@
     private $channel = null;
     private $modes = null;
 
-    public function receiveWHOISResponse($name, $data) {
+    public function receiveWHOISResponse($name, $id, $data) {
       $source = $data[0];
       $target = $data[1];
       $response = $data[2];
@@ -103,8 +103,8 @@
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->modes = ModuleManagement::getModuleByName("Modes");
-      /*EventHandling::registerAsEventPreprocessor("WHOISResponseEvent", $this,
-        "receiveWHOISResponse");*/
+      EventHandling::registerAsEventPreprocessor("WHOISResponseEvent", $this,
+        "receiveWHOISResponse");
       return true;
     }
   }
