@@ -9,6 +9,7 @@
       $source = $data[0];
       $target = $data[1];
       $response = $data[2];
+      Logger::info($this->name);
 
       $membership = $this->channel->getChannelMembershipByID(
         $target->getOption("id"));

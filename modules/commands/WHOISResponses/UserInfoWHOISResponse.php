@@ -7,6 +7,7 @@
       $source = $data[0];
       $target = $data[1];
       $response = $data[2];
+      Logger::info($this->name);
 
       $weight = "100";
       if (!isset($response[$weight])) {
