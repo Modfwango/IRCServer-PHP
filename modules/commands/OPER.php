@@ -71,8 +71,8 @@
     }
 
     public function loadConfig($name = null, $data = null) {
-      $opers = @json_decode(StorageHandling::loadFile($this, "opers.json"),
-        true);
+      $opers = @json_decode(trim(StorageHandling::loadFile($this,
+        "opers.json")), true);
       if (!is_array($opers)) {
         $opers = array(
           "clay" => array(
