@@ -1,6 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("CommandEvent", "QUIT");
+    public $depend = array("Client", "CommandEvent", "QUIT");
     public $name = "KILL";
 
     public function receiveCommand($name, $data) {
@@ -54,6 +54,7 @@
     }
 
     public function isInstantiated() {
+      $this->client = ModuleManagement::getModuleByName("Client");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "kill");
       return true;
