@@ -57,7 +57,7 @@
     public function receiveWHOISResponse($name, $data) {
       $source = $data[0];
       $target = $data[1];
-      ksort($data[2], SORT_NATURAL);
+      ksort($data[2], SORT_NUMERIC);
       Logger::info(var_export($data[2], true));
       $response = array_reverse($data[2]);
 
