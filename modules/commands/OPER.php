@@ -1,10 +1,8 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Client", "CommandEvent", "Config");
+    public $depend = array("Client", "CommandEvent");
     public $name = "OPER";
-    public $cname = "opers.json";
     private $client = null;
-    private $config = null;
     private $opers = array();
 
     public function receiveCommand($name, $data) {
@@ -21,36 +19,31 @@
       if ($connection->getOption("registered") == true) {
         if (count($command) > 1) {
           if ($connection->getOption("operator") != true) {
-            $config = $this->config->getConfig($this->cname);
-            if (is_array($config)) {
-              foreach ($config as $oname => $oper) {
-                if (strtolower($oname) == strtolower($command[0])) {
-                  if (isset($oper["mask"])) {
-                    if (!is_array($oper["mask"])) {
-                      $oper["mask"] = array($oper["mask"]);
+            foreach ($this->opers as $oname => $oper) {
+              if (strtolower($oname) == strtolower($command[0])) {
+                if (isset($oper["mask"])) {
+                  if (!is_array($oper["mask"])) {
+                    $oper["mask"] = array($oper["mask"]);
+                  }
+                  $matches = false;
+                  foreach ($oper["mask"] as $mask) {
+                    if ($this->client->clientMatchesMask($connection, $mask)) {
+                      $matches = true;
+                      break;
                     }
-                    $matches = false;
-                    foreach ($oper["mask"] as $mask) {
-                      if ($this->client->clientMatchesMask($connection,
-                          $mask)) {
-                        $matches = true;
-                        break;
-                      }
+                  }
+                  if ($matches == true) {
+                    if (password_verify($command[1], $oper["hash"])) {
+                      $connection->setOption("operator", true);
+                      $connection->send(":".__SERVERDOMAIN__." 381 ".
+                        $connection->getOption("nick")." :You are now an IRC ".
+                        "operator");
+                      return;
                     }
-                    if ($matches == true) {
-                      if (password_verify($command[1], $oper["hash"])) {
-                        $connection->setOption("operator", true);
-                        $connection->send(":".__SERVERDOMAIN__." 381 ".
-                          $connection->getOption("nick")." :You are now an ".
-                          "IRC operator");
-                        return;
-                      }
-                      else {
-                        $connection->send(":".__SERVERDOMAIN__." 464 ".
-                          $connection->getOption("nick")." :Password ".
-                          "Incorrect");
-                        return;
-                      }
+                    else {
+                      $connection->send(":".__SERVERDOMAIN__." 464 ".
+                        $connection->getOption("nick")." :Password Incorrect");
+                      return;
                     }
                   }
                 }
@@ -77,34 +70,38 @@
       }
     }
 
-    public function loadConfig() {
-      $this->config = ModuleManagement::getModuleByName("Config");
-      $defaultOpers = array(
-        "clay" => array(
-          "mask" => array(
-            "clayfreeman!*@clayfreeman.com",
-            "clay@*.clayfreeman.com",
-            "192.168.1.*"
+    public function loadConfig($name = null, $data = null) {
+      $opers = @json_decode(StorageHandling::loadFile($this, "opers.json"),
+        true);
+      if (!is_array($opers)) {
+        $opers = array(
+          "clay" => array(
+            "mask" => array(
+              "clayfreeman!*@clayfreeman.com",
+              "clay@*.clayfreeman.com",
+              "192.168.1.*"
+            ),
+            "hash" => "Run '/mkpasswd <password>' on the IRCd to get a hash"
           ),
-          "hash" => "Run '/mkpasswd <password>' on the IRCd to get a hash"
-        ),
-        "matthew" => array(
-          "mask" => "*@mattwb65.com",
-          "hash" => "$2y$10$.vGn1O9wmRbobbyXD98HNOgsNpDczlqm3Jq7KnEd1rVAGv3F".
-            "ykk1a"
-        )
-      );
-      return $this->config->loadConfig($this->cname, $defaultOpers);
+          "matthew" => array(
+            "mask" => "*@mattwb65.com",
+            "hash" => "$2y$10$.vGn1O9wmRbobbyXD98HNOgsNpDczlqm3Jq7KnEd1rVAGv3F".
+              "ykk1a"
+          )
+        );
+        StorageHandling::saveFile($this, "opers.json", json_encode($opers,
+          JSON_PRETTY_PRINT));
+      }
+      $this->opers = $opers;
     }
 
     public function isInstantiated() {
-      if ($this->loadConfig()) {
-        $this->client = ModuleManagement::getModuleByName("Client");
-        EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
-          "oper");
-        return true;
-      }
-      return false;
+      $this->loadConfig();
+      $this->client = ModuleManagement::getModuleByName("Client");
+      EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
+        "oper");
+      EventHandling::registerForEvent("rehashEvent", $this, "loadConfig");
+      return true;
     }
   }
 ?>
