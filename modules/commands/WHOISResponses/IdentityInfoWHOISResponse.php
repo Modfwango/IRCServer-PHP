@@ -7,7 +7,6 @@
       $source = $data[0];
       $target = $data[1];
       $response = $data[2];
-      Logger::info($this->name);
 
       if ($target->getOption("loggedin") != false) {
         $weight = "50.5";

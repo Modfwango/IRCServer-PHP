@@ -9,16 +9,15 @@
       $source = $data[0];
       $target = $data[1];
       $response = $data[2];
-      Logger::info($this->name);
 
+      $weight = "83.5";
+      if (!isset($response[$weight])) {
+        $response[$weight] = array();
+      }
       $membership = $this->channel->getChannelMembershipByID(
         $target->getOption("id"));
       $ret = array();
       if (count($membership) > 0) {
-        $weight = "83.5";
-        if (!isset($response[$weight])) {
-          $response[$weight] = array();
-        }
         $modenames = array();
         $prefixes = array();
         foreach ($this->modes->getModesAndWeight() as $weight => $modes) {
