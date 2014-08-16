@@ -22,7 +22,7 @@
             if ($client != false) {
               $message = "Killed";
               if (count($command) > 1) {
-                $message = "Killed: ".implode(" ", $command[1]);
+                $message = "Killed: ".implode(" ", $command);
               }
               ModuleManagement::getModuleByName("QUIT")->notifyQuit(null,
                 $client, $message);
