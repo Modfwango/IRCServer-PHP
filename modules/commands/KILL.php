@@ -16,12 +16,12 @@
 
       if ($connection->getOption("registered") == true) {
         if ($connection->getOption("operator") == true) {
-          if (count($command) > 1) {
+          if (count($command) > 0) {
             $nick = array_shift($command);
             $client = $this->client->getClientByNick($nick);
             if ($client != false) {
               $message = "Killed";
-              if (count($command) > 1) {
+              if (count($command) > 0) {
                 $message = "Killed: ".implode(" ", $command);
               }
               ModuleManagement::getModuleByName("QUIT")->notifyQuit(null,
