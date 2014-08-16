@@ -2,6 +2,9 @@
   class @@CLASSNAME@@ {
     public $depend = array("CommandEvent");
     public $name = "EVAL";
+    private $channel = null;
+    private $client = null;
+    private $modes = null;
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];
@@ -44,6 +47,9 @@
     }
 
     public function isInstantiated() {
+      $this->channel = ModuleManagement::getModuleByName("Channel");
+      $this->client = ModuleManagement::getModuleByName("Client");
+      $this->modes = ModuleManagement::getModuleByName("Modes");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "eval");
       return true;
