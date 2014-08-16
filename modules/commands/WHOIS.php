@@ -23,8 +23,7 @@
           $client = $this->client->getClientByNick($command[0]);
           if ($client != false) {
             Logger::info(var_export($client, true));
-            $event = EventHandling::getEventByName(
-              "WHOISResponseEvent");
+            $event = EventHandling::getEventByName("WHOISResponseEvent");
             if ($event != false) {
               foreach ($event[2] as $id => $registration) {
                 // Trigger the WHOISResponseEvent event for each registered
