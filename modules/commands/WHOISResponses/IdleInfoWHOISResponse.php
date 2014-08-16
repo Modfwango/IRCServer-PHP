@@ -21,8 +21,8 @@
     }
 
     public function isInstantiated() {
-      //EventHandling::registerAsEventPreprocessor("WHOISResponseEvent", $this,
-        "receiveWHOISResponse");
+      /*EventHandling::registerAsEventPreprocessor("WHOISResponseEvent", $this,
+        "receiveWHOISResponse");*/
       return true;
     }
   }
