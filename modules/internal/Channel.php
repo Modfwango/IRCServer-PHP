@@ -438,6 +438,10 @@
       return false;
     }
 
+    public function isUnloadable() {
+      return false;
+    }
+
     public function isInstantiated() {
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");

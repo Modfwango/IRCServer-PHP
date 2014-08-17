@@ -186,6 +186,10 @@
       }
     }
 
+    public function isUnloadable() {
+      return false;
+    }
+
     public function isInstantiated() {
       return true;
     }

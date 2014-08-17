@@ -102,6 +102,10 @@
       return false;
     }
 
+    public function isUnloadable() {
+      return false;
+    }
+
     public function isInstantiated() {
       $db = StorageHandling::loadFile($this, "database.txt");
       $this->db = @unserialize($db);

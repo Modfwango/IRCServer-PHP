@@ -42,6 +42,10 @@
       }
     }
 
+    public function isUnloadable() {
+      return false;
+    }
+
     public function isInstantiated() {
       // Kill any pre-existing connection with "NickServ" as its nickname.
       $client = ModuleManagement::getModuleByName("Client");

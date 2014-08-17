@@ -82,6 +82,10 @@
       }
     }
 
+    public function isUnloadable() {
+      return false;
+    }
+
     public function isInstantiated() {
       $this->quit = ModuleManagement::getModuleByName("QUIT");
       $this->self = ModuleManagement::getModuleByName("Self");

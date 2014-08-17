@@ -424,6 +424,10 @@
       }
     }
 
+    public function isUnloadable() {
+      return false;
+    }
+
     public function isInstantiated() {
       $this->modes = ModuleManagement::getModuleByName("Modes");
       EventHandling::registerForEvent("nickChangeEvent", $this,

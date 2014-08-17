@@ -5,6 +5,10 @@
     public function isInstantiated() {
       return true;
     }
+
+    public function isUnloadable() {
+      return false;
+    }
   }
 
   class PseudoConnection extends Connection {

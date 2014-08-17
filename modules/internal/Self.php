@@ -39,6 +39,10 @@
       }
     }
 
+    public function isUnloadable() {
+      return false;
+    }
+
     public function isInstantiated() {
       $this->loadConfig();
       EventHandling::registerForEvent("rehashEvent", $this, "loadConfig");

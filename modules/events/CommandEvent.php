@@ -62,6 +62,10 @@
       return true;
     }
 
+    public function isUnloadable() {
+      return false;
+    }
+
     public function isInstantiated() {
       $this->self = ModuleManagement::getModuleByName("Self");
       // Create an event for raw data.
