@@ -61,7 +61,6 @@
       $source = $data[0];
       $target = $data[1];
       ksort($data[2], SORT_NATURAL);
-      Logger::info(var_export($data[2], true));
       $response = array_reverse($data[2]);
 
       foreach ($response as $weight => $responses) {
