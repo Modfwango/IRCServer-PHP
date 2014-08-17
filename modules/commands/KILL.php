@@ -24,6 +24,8 @@
               if (count($command) > 0) {
                 $message = "Killed: ".implode(" ", $command);
               }
+              $client->send("ERROR :Closing Link: ".$client->getHost()." (".
+                $message.")");
               ModuleManagement::getModuleByName("QUIT")->notifyQuit(null,
                 $client, $message);
               $client->setOption("registered", false);
