@@ -49,22 +49,27 @@
             }
             if ($mode["operation"] == "+") {
               if ($h[$mode["param"]] != false) {
+                Logger::info("Mode is already set!");
                 unset($modes[$key]);
               }
               else {
+                Logger::info("Setting mode.");
                 $h[$mode["param"]] = true;
               }
             }
             if ($mode["operation"] == "-") {
               if ($h[$mode["param"]] == false) {
+                Logger::info("Mode is not set!");
                 unset($modes[$key]);
               }
               else {
+                Logger::info("Removing mode.");
                 $h[$mode["param"]] = false;
               }
             }
           }
           else {
+            Logger::info("Specified user is not applicable.");
             unset($modes[$key]);
           }
         }
