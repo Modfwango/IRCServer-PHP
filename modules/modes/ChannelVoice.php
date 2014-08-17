@@ -25,12 +25,12 @@
           }
         }
       }
-      foreach ($modes as $key => &$mode) {
+      foreach ($modes as $key => $mode) {
         if ($mode["name"] == "ChannelVoice") {
           $client = $this->client->getClientByNick($mode["param"]);
           if ($client != false && $this->channel->clientIsOnChannel(
               $client->getOption("id"), $channel["name"])) {
-            $mode["param"] = $client->getOption("id");
+            $modes[$key]["param"] = $client->getOption("id");
             if (!isset($h[$mode["param"]])) {
               $h[$mode["param"]] = false;
             }
