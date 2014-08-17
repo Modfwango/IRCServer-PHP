@@ -22,7 +22,6 @@
           "config.json")), true);
         if (!is_array($config)) {
           $config = array(
-            "motd" => $motd,
             "netname" => "PHPNet",
             "pingtime" => 120,
             "version" => "IRCServer-PHP-dev",
@@ -33,6 +32,7 @@
             JSON_PRETTY_PRINT));
         }
         $this->config = $config;
+        $this->config["motd"] = $motd;
       }
       else {
         $this->config["motd"] = $motd;
