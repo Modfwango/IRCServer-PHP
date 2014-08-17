@@ -20,12 +20,12 @@
             if (ModuleManagement::unloadModule($command[0])) {
               $connection->send(":".$this->self->getConfigFlag(
                 "serverdomain")." NOTICE ".$connection->getOption("nick")." ".
-                ":*** Unloaded module: ".$command[1]);
+                ":*** Unloaded module: ".$command[0]);
             }
             else {
               $connection->send(":".$this->self->getConfigFlag(
                 "serverdomain")." NOTICE ".$connection->getOption("nick")." ".
-                ":*** Unable to unload module: ".$command[1]);
+                ":*** Unable to unload module: ".$command[0]);
             }
           }
           else {

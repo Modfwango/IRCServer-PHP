@@ -20,12 +20,12 @@
             if (ModuleManagement::loadModule($command[0])) {
               $connection->send(":".$this->self->getConfigFlag(
                 "serverdomain")." NOTICE ".$connection->getOption("nick")." ".
-                ":*** Loaded module: ".$command[1]);
+                ":*** Loaded module: ".$command[0]);
             }
             else {
               $connection->send(":".$this->self->getConfigFlag(
                 "serverdomain")." NOTICE ".$connection->getOption("nick")." ".
-                ":*** Unable to load module: ".$command[1]);
+                ":*** Unable to load module: ".$command[0]);
             }
           }
           else {

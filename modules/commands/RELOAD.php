@@ -20,12 +20,12 @@
             if (ModuleManagement::reloadModule($command[0])) {
               $connection->send(":".$this->self->getConfigFlag(
                 "serverdomain")." NOTICE ".$connection->getOption("nick")." ".
-                ":*** Reloaded module: ".$command[1]);
+                ":*** Reloaded module: ".$command[0]);
             }
             else {
               $connection->send(":".$this->self->getConfigFlag(
                 "serverdomain")." NOTICE ".$connection->getOption("nick")." ".
-                ":*** Unable to reload module: ".$command[1]);
+                ":*** Unable to reload module: ".$command[0]);
             }
           }
           else {
