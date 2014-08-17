@@ -1,5 +1,5 @@
 <?php
-  class @@CLASSNAME@@ {
+  class __CLASSNAME__ {
     public $depend = array("Self", "WHOISResponseEvent");
     public $name = "IdleInfoWHOISResponse";
     private $self = null;

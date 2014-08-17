@@ -1,5 +1,5 @@
 <?php
-  class @@CLASSNAME@@ {
+  class __CLASSNAME__ {
     public $depend = array("CommandEvent", "ConnectionDisconnectedEvent",
       "UserQuitEvent");
     public $name = "QUIT";

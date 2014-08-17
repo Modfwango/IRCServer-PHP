@@ -1,5 +1,5 @@
 <?php
-  class @@CLASSNAME@@ {
+  class __CLASSNAME__ {
     public $depend = array("CommandEvent", "Self");
     public $name = "LUSERS";
     private $self = null;

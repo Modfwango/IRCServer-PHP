@@ -1,5 +1,5 @@
 <?php
-  class @@CLASSNAME@@ {
+  class __CLASSNAME__ {
     public $name = "Modes";
     private $modes = array("byname" => array(),
       "bychar" => array("0" => array(), "1" => array()), "byprefix" => array(),

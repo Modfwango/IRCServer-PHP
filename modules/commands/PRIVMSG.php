@@ -1,5 +1,5 @@
 <?php
-  class @@CLASSNAME@@ {
+  class __CLASSNAME__ {
     public $depend = array("Channel", "ChannelMessageEvent", "Client",
       "CommandEvent", "PrivateMessageEvent", "Self");
     public $name = "PRIVMSG";

@@ -1,5 +1,5 @@
 <?php
-  class @@CLASSNAME@@ {
+  class __CLASSNAME__ {
     public $depend = array("Channel", "ChannelCreatedEvent",
       "ChannelMessageEvent", "ChannelModeEvent", "ChannelNoticeEvent", "Modes",
       "Self");

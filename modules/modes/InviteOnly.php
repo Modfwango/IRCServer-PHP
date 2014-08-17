@@ -1,5 +1,5 @@
 <?php
-  class @@CLASSNAME@@ {
+  class __CLASSNAME__ {
     public $depend = array("Channel", "ChannelJoinEvent", "ChannelModeEvent",
       "InviteOnlyShouldPreventJoinEvent", "Modes", "Self");
     public $name = "InviteOnly";

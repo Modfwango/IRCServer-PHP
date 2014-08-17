@@ -1,5 +1,5 @@
 <?php
-  class @@CLASSNAME@@ {
+  class __CLASSNAME__ {
     public $name = "ShouldExposeChannelToUserEvent";
 
     public function isUnloadable() {

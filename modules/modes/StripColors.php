@@ -1,5 +1,5 @@
 <?php
-  class @@CLASSNAME@@ {
+  class __CLASSNAME__ {
     public $depend = array("Channel", "ChannelMessageEvent", "ChannelModeEvent",
       "ChannelNoticeEvent", "Modes");
     public $name = "StripColors";
