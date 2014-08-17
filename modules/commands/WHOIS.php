@@ -24,7 +24,6 @@
           // :kelabs.arinity.org 318 lol bobdhk :End of /WHOIS list.
           $client = $this->client->getClientByNick($command[0]);
           if ($client != false) {
-            Logger::info(var_export($client, true));
             $event = EventHandling::getEventByName("WHOISResponseEvent");
             if ($event != false) {
               foreach ($event[2] as $id => $registration) {
