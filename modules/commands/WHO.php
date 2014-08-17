@@ -40,7 +40,7 @@
               $has = $this->channel->hasModes($channel["name"], $modenames);
               if ($has != false) {
                 foreach ($has as $m) {
-                  if ($m["param"] == $c->getOption("nick")
+                  if ($m["param"] == $c->getOption("id")
                       && isset($prefixes[$m["name"]])) {
                     if (!isset($p[$prefixes[$m["name"]][1]])) {
                       $p[$prefixes[$m["name"]][1]] = array();

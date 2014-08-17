@@ -46,7 +46,7 @@
         $modes = $this->channel->hasModes($channel,
           array("InviteOnly"));
         if ($modes != false) {
-          if (!in_array($source->getOption("nick"), $c["invites"])) {
+          if (!in_array($source->getOption("id"), $c["invites"])) {
             // Allow for dynamic invite exceptions.
             $event = EventHandling::getEventByName(
               "inviteOnlyShouldPreventJoinEvent");

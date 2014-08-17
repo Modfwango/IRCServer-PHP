@@ -50,7 +50,7 @@
             $has = $this->channel->hasModes($channel, $modenames);
             if ($has != false) {
               foreach ($has as $m) {
-                if ($m["param"] == $target->getOption("nick")) {
+                if ($m["param"] == $target->getOption("id")) {
                   if ($prefixes[$m["name"]][1] > $prefix[1]) {
                     $prefix = $prefixes[$m["name"]];
                   }

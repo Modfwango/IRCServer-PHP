@@ -95,7 +95,7 @@
                 array("ChannelOperator"));
               if (is_array($has)) {
                 foreach ($has as $m) {
-                  if ($m["param"] == $connection->getOption("nick")) {
+                  if ($m["param"] == $connection->getOption("id")) {
                     $opped = true;
                     $modes = $this->parseModes("0", $command[1]);
                     $event = EventHandling::getEventByName(

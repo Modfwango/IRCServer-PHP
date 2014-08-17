@@ -1,7 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("Channel", "Client", "ChannelModeEvent",
-      "ChannelPartEvent", "Modes", "NickChangeEvent", "UserQuitEvent");
+      "ChannelPartEvent", "Modes", "UserQuitEvent");
     public $name = "ChannelVoice";
     private $channel = null;
     private $client = null;
@@ -17,10 +17,10 @@
         array("ChannelVoice"));
       if (is_array($has) && count($has) > 0) {
         foreach ($has as $m) {
-          $client = $this->client->getClientByNick($m["param"]);
+          $client = $this->client->getClientByID($m["param"]);
           if ($client != false && $this->channel->clientIsOnChannel(
               $client->getOption("id"), $channel["name"])) {
-            $m["param"] = $client->getOption("nick");
+            $m["param"] = $client->getOption("id");
             $h[$m["param"]] = true;
           }
         }
@@ -30,7 +30,7 @@
           $client = $this->client->getClientByNick($mode["param"]);
           if ($client != false && $this->channel->clientIsOnChannel(
               $client->getOption("id"), $channel["name"])) {
-            $mode["param"] = $client->getOption("nick");
+            $mode["param"] = $client->getOption("id");
             if (!isset($h[$mode["param"]])) {
               $h[$mode["param"]] = false;
             }
@@ -70,29 +70,11 @@
           array("ChannelVoice"))) {
         foreach ($ch["modes"] as $key => $mode) {
           if ($mode["name"] == "ChannelVoice"
-              && $mode["param"] == $source->getOption("nick")) {
+              && $mode["param"] == $source->getOption("id")) {
             unset($ch["modes"][$key]);
           }
         }
         $this->channel->setChannel($ch);
-      }
-    }
-
-    public function receiveNickChange($name, $data) {
-      $source = $data[0];
-      $oldnick = $data[1];
-
-      foreach ($this->channel->getChannels() as $ch) {
-        if ($this->channel->hasModes($ch["name"],
-            array("ChannelVoice"))) {
-          foreach ($ch["modes"] as $key => &$mode) {
-            if ($mode["name"] == "ChannelVoice"
-                && $mode["param"] == $oldnick) {
-              $mode["param"] = $source->getOption("nick");
-            }
-          }
-          $this->channel->setChannel($ch);
-        }
       }
     }
 
@@ -105,7 +87,7 @@
             array("ChannelVoice"))) {
           foreach ($ch["modes"] as $key => $mode) {
             if ($mode["name"] == "ChannelVoice"
-                && $mode["param"] == $source->getOption("nick")) {
+                && $mode["param"] == $source->getOption("id")) {
               unset($ch["modes"][$key]);
             }
           }
@@ -123,8 +105,6 @@
         "receiveChannelMode");
       EventHandling::registerForEvent("channelPartEvent", $this,
         "receiveChannelPart");
-      EventHandling::registerForEvent("nickChangeEvent", $this,
-        "receiveNickChange");
       EventHandling::registerForEvent("userQuitEvent", $this,
         "receiveUserQuit");
       return true;

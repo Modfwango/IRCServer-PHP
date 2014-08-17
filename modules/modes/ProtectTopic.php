@@ -59,7 +59,7 @@
           array("ChannelOperator"));
         if ($modes != false) {
           foreach ($modes as $mode) {
-            if ($mode["param"] == $source->getOption("nick")) {
+            if ($mode["param"] == $source->getOption("id")) {
               return array(true);
             }
           }

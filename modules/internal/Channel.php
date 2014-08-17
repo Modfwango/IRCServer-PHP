@@ -131,8 +131,8 @@
       $exceptions[] = $source->getOption("id");
       $exceptions = array_unique($exceptions);
       $base = ":".$source->getOption("nick")."!".$source->getOption("ident").
-        "@".$source->getHost().($name == "privateMessageEvent" ? " PRIVMSG " :
-        null).($name == "privateNoticeEvent" ? " NOTICE " : null).
+        "@".$source->getHost().($name == "channelMessageEvent" ? " PRIVMSG " :
+        null).($name == "channelNoticeEvent" ? " NOTICE " : null).
         $target["name"]." :";
 
       if (strlen($base.$message) > 510) {
@@ -155,7 +155,7 @@
 
       $channel = $this->getChannelByName($target);
       if ($channel != false) {
-        $channel["invites"][] = $recipient->getOption("nick");
+        $channel["invites"][] = $recipient->getOption("id");
         $this->setChannel($channel);
         $recipient->send(":".$source->getOption("nick")."!".
           $source->getOption("ident")."@".$source->getHost()." INVITE ".
@@ -177,9 +177,9 @@
       if (!$this->clientIsOnChannel($source->getOption("id"), $target)) {
         $channel = $this->getChannelByName($target);
         if ($channel != false) {
-          if (in_array($source->getOption("nick"), $channel["invites"])) {
+          if (in_array($source->getOption("id"), $channel["invites"])) {
             $channel["invites"] = array_diff($channel["invites"],
-              array($source->getOption("nick")));
+              array($source->getOption("id")));
           }
           $channel["members"][] = $source->getOption("id");
           $this->setChannel($channel);
@@ -372,11 +372,6 @@
 
       $targets = array();
       foreach ($this->channels as &$channel) {
-        if (in_array($source->getOption("nick"), $channel["invites"])) {
-          $channel["invites"] = array_diff($channel["invites"],
-            array($oldnick));
-          $channel["invites"][] = $source->getOption("nick");
-        }
         if ($this->clientIsOnChannel($source->getOption("id"),
             $channel["name"])) {
           $targets = array_values(array_unique(array_merge(
@@ -407,9 +402,9 @@
 
       $targets = array();
       foreach ($this->channels as $key => &$channel) {
-        if (in_array($source->getOption("nick"), $channel["invites"])) {
+        if (in_array($source->getOption("id"), $channel["invites"])) {
           $channel["invites"] = array_diff($channel["invites"],
-            array($source->getOption("nick")));
+            array($source->getOption("id")));
         }
         if ($this->clientIsOnChannel($source->getOption("id"),
             $channel["name"])) {
