@@ -1,8 +1,8 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("BanShouldPreventActionEvent", "Channel", "Client",
-      "ChannelJoinEvent", "ChannelMessageEvent", "ChannelModeEvent", "Modes",
-      "Self");
+      "ChannelJoinEvent", "ChannelMessageEvent", "ChannelModeEvent",
+      "ChannelNoticeEvent", "Modes", "Self");
     public $name = "ChannelBan";
     private $channel = null;
     private $client = null;
@@ -77,7 +77,8 @@
             }
 
             // Prevent the action, and inform the user.
-            if ($name == "channelMessageEvent") {
+            if ($name == "channelMessageEvent"
+                || $name == "channelNoticeEvent") {
               $source->send(":".$this->self->getConfigFlag(
                 "serverdomain")." 404 ".$source->getOption("nick")." ".
                 $channel." :Cannot send to channel");
@@ -107,6 +108,8 @@
         "receiveChannelEvent");
       EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
         "receiveChannelMode");
+      EventHandling::registerAsEventPreprocessor("channelNoticeEvent", $this,
+        "receiveChannelEvent");
       return true;
     }
   }

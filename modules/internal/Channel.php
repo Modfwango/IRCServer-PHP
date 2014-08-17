@@ -2,8 +2,8 @@
   class @@CLASSNAME@@ {
     public $depend = array("ChannelCreatedEvent", "ChannelInviteEvent",
       "ChannelJoinEvent", "ChannelMessageEvent", "ChannelModeEvent",
-      "ChannelPartEvent", "ChannelTopicEvent", "Client", "Modes",
-      "NickChangeEvent", "Self", "UserQuitEvent");
+      "ChannelNoticeEvent", "ChannelPartEvent", "ChannelTopicEvent", "Client",
+      "Modes", "NickChangeEvent", "Self", "UserQuitEvent");
     public $name = "Channel";
     private $client = null;
     private $channels = array();
@@ -114,6 +114,38 @@
       return true;
     }
 
+    public function receiveChannelEvent($name, $data) {
+      $source = $data[0];
+      $target = $data[1];
+      $message = $data[2];
+
+      $source->setOption("idle", time());
+
+      if (isset($data[3])) {
+        $exceptions = $data[3];
+      }
+      else {
+        $exceptions = array();
+      }
+
+      $exceptions[] = $source->getOption("id");
+      $exceptions = array_unique($exceptions);
+      $base = ":".$source->getOption("nick")."!".$source->getOption("ident").
+        "@".$source->getHost().($name == "privateMessageEvent" ? " PRIVMSG " :
+        null).($name == "privateNoticeEvent" ? " NOTICE " : null).
+        $target["name"]." :";
+
+      if (strlen($base.$message) > 510) {
+        $chunks = str_split($message, (510 - strlen($base)));
+        foreach ($chunks as $chunk) {
+          $this->broadcast($target["name"], $base.$chunk, $exceptions);
+        }
+      }
+      else {
+        $this->broadcast($target["name"], $base.$message, $exceptions);
+      }
+    }
+
     public function receiveChannelInvite($name, $data) {
       $source = $data[0];
       $recipient = $data[1];
@@ -200,36 +232,6 @@
             }
           }
         }
-      }
-    }
-
-    public function receiveChannelMessage($name, $data) {
-      $source = $data[0];
-      $target = $data[1];
-      $message = $data[2];
-
-      $source->setOption("idle", time());
-
-      if (isset($data[3])) {
-        $exceptions = $data[3];
-      }
-      else {
-        $exceptions = array();
-      }
-
-      $exceptions[] = $source->getOption("id");
-      $exceptions = array_unique($exceptions);
-      $base = ":".$source->getOption("nick")."!".$source->getOption("ident").
-        "@".$source->getHost()." PRIVMSG ".$target["name"]." :";
-
-      if (strlen($base.$message) > 510) {
-        $chunks = str_split($message, (510 - strlen($base)));
-        foreach ($chunks as $chunk) {
-          $this->broadcast($target["name"], $base.$chunk, $exceptions);
-        }
-      }
-      else {
-        $this->broadcast($target["name"], $base.$message, $exceptions);
       }
     }
 
@@ -454,9 +456,11 @@
       EventHandling::registerForEvent("channelJoinEvent", $this,
         "receiveChannelJoin");
       EventHandling::registerForEvent("channelMessageEvent", $this,
-        "receiveChannelMessage");
+        "receiveChannelEvent");
       EventHandling::registerForEvent("channelModeEvent", $this,
         "receiveChannelMode");
+      EventHandling::registerForEvent("channelNoticeEvent", $this,
+        "receiveChannelEvent");
       EventHandling::registerForEvent("channelPartEvent", $this,
         "receiveChannelPart");
       EventHandling::registerForEvent("channelTopicEvent", $this,

@@ -1,7 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("Channel", "ChannelMessageEvent", "ChannelModeEvent",
-      "Modes");
+      "ChannelNoticeEvent", "Modes");
     public $name = "StripColors";
     private $channel = null;
     private $modes = null;
@@ -37,7 +37,7 @@
       return array(null, $data);
     }
 
-    public function receiveChannelMessage($name, $id, $data) {
+    public function receiveChannelEvent($name, $id, $data) {
       $source = $data[0];
       $channel = $data[1];
       $message = $data[2];
@@ -59,7 +59,9 @@
       EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
         "receiveChannelMode");
       EventHandling::registerAsEventPreprocessor("channelMessageEvent", $this,
-        "receiveChannelMessage");
+        "receiveChannelEvent");
+      EventHandling::registerAsEventPreprocessor("channelNoticeEvent", $this,
+        "receiveChannelEvent");
       return true;
     }
   }

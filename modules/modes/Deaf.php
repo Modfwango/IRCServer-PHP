@@ -1,7 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("Channel", "Client", "ChannelMessageEvent",
-      "UserModeEvent", "Modes");
+      "ChannelNoticeEvent", "UserModeEvent", "Modes");
     public $name = "Deaf";
     private $channel = null;
     private $client = null;
@@ -37,7 +37,7 @@
       return array(null, $data);
     }
 
-    public function receiveChannelMessage($name, $id, $data) {
+    public function receiveChannelEvent($name, $id, $data) {
       $source = $data[0];
       $channel = $data[1];
       $message = $data[2];
@@ -70,7 +70,9 @@
       EventHandling::registerAsEventPreprocessor("userModeEvent", $this,
         "receiveUserMode");
       EventHandling::registerAsEventPreprocessor("channelMessageEvent", $this,
-        "receiveChannelMessage");
+        "receiveChannelEvent");
+      EventHandling::registerAsEventPreprocessor("channelNoticeEvent", $this,
+        "receiveChannelEvent");
       return true;
     }
   }

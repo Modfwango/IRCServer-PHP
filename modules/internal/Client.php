@@ -1,7 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("Modes", "NickChangeEvent", "PrivateMessageEvent",
-      "UserModeEvent", "UserRegistrationEvent");
+      "PrivateNoticeEvent", "UserModeEvent", "UserRegistrationEvent");
     public $name = "Client";
     private $clients = array("byhost" => array(), "byident" => array(),
       "byid" => array(), "bynick" => array(), "byrealname" => array());
@@ -280,12 +280,14 @@
       $this->setClient($source);
     }
 
-    public function receivePrivateMessage($name, $data) {
+    public function receivePrivateEvent($name, $data) {
       $source = $data[0];
       $target = $data[1];
       $message = $data[2];
       $base = ":".$source->getOption("nick")."!".$source->getOption("ident").
-        "@".$source->getHost()." PRIVMSG ".$target->getOption("nick")." :";
+        "@".$source->getHost().($name == "privateMessageEvent" ? " PRIVMSG " :
+        null).($name == "privateNoticeEvent" ? " NOTICE " : null).
+        $target->getOption("nick")." :";
 
       $source->setOption("idle", time());
 
@@ -433,7 +435,9 @@
       EventHandling::registerForEvent("nickChangeEvent", $this,
         "receiveNickChange");
       EventHandling::registerForEvent("privateMessageEvent", $this,
-        "receivePrivateMessage");
+        "receivePrivateEvent");
+      EventHandling::registerForEvent("privateNoticeEvent", $this,
+        "receivePrivateEvent");
       EventHandling::registerForEvent("userQuitEvent", $this,
         "receiveUserQuit");
       EventHandling::registerForEvent("userModeEvent", $this,
