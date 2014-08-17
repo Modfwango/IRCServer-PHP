@@ -79,15 +79,15 @@
                   }
                   else {
                     $connection->send(":".$this->self->getConfigFlag(
-                      "serverdomain")." 442 ".$connection->getOption(
-                      "nick")." ".$target." :You're not on that channel");
+                      "serverdomain")." 443 ".$connection->getOption(
+                      "nick")." ".$target." :is already on channel");
                   }
                 }
                 else {
                   $connection->send(":".$this->self->getConfigFlag(
-                    "serverdomain")." 443 ".$connection->getOption("nick")." ".
-                    $recipient->getOption("nick")." ".$target." :is already ".
-                    "on channel");
+                    "serverdomain")." 442 ".$connection->getOption("nick")." ".
+                    $recipient->getOption("nick")." ".$target." :You're not ".
+                    "on that channel");
                 }
               }
               else {
