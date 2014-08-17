@@ -2,6 +2,7 @@
   class @@CLASSNAME@@ {
     public $depend = array("CommandEvent", "Self", "UserRegistrationEvent");
     public $name = "USER";
+    private $self = null;
 
     public function preprocessUserRegistration($name, $id, $connection) {
       if (!preg_match("/^[a-zA-Z][a-zA-Z0-9]*$/", $connection->getOption(

@@ -2,6 +2,7 @@
   class @@CLASSNAME@@ {
     public $depend = array("Client", "CommandEvent", "QUIT", "Self");
     public $name = "KILL";
+    private $self = null;
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];

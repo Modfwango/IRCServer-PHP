@@ -4,6 +4,7 @@
     public $name = "PingPong";
     private $quit = null;
     private $responses = array();
+    private $self = null;
 
     private function getPingResponse($server, $subject) {
       return ":".$server." PONG ".$server." :".$subject;

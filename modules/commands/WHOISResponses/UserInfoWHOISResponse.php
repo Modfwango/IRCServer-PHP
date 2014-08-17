@@ -2,6 +2,7 @@
   class @@CLASSNAME@@ {
     public $depend = array("Self", "WHOISResponseEvent");
     public $name = "UserInfoWHOISResponse";
+    private $self = null;
 
     public function receiveWHOISResponse($name, $id, $data) {
       $source = $data[0];

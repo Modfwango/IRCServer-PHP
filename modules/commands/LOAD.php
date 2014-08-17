@@ -2,6 +2,7 @@
   class @@CLASSNAME@@ {
     public $depend = array("CommandEvent", "Self");
     public $name = "LOAD";
+    private $self = null;
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];

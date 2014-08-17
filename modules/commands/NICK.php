@@ -4,6 +4,7 @@
       "UserRegistrationEvent");
     public $name = "NICK";
     private $client = null;
+    private $self = null;
 
     private function nicknameAvailable($nick) {
       if ($this->client->getClientByNick($nick) == true) {

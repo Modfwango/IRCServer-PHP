@@ -1,9 +1,12 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Channel", "Modes", "Self", "WHOISResponseEvent");
+    public $depend = array("Channel", "Modes", "Self", "Util",
+      "WHOISResponseEvent");
     public $name = "ChannelInfoWHOISResponse";
     private $channel = null;
     private $modes = null;
+    private $self = null;
+    private $util = null;
 
     public function receiveWHOISResponse($name, $id, $data) {
       $source = $data[0];
@@ -59,7 +62,7 @@
         }
       }
       if (count($ret) > 0) {
-        foreach ($this->getStringsWithBaseAndMaxLengthAndObjects(":".
+        foreach ($this->util->getStringsWithBaseAndMaxLengthAndObjects(":".
             $this->self->getConfigFlag("serverdomain")." 319 ".
             $source->getOption("nick")." ".$target->getOption("nick")." :",
             $ret, false, 510) as $line) {
@@ -71,39 +74,11 @@
       return array(true);
     }
 
-    public function getStringsWithBaseAndMaxLengthAndObjects($base, $objects,
-        $includeFirstSpace = true, $maxLength = 0, $maxObjects = 0) {
-      $ret = array();
-      if (count($objects) > 0) {
-        foreach ($objects as $key => $object) {
-          $objects[$key] = " ".$object;
-        }
-        while (count($objects) > 0) {
-          $objCount = 0;
-          $string = $base;
-          if ($includeFirstSpace == false) {
-            $objects[0] = substr($objects[0], 1);
-          }
-          while (true) {
-            if (count($objects) == 0
-                || ($maxLength > 0
-                && strlen($string.$objects[0]) >= $maxLength)
-                || ($maxObjects > 0 && $objCount > $maxObjects)) {
-              break;
-            }
-            $string .= array_shift($objects);
-            $objCount++;
-          }
-          $ret[] = $string;
-        }
-      }
-      return $ret;
-    }
-
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->modes = ModuleManagement::getModuleByName("Modes");
       $this->self = ModuleManagement::getModuleByName("Self");
+      $this->util = ModuleManagement::getModuleByName("Util");
       EventHandling::registerAsEventPreprocessor("WHOISResponseEvent", $this,
         "receiveWHOISResponse");
       return true;

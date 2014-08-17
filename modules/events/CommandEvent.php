@@ -2,6 +2,7 @@
   class @@CLASSNAME@@ {
     public $depend = array("Self");
     public $name = "CommandEvent";
+    private $self = null;
 
     public function preprocessEvent($name, $registrations, $connection, $data) {
       $params = trim($data);

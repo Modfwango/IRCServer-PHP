@@ -9,35 +9,33 @@
         mt_rand(0, 0xffff));
     }
 
-    public function prettyStrChunk($string, $size, $ending) {
+    public function getStringsWithBaseAndMaxLengthAndObjects($base, $objects,
+        $includeFirstSpace = true, $maxLength = 0, $maxObjects = 0) {
       $ret = array();
-      $s = explode("\n", $string);
-      foreach ($s as &$stringf) {
-        $stringf = explode(" ", trim($stringf));
-      }
-      $line = 0;
-      foreach ($s as $string) {
-        while (count($string) > 0) {
-          $ret[$line] = null;
-          $lastCount = count($string);
-          while (isset($string[0]) && (strlen($ret[$line]) +
-                  (strlen($string[0]) + (strlen($ending) + 2))) <= $size) {
-            $ret[$line] .= " ".array_shift($string);
-            $ret[$line] = trim($ret[$line]);
+      if (count($objects) > 0) {
+        foreach ($objects as $key => $object) {
+          $objects[$key] = " ".$object;
+        }
+        while (count($objects) > 0) {
+          $objCount = 0;
+          $string = $base;
+          if ($includeFirstSpace == false) {
+            $objects[0] = substr($objects[0], 1);
           }
-          $line++;
-          if (count($string) == $lastCount) {
-            if (strlen($string[0]) > ($size - strlen($ending))) {
-              $str = chunk_split(array_shift($string),
-                ($size - (strlen($ending) + 1)), "-".$ending);
-              foreach ($str as $substr) {
-                array_unshift($string, $substr);
-              }
+          while (true) {
+            if (count($objects) == 0
+                || ($maxLength > 0
+                && strlen($string.$objects[0]) >= $maxLength)
+                || ($maxObjects > 0 && $objCount > $maxObjects)) {
+              break;
             }
+            $string .= array_shift($objects);
+            $objCount++;
           }
+          $ret[] = $string;
         }
       }
-      return implode("\r\n", $ret);
+      return $ret;
     }
 
     public function validateEmail($email) {

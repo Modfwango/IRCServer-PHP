@@ -2,6 +2,7 @@
   class @@CLASSNAME@@ {
     public $depend = array("CommandEvent", "RehashEvent", "Self");
     public $name = "REHASH";
+    private $self = null;
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];

@@ -3,6 +3,7 @@
     public $depend = array("Channel", "ChannelJoinEvent", "CommandEvent",
       "Self");
     public $name = "JOIN";
+    private $self = null;
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];

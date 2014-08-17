@@ -3,6 +3,7 @@
     public $depend = array("Client", "CommandEvent", "Self");
     public $name = "ISON";
     private $client = null;
+    private $self = null;
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];

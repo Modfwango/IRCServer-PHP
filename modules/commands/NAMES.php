@@ -1,11 +1,13 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("Channel", "Client", "CommandEvent", "Modes",
-      "Self");
+      "Self", "Util");
     public $name = "NAMES";
     private $channel = null;
     private $client = null;
     private $modes = null;
+    private $self = null;
+    private $util = null;
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];
@@ -65,23 +67,9 @@
 
               $base = ":".$this->self->getConfigFlag("serverdomain")." 353 ".
                 $connection->getOption("nick")." = ".$channel["name"]." :";
-              $remaining = (510 - strlen($base));
-              foreach ($members as $member) {
-                $remaining -= (strlen($member) + 1);
-                if ($remaining > -2) {
-                  if (!isset($items)) {
-                    $items = array();
-                  }
-                  $items[] = $member;
-                }
-                else {
-                  $remaining = (510 - strlen($base));
-                  $connection->send($base.implode(" ", $items));
-                  unset($items);
-                }
-              }
-              if (isset($items)) {
-                $connection->send($base.implode(" ", $items));
+              foreach ($this->util->getStringsWithBaseAndMaxLengthAndObjects(
+                        $base, $members, false, 510) as $line) {
+                $connection->send($line);
               }
             }
           }
@@ -108,6 +96,7 @@
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
       $this->self = ModuleManagement::getModuleByName("Self");
+      $this->util = ModuleManagement::getModuleByName("Util");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "names");
       return true;

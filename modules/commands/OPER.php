@@ -4,6 +4,7 @@
     public $name = "OPER";
     private $client = null;
     private $config = array();
+    private $self = null;
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];

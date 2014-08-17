@@ -8,6 +8,7 @@
     private $client = null;
     private $channels = array();
     private $modes = null;
+    private $self = null;
 
     public function broadcast($name, $data, $exclude = null) {
       if (!is_array($exclude)) {

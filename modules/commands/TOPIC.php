@@ -4,6 +4,7 @@
       "Self");
     public $name = "TOPIC";
     private $channel = null;
+    private $self = null;
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];

@@ -6,6 +6,7 @@
     public $name = "INVITE";
     private $channel = null;
     private $client = null;
+    private $self = null;
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];

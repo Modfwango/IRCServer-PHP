@@ -6,6 +6,7 @@
     private $channel = null;
     private $client = null;
     private $modes = null;
+    private $self = null;
 
     public function parseModes($type, $modeString) {
       $mex = array($modeString);
