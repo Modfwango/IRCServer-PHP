@@ -31,8 +31,23 @@
           }
           $match = "*";
           $users = array();
+          $show = true;
           $channel = $this->channel->getChannelByName($command[0]);
           if ($channel != false) {
+            $event = EventHandling::getEventByName(
+              "shouldExposeChannelToUserEvent");
+            if ($event != false) {
+              foreach ($event[2] as $id => $registration) {
+                // Trigger the shouldExposeChannelToUserEvent event for each
+                // registered module.
+                if (!EventHandling::triggerEvent(
+                    "shouldExposeChannelToUserEvent", $id,
+                    array($connection, $channel["name"]))) {
+                  $show = false;
+                }
+              }
+            }
+
             $match = $command[0];
             foreach ($channel["members"] as $member) {
               $c = $this->client->getClientByID($member);
@@ -83,18 +98,20 @@
               }
             }
           }
-          foreach ($users as $user) {
-            $prefix = null;
-            if (is_array($user)) {
-              $prefix = $user[1];
-              $user = $user[0];
+          if ($show == true) {
+            foreach ($users as $user) {
+              $prefix = null;
+              if (is_array($user)) {
+                $prefix = $user[1];
+                $user = $user[0];
+              }
+              $connection->send(":".$this->self->getConfigFlag(
+                "serverdomain")." 352 ".$connection->getOption("nick")." ".
+                $match." ".$user->getOption("ident")." ".$user->getHost()." ".
+                $this->self->getConfigFlag("serverdomain")." ".
+                $user->getOption("nick")." H".$prefix." :0 ".
+                $user->getOption("realname"));
             }
-            $connection->send(":".$this->self->getConfigFlag(
-              "serverdomain")." 352 ".$connection->getOption("nick")." ".
-              $match." ".$user->getOption("ident")." ".$user->getHost()." ".
-              $this->self->getConfigFlag("serverdomain")." ".
-              $user->getOption("nick")." H".$prefix." :0 ".
-              $user->getOption("realname"));
           }
           $connection->send(":".$this->self->getConfigFlag(
             "serverdomain")." 315 ".$connection->getOption("nick")." ".

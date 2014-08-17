@@ -41,7 +41,7 @@
                 if (!EventHandling::triggerEvent(
                     "shouldExposeChannelToUserEvent", $id,
                     array($source, $channel))) {
-                  continue;
+                  continue 2;
                 }
               }
             }

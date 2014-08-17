@@ -37,6 +37,20 @@
           foreach ($channels as $channel) {
             $channel = $this->channel->getChannelByName($channel);
             if ($channel != false) {
+              $event = EventHandling::getEventByName(
+                "shouldExposeChannelToUserEvent");
+              if ($event != false) {
+                foreach ($event[2] as $id => $registration) {
+                  // Trigger the shouldExposeChannelToUserEvent event for each
+                  // registered module.
+                  if (!EventHandling::triggerEvent(
+                      "shouldExposeChannelToUserEvent", $id,
+                      array($connection, $channel["name"]))) {
+                    continue 2;
+                  }
+                }
+              }
+
               $members = array();
               foreach ($channel["members"] as $id) {
                 $c = $this->client->getClientByID($id);

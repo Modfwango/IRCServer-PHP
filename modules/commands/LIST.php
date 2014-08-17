@@ -23,10 +23,26 @@
         if (count($command) > 0) {
           $c = $this->channel->getChannelByName($command[0]);
           if ($c != false) {
-            $connection->send(":".$this->self->getConfigFlag(
-              "serverdomain")." 322 ".$connection->getOption("nick")." ".
-              $c["name"]." ".count($c["members"])." :".(
-              isset($c["topic"]["text"]) ? $c["topic"]["text"] : null));
+            $show = true;
+            $event = EventHandling::getEventByName(
+              "shouldExposeChannelToUserEvent");
+            if ($event != false) {
+              foreach ($event[2] as $id => $registration) {
+                // Trigger the shouldExposeChannelToUserEvent event for each
+                // registered module.
+                if (!EventHandling::triggerEvent(
+                    "shouldExposeChannelToUserEvent", $id,
+                    array($connection, $c["name"]))) {
+                  $show = false;
+                }
+              }
+            }
+            if ($show == true) {
+              $connection->send(":".$this->self->getConfigFlag(
+                "serverdomain")." 322 ".$connection->getOption("nick")." ".
+                $c["name"]." ".count($c["members"])." :".(
+                isset($c["topic"]["text"]) ? $c["topic"]["text"] : null));
+            }
           }
           else {
             $connection->send(":".$this->self->getConfigFlag(
@@ -36,6 +52,19 @@
         }
         else {
           foreach ($this->channel->getChannels() as $c) {
+            $event = EventHandling::getEventByName(
+              "shouldExposeChannelToUserEvent");
+            if ($event != false) {
+              foreach ($event[2] as $id => $registration) {
+                // Trigger the shouldExposeChannelToUserEvent event for each
+                // registered module.
+                if (!EventHandling::triggerEvent(
+                    "shouldExposeChannelToUserEvent", $id,
+                    array($connection, $c["name"]))) {
+                  continue 2;
+                }
+              }
+            }
             $connection->send(":".$this->self->getConfigFlag(
               "serverdomain")." 322 ".$connection->getOption("nick")." ".
               $c["name"]." ".count($c["members"])." :".(
