@@ -1,6 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("CommandEvent", "QUIT", "Timer", "USER");
+    public $depend = array("CommandEvent", "QUIT", "Self", "Timer", "USER");
     public $name = "PingPong";
     private $quit = null;
     private $responses = array();
@@ -15,22 +15,26 @@
 
       if (count($command) == 1) {
         $connection->send(
-          $this->getPingResponse(__SERVERDOMAIN__, $command[0]));
+          $this->getPingResponse($this->self->getConfigFlag("serverdomain"),
+          $command[0]));
       }
       elseif (count($command) > 1) {
-        if (strtolower($command[1]) == strtolower(__SERVERDOMAIN__)) {
+        if (strtolower($command[1]) == strtolower($this->self->getConfigFlag(
+            "serverdomain"))) {
           $connection->send(
-            $this->getPingResponse(__SERVERDOMAIN__, $command[0]));
+            $this->getPingResponse($this->self->getConfigFlag("serverdomain"),
+            $command[0]));
         }
         else {
-          $connection->send(":".__SERVERDOMAIN__." 402 ".
-            $connection->getOption("nick")." ".$command[1].
-            " :No such server");
+          $connection->send(":".$this->self->getConfigFlag(
+            "serverdomain")." 402 ".$connection->getOption("nick")." ".
+            $command[1]." :No such server");
         }
       }
       else {
-        $connection->send(":".__SERVERDOMAIN__." 409 ".
-          $connection->getOption("nick")." :No origin specified");
+        $connection->send(":".$this->self->getConfigFlag(
+          "serverdomain")." 409 ".$connection->getOption(
+          "nick")." :No origin specified");
       }
     }
 
@@ -38,7 +42,8 @@
       $connection = $data[0];
       $command = $data[1];
 
-      if (strtolower($command[0]) == strtolower(__SERVERDOMAIN__)) {
+      if (strtolower($command[0]) == strtolower($this->self->getConfigFlag(
+          "serverdomain"))) {
         $this->responses[$connection->getOption("id")] = true;
       }
     }
@@ -46,8 +51,9 @@
     public function receiveUserRegistration($name, $connection) {
       if ($connection->getType() != "2") {
         $this->responses[$connection->getOption("id")] = true;
-        ModuleManagement::getModuleByName("Timer")->newTimer(__PINGTIME__,
-          $this, "sendPingRequest", $connection);
+        ModuleManagement::getModuleByName("Timer")->newTimer(
+          $this->self->getConfigFlag("pingtime"), $this, "sendPingRequest",
+          $connection);
       }
       return true;
     }
@@ -55,12 +61,14 @@
     public function sendPingRequest($connection) {
       if ($this->responses[$connection->getOption("id")] == true) {
         $this->responses[$connection->getOption("id")] = false;
-        $connection->send("PING :".__SERVERDOMAIN__);
-        ModuleManagement::getModuleByName("Timer")->newTimer(__PINGTIME__,
-          $this, "sendPingRequest", $connection);
+        $connection->send("PING :".$this->self->getConfigFlag("serverdomain"));
+        ModuleManagement::getModuleByName("Timer")->newTimer(
+          $this->self->getConfigFlag("pingtime"), $this, "sendPingRequest",
+          $connection);
       }
       else {
-        $message = "Ping timeout: ".__PINGTIME__." seconds";
+        $message = "Ping timeout: ".$this->self->getConfigFlag(
+          "pingtime")." seconds";
         if ($connection->getOption("registered") == true) {
           $connection->send(":".$connection->getOption("nick")."!".
             $connection->getOption("ident")."@".$connection->getHost().
@@ -76,6 +84,7 @@
 
     public function isInstantiated() {
       $this->quit = ModuleManagement::getModuleByName("QUIT");
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this,
         "receivePingCommand", "ping");
       EventHandling::registerForEvent("commandEvent", $this,

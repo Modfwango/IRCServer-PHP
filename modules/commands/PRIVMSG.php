@@ -1,7 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("Channel", "ChannelMessageEvent", "Client",
-      "CommandEvent", "PrivateMessageEvent");
+      "CommandEvent", "PrivateMessageEvent", "Self");
     public $name = "PRIVMSG";
     private $channel = null;
     private $client = null;
@@ -40,9 +40,9 @@
                 }
               }
               else {
-                $connection->send(":".__SERVERDOMAIN__." 401 ".
-                  $connection->getOption("nick")." PRIVMSG :No such".
-                  " nick/channel");
+                $connection->send(":".$this->self->getConfigFlag(
+                "serverdomain")." 401 ".$connection->getOption("nick")." ".
+                "PRIVMSG :No such nick/channel");
               }
             }
             elseif (preg_match("/^[[\\]a-zA-Z\\\\`_^{|}][[\\]a-zA-Z0-9\\\\`_".
@@ -62,32 +62,35 @@
                 }
               }
               else {
-                $connection->send(":".__SERVERDOMAIN__." 401 ".
-                  $connection->getOption("nick")." PRIVMSG :No such".
-                  " nick/channel");
+                $connection->send(":".$this->self->getConfigFlag(
+                  "serverdomain")." 401 ".$connection->getOption("nick")." ".
+                  "PRIVMSG :No such nick/channel");
               }
             }
           }
         }
         elseif (count($command) == 1) {
-          $connection->send(":".__SERVERDOMAIN__." 412 ".
-            $connection->getOption("nick")." :No text to send");
+          $connection->send(":".$this->self->getConfigFlag(
+            "serverdomain")." 412 ".$connection->getOption("nick")." :No text ".
+            "to send");
         }
         elseif (count($command) == 0) {
-          $connection->send(":".__SERVERDOMAIN__." 411 ".
-            $connection->getOption("nick")." :No recipient given (PRIVMSG)");
+          $connection->send(":".$this->self->getConfigFlag(
+            "serverdomain")." 411 ".$connection->getOption("nick")." :No ".
+            "recipient given (PRIVMSG)");
         }
       }
       else {
-        $connection->send(":".__SERVERDOMAIN__." 451 ".(
-          $connection->getOption("nick") ? $connection->getOption("nick") :
-          "*")." :You have not registered");
+        $connection->send(":".$this->self->getConfigFlag(
+          "serverdomain")." 451 ".($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")." :You have not registered");
       }
     }
 
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "privmsg");
       return true;

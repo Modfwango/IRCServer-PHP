@@ -3,7 +3,7 @@
     public $depend = array("ChannelCreatedEvent", "ChannelInviteEvent",
       "ChannelJoinEvent", "ChannelMessageEvent", "ChannelModeEvent",
       "ChannelPartEvent", "ChannelTopicEvent", "Client", "Modes",
-      "NickChangeEvent", "UserQuitEvent");
+      "NickChangeEvent", "Self", "UserQuitEvent");
     public $name = "Channel";
     private $client = null;
     private $channels = array();
@@ -127,8 +127,9 @@
         $recipient->send(":".$source->getOption("nick")."!".
           $source->getOption("ident")."@".$source->getHost()." INVITE ".
           $recipient->getOption("nick")." :".$target);
-        $source->send(":".__SERVERDOMAIN__." 341 ".$source->getOption("nick").
-          " ".$recipient->getOption("nick")." ".$target);
+        $source->send(":".$this->self->getConfigFlag(
+          "serverdomain")." 341 ".$source->getOption("nick")." ".
+          $recipient->getOption("nick")." ".$target);
         return true;
       }
       return false;
@@ -440,6 +441,7 @@
     public function isInstantiated() {
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("channelCreatedEvent", $this,
         "receiveChannelCreated");
       EventHandling::registerForEvent("channelInviteEvent", $this,

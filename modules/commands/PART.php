@@ -1,6 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Channel", "CommandEvent", "ChannelPartEvent");
+    public $depend = array("Channel", "CommandEvent", "ChannelPartEvent",
+      "Self");
     public $name = "PART";
     private $channel = null;
 
@@ -39,26 +40,28 @@
               }
             }
             else {
-              $connection->send(":".__SERVERDOMAIN__." 403 ".
-                $connection->getOption("nick")." ".$target.
-                " :No such channel");
+              $connection->send(":".$this->self->getConfigFlag(
+                "serverdomain")." 403 ".$connection->getOption("nick")." ".
+                $target." :No such channel");
             }
           }
         }
         else {
-          $connection->send(":".__SERVERDOMAIN__." 461 ".
-            $connection->getOption("nick")." PART :Not enough parameters");
+          $connection->send(":".$this->self->getConfigFlag(
+            "serverdomain")." 461 ".$connection->getOption("nick")." PART ".
+            ":Not enough parameters");
         }
       }
       else {
-        $connection->send(":".__SERVERDOMAIN__." 451 ".(
-          $connection->getOption("nick") ? $connection->getOption("nick") :
-          "*")." :You have not registered");
+        $connection->send(":".$this->self->getConfigFlag(
+          "serverdomain")." 451 ".($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")." :You have not registered");
       }
     }
 
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "part");
       return true;

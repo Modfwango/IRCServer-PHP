@@ -1,6 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Channel", "Client", "CommandEvent", "Modes");
+    public $depend = array("Channel", "Client", "CommandEvent", "Modes",
+      "Self");
     public $name = "NAMES";
     private $channel = null;
     private $client = null;
@@ -62,7 +63,7 @@
                 }
               }
 
-              $base = ":".__SERVERDOMAIN__." 353 ".
+              $base = ":".$this->self->getConfigFlag("serverdomain")." 353 ".
                 $connection->getOption("nick")." = ".$channel["name"]." :";
               $remaining = (510 - strlen($base));
               foreach ($members as $member) {
@@ -85,19 +86,20 @@
             }
           }
           if (count($channels) == 1) {
-            $connection->send(":".__SERVERDOMAIN__." 366 ".
-              $connection->getOption("nick")." ".$channels[0].
-              " :End of /NAMES list.");
+            $connection->send(":".$this->self->getConfigFlag(
+              "serverdomain")." 366 ".$connection->getOption("nick")." ".
+              $channels[0]." :End of /NAMES list.");
             return true;
           }
         }
-        $connection->send(":".__SERVERDOMAIN__." 366 ".
-          $connection->getOption("nick")." * :End of /NAMES list.");
+        $connection->send(":".$this->self->getConfigFlag(
+          "serverdomain")." 366 ".$connection->getOption("nick")." * :End of ".
+          "/NAMES list.");
       }
       else {
-        $connection->send(":".__SERVERDOMAIN__." 451 ".(
-          $connection->getOption("nick") ? $connection->getOption("nick") :
-          "*")." :You have not registered");
+        $connection->send(":".$this->self->getConfigFlag(
+          "serverdomain")." 451 ".($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")." :You have not registered");
       }
     }
 
@@ -105,6 +107,7 @@
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "names");
       return true;

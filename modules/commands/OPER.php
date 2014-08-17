@@ -1,9 +1,9 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Client", "CommandEvent");
+    public $depend = array("Client", "CommandEvent", "Self");
     public $name = "OPER";
     private $client = null;
-    private $opers = array();
+    private $config = array();
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];
@@ -19,7 +19,7 @@
       if ($connection->getOption("registered") == true) {
         if (count($command) > 1) {
           if ($connection->getOption("operator") != true) {
-            foreach ($this->opers as $oname => $oper) {
+            foreach ($this->config as $oname => $oper) {
               if (strtolower($oname) == strtolower($command[0])) {
                 if (isset($oper["mask"])) {
                   if (!is_array($oper["mask"])) {
@@ -35,46 +35,49 @@
                   if ($matches == true) {
                     if (password_verify($command[1], $oper["hash"])) {
                       $connection->setOption("operator", true);
-                      $connection->send(":".__SERVERDOMAIN__." 381 ".
-                        $connection->getOption("nick")." :You are now an IRC ".
-                        "operator");
+                      $connection->send(":".$this->self->getConfigFlag(
+                        "serverdomain")." 381 ".$connection->getOption(
+                        "nick")." :You are now an IRC operator");
                       return;
                     }
                     else {
-                      $connection->send(":".__SERVERDOMAIN__." 464 ".
-                        $connection->getOption("nick")." :Password Incorrect");
+                      $connection->send(":".$this->self->getConfigFlag(
+                        "serverdomain")." 464 ".$connection->getOption(
+                        "nick")." :Password Incorrect");
                       return;
                     }
                   }
                 }
               }
             }
-            $connection->send(":".__SERVERDOMAIN__." 491 ".
-              $connection->getOption("nick")." :No appropriate operator ".
-              "blocks were found for your host");
+            $connection->send(":".$this->self->getConfigFlag(
+              "serverdomain")." 491 ".$connection->getOption("nick")." :No ".
+              "appropriate operator blocks were found for your host");
           }
           else {
-            $connection->send(":".__SERVERDOMAIN__." 381 ".
-              $connection->getOption("nick")." :You are now an IRC operator");
+            $connection->send(":".$this->self->getConfigFlag(
+              "serverdomain")." 381 ".$connection->getOption("nick")." :You ".
+              "are now an IRC operator");
           }
         }
         else {
-          $connection->send(":".__SERVERDOMAIN__." 461 ".
-            $connection->getOption("nick")." OPER :Not enough parameters");
+          $connection->send(":".$this->self->getConfigFlag(
+            "serverdomain")." 461 ".$connection->getOption("nick")." OPER ".
+            ":Not enough parameters");
         }
       }
       else {
-        $connection->send(":".__SERVERDOMAIN__." 451 ".(
-          $connection->getOption("nick") ? $connection->getOption("nick") :
-          "*")." :You have not registered");
+        $connection->send(":".$this->self->getConfigFlag(
+          "serverdomain")." 451 ".($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")." :You have not registered");
       }
     }
 
     public function loadConfig($name = null, $data = null) {
-      $opers = @json_decode(trim(StorageHandling::loadFile($this,
-        "opers.json")), true);
-      if (!is_array($opers)) {
-        $opers = array(
+      $config = @json_decode(trim(StorageHandling::loadFile($this,
+        "config.json")), true);
+      if (!is_array($config)) {
+        $config = array(
           "clay" => array(
             "mask" => array(
               "clayfreeman!*@clayfreeman.com",
@@ -89,15 +92,16 @@
               "ykk1a"
           )
         );
-        StorageHandling::saveFile($this, "opers.json", json_encode($opers,
+        StorageHandling::saveFile($this, "config.json", json_encode($config,
           JSON_PRETTY_PRINT));
       }
-      $this->opers = $opers;
+      $this->config = $config;
     }
 
     public function isInstantiated() {
       $this->loadConfig();
       $this->client = ModuleManagement::getModuleByName("Client");
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "oper");
       EventHandling::registerForEvent("rehashEvent", $this, "loadConfig");

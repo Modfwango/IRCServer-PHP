@@ -1,7 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("Channel", "ChannelMessageEvent", "ChannelModeEvent",
-      "Modes");
+      "Modes", "Self");
     public $name = "Moderated";
     private $channel = null;
     private $modes = null;
@@ -54,8 +54,9 @@
             }
           }
         }
-        $source->send(":".__SERVERDOMAIN__." 404 ".$source->getOption("nick").
-          " ".$channel["name"]." :Cannot send to channel");
+        $source->send(":".$this->self->getConfigFlag("serverdomain")." 404 ".
+          $source->getOption("nick")." ".$channel["name"].
+          " :Cannot send to channel");
         return array(false);
       }
     }
@@ -63,6 +64,7 @@
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->self = ModuleManagement::getModuleByName("Self");
       $this->modes->setMode(array("Moderated", "m", "0", "0"));
       EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
         "receiveChannelMode");

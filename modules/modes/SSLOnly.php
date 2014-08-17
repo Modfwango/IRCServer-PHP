@@ -1,7 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("Channel", "Client", "ChannelJoinEvent",
-      "ChannelModeEvent", "Modes");
+      "ChannelModeEvent", "Modes", "Self");
     public $name = "SSLOnly";
     private $channel = null;
     private $client = null;
@@ -61,8 +61,8 @@
         }
       }
       if ($sendWarning == true) {
-        $source->send(":".__SERVERDOMAIN__." 490 ".$source->getOption("nick").
-          " ".$channel["name"].
+        $source->send(":".$this->self->getConfigFlag("serverdomain")." 490 ".
+          $source->getOption("nick")." ".$channel["name"].
           " :all members of the channel must be connected via SSL");
       }
       $data[2] = $modes;
@@ -75,8 +75,9 @@
 
       $modes = $this->channel->hasModes($channel, array("SSLOnly"));
       if ($modes != false && $source->getSSL() == false) {
-        $source->send(":".__SERVERDOMAIN__." 489 ".$source->getOption("nick").
-          " ".$channel." :Cannot join channel; SSL users only (+S)");
+        $source->send(":".$this->self->getConfigFlag("serverdomain")." 489 ".
+          $source->getOption("nick")." ".$channel.
+          " :Cannot join channel; SSL users only (+S)");
         return array(false);
       }
     }
@@ -85,6 +86,7 @@
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->self = ModuleManagement::getModuleByName("Self");
       $this->modes->setMode(array("SSLOnly", "S", "0", "0"));
       EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
         "receiveChannelMode");

@@ -1,5 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
+    public $depend = array("Self");
     public $name = "CommandEvent";
 
     public function preprocessEvent($name, $registrations, $connection, $data) {
@@ -53,15 +54,16 @@
       }
       if ($count == 0) {
         // Command doesn't exist.
-        $connection->send(":".__SERVERDOMAIN__." 421 ".(
-          $connection->getOption("nick") ? $connection->getOption("nick") :
-          "*")." ".$cmd." :Unknown command");
+        $connection->send(":".$this->self->getConfigFlag(
+          "serverdomain")." 421 ".($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")." ".$cmd." :Unknown command");
       }
 
       return true;
     }
 
     public function isInstantiated() {
+      $this->self = ModuleManagement::getModuleByName("Self");
       // Create an event for raw data.
       EventHandling::createEvent("commandEvent", $this, "preprocessEvent");
       return true;

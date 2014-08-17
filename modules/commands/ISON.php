@@ -1,6 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Client", "CommandEvent");
+    public $depend = array("Client", "CommandEvent", "Self");
     public $name = "ISON";
     private $client = null;
 
@@ -21,37 +21,40 @@
           foreach ($command as $user) {
             $c = $this->client->getClientByNick($user);
             if ($c != false) {
-              if (strlen(":".__SERVERDOMAIN__." 303 ".
-                  $connection->getOption("nick")." :".implode(" ",
-                  $online)) < 512) {
+              if (strlen(":".$this->self->getConfigFlag(
+                  "serverdomain")." 303 ".$connection->getOption("nick")." :".
+                  implode(" ", $online)) < 512) {
                 $online[] = $c->getOption("nick");
               }
             }
           }
 
-          while (strlen(":".__SERVERDOMAIN__." 303 ".
+          while (strlen(":".$this->self->getConfigFlag("serverdomain")." 303 ".
                   $connection->getOption("nick")." :".implode(" ", $online))
                   > 512) {
             array_pop($online);
           }
 
-          $connection->send(":".__SERVERDOMAIN__." 303 ".
-            $connection->getOption("nick")." :".implode(" ", $online));
+          $connection->send(":".$this->self->getConfigFlag(
+            "serverdomain")." 303 ".$connection->getOption("nick")." :".
+            implode(" ", $online));
         }
         else {
-          $connection->send(":".__SERVERDOMAIN__." 461 ".
-            $connection->getOption("nick")." ISON :Not enough parameters");
+          $connection->send(":".$this->self->getConfigFlag(
+          "serverdomain")." 461 ".$connection->getOption("nick")." ISON :Not ".
+          "enough parameters");
         }
       }
       else {
-        $connection->send(":".__SERVERDOMAIN__." 451 ".(
-          $connection->getOption("nick") ? $connection->getOption("nick") :
-          "*")." :You have not registered");
+        $connection->send(":".$this->self->getConfigFlag(
+          "serverdomain")." 451 ".($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")." :You have not registered");
       }
     }
 
     public function isInstantiated() {
       $this->client = ModuleManagement::getModuleByName("Client");
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "ison");
       return true;

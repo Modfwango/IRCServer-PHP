@@ -1,6 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Client", "CommandEvent", "WHOISResponseEvent");
+    public $depend = array("Client", "CommandEvent", "Self",
+      "WHOISResponseEvent");
     public $name = "WHOIS";
     private $client = null;
 
@@ -34,23 +35,24 @@
             }
           }
           else {
-            $connection->send(":".__SERVERDOMAIN__." 401 ".
-              $connection->getOption("nick")." ".$command[0].
-              " :No such nick/channel");
+            $connection->send(":".$this->self->getConfigFlag(
+              "serverdomain")." 401 ".$connection->getOption("nick")." ".
+              $command[0]." :No such nick/channel");
           }
-          $connection->send(":".__SERVERDOMAIN__." 318 ".
-            $connection->getOption("nick")." ".$command[0].
-            " :End of /WHOIS list.");
+          $connection->send(":".$this->self->getConfigFlag(
+            "serverdomain")." 318 ".$connection->getOption("nick")." ".
+            $command[0]." :End of /WHOIS list.");
         }
         else {
-          $connection->send(":".__SERVERDOMAIN__." 461 ".
-            $connection->getOption("nick")." WHOIS :Not enough parameters");
+          $connection->send(":".$this->self->getConfigFlag(
+            "serverdomain")." 461 ".$connection->getOption("nick")." WHOIS ".
+            ":Not enough parameters");
         }
       }
       else {
-        $connection->send(":".__SERVERDOMAIN__." 451 ".(
-          $connection->getOption("nick") ? $connection->getOption("nick") :
-          "*")." :You have not registered");
+        $connection->send(":".$this->self->getConfigFlag(
+          "serverdomain")." 451 ".($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")." :You have not registered");
       }
     }
 
@@ -70,6 +72,7 @@
 
     public function isInstantiated() {
       $this->client = ModuleManagement::getModuleByName("Client");
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "whois");
       EventHandling::registerForEvent("WHOISResponseEvent", $this,

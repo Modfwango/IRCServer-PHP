@@ -1,6 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Channel", "ChannelJoinEvent", "CommandEvent");
+    public $depend = array("Channel", "ChannelJoinEvent", "CommandEvent",
+      "Self");
     public $name = "JOIN";
 
     public function receiveCommand($name, $data) {
@@ -34,31 +35,33 @@
                 }
               }
               else {
-                $connection->send(":".__SERVERDOMAIN__." 479 ".
-                  $connection->getOption("nick")." ".$channel.
-                  " :Illegal channel name");
+                $connection->send(":".$this->self->getConfigFlag(
+                  "serverdomain")." 479 ".$connection->getOption("nick")." ".
+                  $channel." :Illegal channel name");
               }
             }
             else {
-              $connection->send(":".__SERVERDOMAIN__." 479 ".
-                $connection->getOption("nick")." ".$channel.
-                " :Illegal channel name");
+              $connection->send(":".$this->self->getConfigFlag(
+                "serverdomain")." 479 ".$connection->getOption("nick")." ".
+                $channel." :Illegal channel name");
             }
           }
         }
         else {
-          $connection->send(":".__SERVERDOMAIN__." 461 ".
-            $connection->getOption("nick")." JOIN :Not enough parameters");
+          $connection->send(":".$this->self->getConfigFlag(
+            "serverdomain")." 461 ".$connection->getOption("nick")." JOIN ".
+            ":Not enough parameters");
         }
       }
       else {
-        $connection->send(":".__SERVERDOMAIN__." 451 ".(
-          $connection->getOption("nick") ? $connection->getOption("nick") :
-          "*")." :You have not registered");
+        $connection->send(":".$this->self->getConfigFlag(
+          "serverdomain")." 451 ".($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")." :You have not registered");
       }
     }
 
     public function isInstantiated() {
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "join");
       return true;

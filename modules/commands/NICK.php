@@ -1,6 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Client", "CommandEvent", "NickChangeEvent",
+    public $depend = array("Client", "CommandEvent", "NickChangeEvent", "Self",
       "UserRegistrationEvent");
     public $name = "NICK";
     private $client = null;
@@ -61,24 +61,26 @@
           }
         }
         else {
-          $connection->send(":".__SERVERDOMAIN__." 433 ".(
-            $connection->getOption("nick") ? $connection->getOption("nick") :
-            "*")." ".$command[0]." :Nickname is already in use.");
+          $connection->send(":".$this->self->getConfigFlag(
+            "serverdomain")." 433 ".($connection->getOption("nick") ?
+            $connection->getOption("nick") : "*")." ".$command[0]." :Nickname ".
+            "is already in use.");
         }
       }
       elseif (count($command) > 0) {
-        $connection->send(":".__SERVERDOMAIN__." 432 * ".$command[0].
-          " :Erroneous Nickname");
+        $connection->send(":".$this->self->getConfigFlag(
+          "serverdomain")." 432 * ".$command[0]." :Erroneous Nickname");
       }
       else {
-        $connection->send(":".__SERVERDOMAIN__." 431 ".(
-          $connection->getOption("nick") ? $connection->getOption("nick") :
-          "*")." :No nickname given");
+        $connection->send(":".$this->self->getConfigFlag(
+          "serverdomain")." 431 ".($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")." :No nickname given");
       }
     }
 
     public function isInstantiated() {
       $this->client = ModuleManagement::getModuleByName("Client");
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "nick");
       return true;

@@ -1,7 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("Channel", "ChannelOperator", "Client",
-      "CommandEvent", "Modes");
+      "CommandEvent", "Modes", "Self");
     public $name = "MODE";
     private $channel = null;
     private $client = null;
@@ -122,15 +122,15 @@
                   }
                 }
                 if ($okay == false) {
-                  $connection->send(":".__SERVERDOMAIN__." 482 ".
-                    $connection->getOption("nick")." ".$channel["name"].
-                    " :You're not a channel operator");
+                  $connection->send(":".$this->self->getConfigFlag(
+                    "serverdomain")." 482 ".$connection->getOption("nick")." ".
+                    $channel["name"]." :You're not a channel operator");
                 }
                 else {
                   // Use as a filter to list modes for this channel.
-                  $connection->send(":".__SERVERDOMAIN__." 368 ".
-                    $connection->getOption("nick")." ".$channel["name"].
-                    " :End of Channel Ban List");
+                  $connection->send(":".$this->self->getConfigFlag(
+                    "serverdomain")." 368 ".$connection->getOption("nick")." ".
+                    $channel["name"]." :End of Channel Ban List");
                 }
               }
             }
@@ -144,20 +144,20 @@
                     // Trigger the userModeEvent event for each registered
                     // module.
                     EventHandling::triggerEvent("userModeEvent", $id,
-                        array($connection, $modes));
+                      array($connection, $modes));
                   }
                 }
               }
               else {
-                $connection->send(":".__SERVERDOMAIN__." 502 ".
-                  $connection->getOption("nick").
-                  " :Can't change mode for other users");
+                $connection->send(":".$this->self->getConfigFlag(
+                  "serverdomain")." 502 ".$connection->getOption("nick")." ".
+                  ":Can't change mode for other users");
               }
             }
             else {
-              $connection->send(":".__SERVERDOMAIN__." 403 ".
-                $connection->getOption("nick")." ".$command[0].
-                " :No such channel");
+              $connection->send(":".$this->self->getConfigFlag(
+                "serverdomain")." 403 ".$connection->getOption("nick")." ".
+                $command[0]." :No such channel");
             }
           }
           else {
@@ -183,14 +183,14 @@
               $modes = "+".implode($modes);
               $params = implode(" ", $params);
               $modeString = $modes." ".$params;
-              $connection->send(":".__SERVERDOMAIN__." 324 ".
-                $connection->getOption("nick")." ".$channel["name"]." ".
-                $modeString);
+              $connection->send(":".$this->self->getConfigFlag(
+                "serverdomain")." 324 ".$connection->getOption("nick")." ".
+                $channel["name"]." ".$modeString);
               if (!isset($data[2])) {
-                $connection->send(":".__SERVERDOMAIN__." 329 ".
-                  $connection->getOption("nick")." ".$channel["name"]." ".
-                  (isset($channel["modetime"]) ? $channel["modetime"] :
-                  $channel["created"]));
+                $connection->send(":".$this->self->getConfigFlag(
+                  "serverdomain")." 329 ".$connection->getOption("nick")." ".
+                  $channel["name"]." ".(isset($channel["modetime"]) ?
+                  $channel["modetime"] :$channel["created"]));
               }
             }
             elseif ($client != false) {
@@ -215,31 +215,33 @@
                 $modes = "+".implode($modes);
                 $params = implode(" ", $params);
                 $modeString = $modes." ".$params;
-                $connection->send(":".__SERVERDOMAIN__." 221 ".
-                  $connection->getOption("nick")." ".$modeString);
+                $connection->send(":".$this->self->getConfigFlag(
+                  "serverdomain")." 221 ".$connection->getOption("nick")." ".
+                  $modeString);
               }
               else {
-                $connection->send(":".__SERVERDOMAIN__." 502 ".
-                  $connection->getOption("nick").
-                  " :Can't change mode for other users");
+                $connection->send(":".$this->self->getConfigFlag(
+                  "serverdomain")." 502 ".$connection->getOption("nick")." ".
+                  ":Can't change mode for other users");
               }
             }
             else {
-              $connection->send(":".__SERVERDOMAIN__." 403 ".
-                $connection->getOption("nick")." ".$command[0].
-                " :No such channel");
+              $connection->send(":".$this->self->getConfigFlag(
+                "serverdomain")." 403 ".$connection->getOption("nick")." ".
+                $command[0]." :No such channel");
             }
           }
         }
         else {
-          $connection->send(":".__SERVERDOMAIN__." 461 ".
-            $connection->getOption("nick")." MODE :Not enough parameters");
+          $connection->send(":".$this->self->getConfigFlag(
+            "serverdomain")." 461 ".$connection->getOption("nick")." MODE ".
+            ":Not enough parameters");
         }
       }
       else {
-        $connection->send(":".__SERVERDOMAIN__." 451 ".(
-          $connection->getOption("nick") ? $connection->getOption("nick") :
-          "*")." :You have not registered");
+        $connection->send(":".$this->self->getConfigFlag(
+          "serverdomain")." 451 ".($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")." :You have not registered");
       }
     }
 
@@ -247,6 +249,7 @@
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "mode");
       return true;

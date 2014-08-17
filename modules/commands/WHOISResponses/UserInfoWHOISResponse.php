@@ -1,6 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("WHOISResponseEvent");
+    public $depend = array("Self", "WHOISResponseEvent");
     public $name = "UserInfoWHOISResponse";
 
     public function receiveWHOISResponse($name, $id, $data) {
@@ -12,15 +12,16 @@
       if (!isset($response[$weight])) {
         $response[$weight] = array();
       }
-      $response[$weight][] = ":".__SERVERDOMAIN__." 311 ".
-        $source->getOption("nick")." ".$target->getOption("nick")." ".
-        $target->getOption("ident")." ".$target->getHost()." * :".
-        $target->getOption("realname");
+      $response[$weight][] = ":".$this->self->getConfigFlag(
+        "serverdomain")." 311 ".$source->getOption("nick")." ".
+        $target->getOption("nick")." ".$target->getOption("ident")." ".
+        $target->getHost()." * :".$target->getOption("realname");
       $data[2] = $response;
       return array(null, $data);
     }
 
     public function isInstantiated() {
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerAsEventPreprocessor("WHOISResponseEvent", $this,
         "receiveWHOISResponse");
       return true;

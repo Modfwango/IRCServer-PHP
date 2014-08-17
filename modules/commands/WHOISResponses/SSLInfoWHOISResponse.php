@@ -1,6 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("WHOISResponseEvent");
+    public $depend = array("Self", "WHOISResponseEvent");
     public $name = "SSLInfoWHOISResponse";
 
     public function receiveWHOISResponse($name, $id, $data) {
@@ -13,9 +13,9 @@
         if (!isset($response[$weight])) {
           $response[$weight] = array();
         }
-        $response[$weight][] = ":".__SERVERDOMAIN__." 671 ".
-          $source->getOption("nick")." ".$target->getOption("nick")." :is ".
-          "using a secure connection";
+        $response[$weight][] = ":".$this->self->getConfigFlag(
+          "serverdomain")." 671 ".$source->getOption("nick")." ".
+          $target->getOption("nick")." :is using a secure connection";
         $data[2] = $response;
         return array(null, $data);
       }
@@ -23,6 +23,7 @@
     }
 
     public function isInstantiated() {
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerAsEventPreprocessor("WHOISResponseEvent", $this,
         "receiveWHOISResponse");
       return true;

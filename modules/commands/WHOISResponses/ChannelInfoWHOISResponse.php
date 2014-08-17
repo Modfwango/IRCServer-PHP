@@ -1,6 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Channel", "Modes", "WHOISResponseEvent");
+    public $depend = array("Channel", "Modes", "Self", "WHOISResponseEvent");
     public $name = "ChannelInfoWHOISResponse";
     private $channel = null;
     private $modes = null;
@@ -60,8 +60,9 @@
       }
       if (count($ret) > 0) {
         foreach ($this->getStringsWithBaseAndMaxLengthAndObjects(":".
-          __SERVERDOMAIN__." 319 ".$source->getOption("nick")." ".
-          $target->getOption("nick")." :", $ret, false, 510) as $line) {
+            $this->self->getConfigFlag("serverdomain")." 319 ".
+            $source->getOption("nick")." ".$target->getOption("nick")." :",
+            $ret, false, 510) as $line) {
           $response[$weight][] = $line;
         }
         $data[2] = $response;
@@ -102,6 +103,7 @@
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerAsEventPreprocessor("WHOISResponseEvent", $this,
         "receiveWHOISResponse");
       return true;

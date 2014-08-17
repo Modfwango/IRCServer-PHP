@@ -1,15 +1,15 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("CommandEvent", "UserRegistrationEvent");
+    public $depend = array("CommandEvent", "Self", "UserRegistrationEvent");
     public $name = "USER";
 
     public function preprocessUserRegistration($name, $id, $connection) {
       if (!preg_match("/^[a-zA-Z][a-zA-Z0-9]*$/", $connection->getOption(
           "ident"))) {
-        $connection->send(":".__SERVERDOMAIN__." NOTICE ".
-          $connection->getOption("nick")." :*** Your username is invalid. ".
-          "Please make sure that your username contains only alphanumeric ".
-          "characters.");
+        $connection->send(":".$this->self->getConfigFlag(
+          "serverdomain")." NOTICE ".$connection->getOption("nick")." :*** ".
+          "Your username is invalid. Please make sure that your username ".
+          "contains only alphanumeric characters.");
         $connection->send("ERROR :Closing Link: ".$connection->getIP().
           " (Invalid username [".$connection->getOption("ident")."])");
         $connection->disconnect();
@@ -52,18 +52,20 @@
           }
         }
         elseif ($connection->getOption("nick") != false) {
-          $connection->send(":".__SERVERDOMAIN__." 462 ".
-            $connection->getOption("nick")." :You may not reregister");
+          $connection->send(":".$this->self->getConfigFlag(
+            "serverdomain")." 462 ".$connection->getOption("nick")." :You may ".
+            "not reregister");
         }
       }
       else {
-        $connection->send(":".__SERVERDOMAIN__." 461 ".(
-          $connection->getOption("nick") ? $connection->getOption("nick") :
-          "*")." USER :Not enough parameters");
+        $connection->send(":".$this->self->getConfigFlag(
+          "serverdomain")." 461 ".($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")." USER :Not enough parameters");
       }
     }
 
     public function isInstantiated() {
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "user");
       EventHandling::registerAsEventPreprocessor("userRegistrationEvent", $this,

@@ -1,23 +1,24 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("Client", "CommandEvent", "ConnectionCreatedEvent",
-      "LUSERS", "Modes", "MOTD", "USER");
+      "LUSERS", "Modes", "MOTD", "Self", "USER");
     public $name = "Welcome";
     private $client = null;
     private $modes = null;
+    private $self = null;
 
     public function receiveConnectionCreated($name, $connection) {
-      $connection->send(":".__SERVERDOMAIN__.
+      $connection->send(":".$this->self->getConfigFlag("serverdomain").
         " NOTICE * :*** Looking up your hostname...");
       $ip = $connection->getIP();
       $host = $connection->getHost();
       if ($ip == $host) {
-        $connection->send(":".__SERVERDOMAIN__.
+        $connection->send(":".$this->self->getConfigFlag("serverdomain").
           " NOTICE * :*** Couldn't look up your hostname");
         $connection->setOption("id", hash("sha256", rand().$ip));
       }
       else {
-        $connection->send(":".__SERVERDOMAIN__.
+        $connection->send(":".$this->self->getConfigFlag("serverdomain").
           " NOTICE * :*** Found your hostname");
         $connection->setOption("id", hash("sha256", rand().$host));
       }
@@ -91,26 +92,30 @@
 
       $cmodespp = array_merge($cmodesp, $cmodesb);
 
-      $connection->send(":".__SERVERDOMAIN__." 001 ".
-        $connection->getOption("nick")." :Welcome to the ".__NETNAME__.
-        " Internet Relay Chat Network ".$connection->getOption("nick"));
-      $connection->send(":".__SERVERDOMAIN__." 002 ".
-        $connection->getOption("nick")." :Your host is ".__SERVERDOMAIN__."[".
+      $connection->send(":".$this->self->getConfigFlag("serverdomain")." 001 ".
+        $connection->getOption("nick")." :Welcome to the ".
+        $this->self->getConfigFlag("netname")." Internet Relay Chat Network ".
+        $connection->getOption("nick"));
+      $connection->send(":".$this->self->getConfigFlag("serverdomain")." 002 ".
+        $connection->getOption("nick")." :Your host is ".
+        $this->self->getConfigFlag("serverdomain")."[".
         $connection->getLocalIP()."/".$connection->getPort().
-        "], running version ".__PROJECTVERSION__);
-      $connection->send(":".__SERVERDOMAIN__." 003 ".
-        $connection->getOption("nick")." :This server was created ".date(
-        "D M d Y", __STARTTIME__)." at ".date("H:i:s e", __STARTTIME__));
-      $connection->send(":".__SERVERDOMAIN__." 004 ".
-        $connection->getOption("nick")." ".__SERVERDOMAIN__." ".
-        __PROJECTVERSION__." ".implode($umodes)." ".implode($cmodes).
-        " ".implode($cmodespp));
-      $connection->send(":".__SERVERDOMAIN__." 005 ".
+        "], running version ".$this->self->getConfigFlag("version"));
+      $connection->send(":".$this->self->getConfigFlag("serverdomain")." 003 ".
+        $connection->getOption("nick")." :This server was created ".
+        date("D M d Y", __STARTTIME__)." at ".date("H:i:s e", __STARTTIME__));
+      $connection->send(":".$this->self->getConfigFlag("serverdomain")." 004 ".
+        $connection->getOption("nick")." ".
+        $this->self->getConfigFlag("serverdomain")." ".
+        $this->self->getConfigFlag("version")." ".implode($umodes)." ".
+        implode($cmodes)." ".implode($cmodespp));
+      $connection->send(":".$this->self->getConfigFlag("serverdomain")." 005 ".
         $connection->getOption("nick")." CHANTYPES=# CHANMODES=".
         implode($cmodesb).",".implode($cmodesk).",".implode($cmodess).",".
-        implode($cmodes)." PREFIX=(".implode($pmodes).")".implode($pprefixes).
-        " NETWORK=".__NETNAME__." STATUSMSG=".implode($pprefixes).
-        " :are supported by this server");
+        implode($cmodes)." PREFIX=(".implode($pmodes).")".
+        implode($pprefixes)." NETWORK=".
+        $this->self->getConfigFlag("netname")." STATUSMSG=".
+        implode($pprefixes)." :are supported by this server");
 
       $event = EventHandling::getEventByName("commandEvent");
       if ($event != false) {
@@ -128,6 +133,7 @@
     public function isInstantiated() {
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("connectionCreatedEvent", $this,
         "receiveConnectionCreated");
       EventHandling::registerForEvent("userRegistrationEvent", $this,

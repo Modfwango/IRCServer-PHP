@@ -1,6 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Channel", "Client", "CommandEvent", "Modes");
+    public $depend = array("Channel", "Client", "CommandEvent", "Modes", "Self");
     public $name = "WHO";
     private $channel = null;
     private $client = null;
@@ -87,25 +87,27 @@
               $prefix = $user[1];
               $user = $user[0];
             }
-            $connection->send(":".__SERVERDOMAIN__." 352 ".
-              $connection->getOption("nick")." ".$match." ".
-              $user->getOption("ident")." ".$user->getHost()." ".
-              __SERVERDOMAIN__." ".$user->getOption("nick").
-              " H".$prefix." :0 ".$user->getOption("realname"));
+            $connection->send(":".$this->self->getConfigFlag(
+              "serverdomain")." 352 ".$connection->getOption("nick")." ".
+              $match." ".$user->getOption("ident")." ".$user->getHost()." ".
+              $this->self->getConfigFlag("serverdomain")." ".
+              $user->getOption("nick")." H".$prefix." :0 ".
+              $user->getOption("realname"));
           }
-          $connection->send(":".__SERVERDOMAIN__." 315 ".
-            $connection->getOption("nick")." ".$command[0].
-            " :End of /WHO list.");
+          $connection->send(":".$this->self->getConfigFlag(
+            "serverdomain")." 315 ".$connection->getOption("nick")." ".
+            $command[0]." :End of /WHO list.");
         }
         else {
-          $connection->send(":".__SERVERDOMAIN__." 461 ".
-            $connection->getOption("nick")." WHO :Not enough parameters");
+          $connection->send(":".$this->self->getConfigFlag(
+            "serverdomain")." 461 ".$connection->getOption("nick")." WHO :Not ".
+            "enough parameters");
         }
       }
       else {
-        $connection->send(":".__SERVERDOMAIN__." 451 ".(
-          $connection->getOption("nick") ? $connection->getOption("nick") :
-          "*")." :You have not registered");
+        $connection->send(":".$this->self->getConfigFlag(
+          "serverdomain")." 451 ".($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")." :You have not registered");
       }
     }
 
@@ -113,6 +115,7 @@
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "who");
       return true;

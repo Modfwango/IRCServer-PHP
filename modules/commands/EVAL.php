@@ -1,6 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("CommandEvent");
+    public $depend = array("CommandEvent", "Self");
     public $name = "EVAL";
     private $channel = null;
     private $client = null;
@@ -23,7 +23,7 @@
           $i = 0;
           foreach ($output as $line) {
             $i++;
-            $base = ":".__SERVERDOMAIN__." NOTICE ".
+            $base = ":".$this->self->getConfigFlag("serverdomain")." NOTICE ".
               $connection->getOption("nick")." :*** EVAL (".$i."):  ";
             $length = (510 - strlen($base));
             foreach (str_split($line, $length) as $outline) {
@@ -34,15 +34,16 @@
           }
         }
         else {
-          $connection->send(":".__SERVERDOMAIN__." 481 ".(
-            $connection->getOption("nick") ? $connection->getOption("nick") :
-            "*")." :Permission Denied - You're not an IRC operator");
+          $connection->send(":".$this->self->getConfigFlag(
+            "serverdomain")." 481 ".($connection->getOption("nick") ?
+            $connection->getOption("nick") : "*")." :Permission Denied - ".
+            "You're not an IRC operator");
         }
       }
       else {
-        $connection->send(":".__SERVERDOMAIN__." 451 ".(
-          $connection->getOption("nick") ? $connection->getOption("nick") :
-          "*")." :You have not registered");
+        $connection->send(":".$this->self->getConfigFlag(
+          "serverdomain")." 451 ".($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")." :You have not registered");
       }
     }
 
@@ -50,6 +51,7 @@
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "eval");
       return true;

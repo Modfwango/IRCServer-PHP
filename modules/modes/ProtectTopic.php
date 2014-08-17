@@ -1,7 +1,7 @@
 <?php
   class @@CLASSNAME@@ {
     public $depend = array("Channel", "ChannelCreatedEvent", "ChannelModeEvent",
-      "ChannelTopicEvent", "Modes");
+      "ChannelTopicEvent", "Modes", "Self");
     public $name = "ProtectTopic";
     private $channel = null;
     private $modes = null;
@@ -64,8 +64,9 @@
             }
           }
         }
-        $source->send(":".__SERVERDOMAIN__." 482 ".$source->getOption("nick").
-          " ".$channel["name"]." :You're not a channel operator");
+        $source->send(":".$this->self->getConfigFlag("serverdomain")." 482 ".
+          $source->getOption("nick")." ".$channel["name"].
+          " :You're not a channel operator");
         return array(false);
       }
     }
@@ -73,6 +74,7 @@
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->self = ModuleManagement::getModuleByName("Self");
       $this->modes->setMode(array("ProtectTopic", "t", "0", "0"));
       EventHandling::registerAsEventPreprocessor("channelCreatedEvent", $this,
         "receiveChannelCreated");

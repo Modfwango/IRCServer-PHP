@@ -2,7 +2,7 @@
   class @@CLASSNAME@@ {
     public $depend = array("Channel", "ChannelOperator", "Client",
       "ChannelInviteEvent", "CommandEvent",
-      "LackOfChannelOperatorShouldPreventInvitationEvent");
+      "LackOfChannelOperatorShouldPreventInvitationEvent", "Self");
     public $name = "INVITE";
     private $channel = null;
     private $client = null;
@@ -71,52 +71,54 @@
                       }
                     }
                     else {
-                      $connection->send(":".__SERVERDOMAIN__." 482 ".
-                        $connection->getOption("nick")." ".$target.
-                        " :You're not a channel operator");
+                      $connection->send(":".$this->self->getConfigFlag(
+                        "serverdomain")." 482 ".$connection->getOption(
+                        "nick")." ".$target." :You're not a channel operator");
                     }
                   }
                   else {
-                    $connection->send(":".__SERVERDOMAIN__." 442 ".
-                      $connection->getOption("nick")." ".$target.
-                      " :You're not on that channel");
+                    $connection->send(":".$this->self->getConfigFlag(
+                      "serverdomain")." 442 ".$connection->getOption(
+                      "nick")." ".$target." :You're not on that channel");
                   }
                 }
                 else {
-                  $connection->send(":".__SERVERDOMAIN__." 443 ".
-                    $connection->getOption("nick")." ".
-                    $recipient->getOption("nick")." ".$target.
-                    " :is already on channel");
+                  $connection->send(":".$this->self->getConfigFlag(
+                    "serverdomain")." 443 ".$connection->getOption("nick")." ".
+                    $recipient->getOption("nick")." ".$target." :is already ".
+                    "on channel");
                 }
               }
               else {
-                $connection->send(":".__SERVERDOMAIN__." 403 ".
-                  $connection->getOption("nick")." ".$target.
-                  " :No such channel");
+                $connection->send(":".$this->self->getConfigFlag(
+                  "serverdomain")." 403 ".$connection->getOption("nick")." ".
+                  $target." :No such channel");
               }
             }
           }
           else {
-            $connection->send(":".__SERVERDOMAIN__." 401 ".
-              $connection->getOption("nick")." ".$command[0].
-              " :No such nick/channel");
+            $connection->send(":".$this->self->getConfigFlag(
+              "serverdomain")." 401 ".$connection->getOption("nick")." ".
+              $command[0]." :No such nick/channel");
           }
         }
         else {
-          $connection->send(":".__SERVERDOMAIN__." 461 ".
-            $connection->getOption("nick")." INVITE :Not enough parameters");
+          $connection->send(":".$this->self->getConfigFlag(
+            "serverdomain")." 461 ".$connection->getOption("nick")." INVITE ".
+            ":Not enough parameters");
         }
       }
       else {
-        $connection->send(":".__SERVERDOMAIN__." 451 ".(
-          $connection->getOption("nick") ? $connection->getOption("nick") :
-          "*")." :You have not registered");
+        $connection->send(":".$this->self->getConfigFlag(
+          "serverdomain")." 451 ".($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")." :You have not registered");
       }
     }
 
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "invite");
       return true;

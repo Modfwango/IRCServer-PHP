@@ -1,6 +1,6 @@
 <?php
   class @@CLASSNAME@@ {
-    public $depend = array("Client", "CommandEvent", "QUIT");
+    public $depend = array("Client", "CommandEvent", "QUIT", "Self");
     public $name = "KILL";
 
     public function receiveCommand($name, $data) {
@@ -30,31 +30,34 @@
               $client->disconnect();
             }
             else {
-              $connection->send(":".__SERVERDOMAIN__." 401 ".
-                $connection->getOption("nick")." ".$nick.
-                " :No such nick/channel");
+              $connection->send(":".$this->self->getConfigFlag(
+                "serverdomain")." 401 ".$connection->getOption("nick")." ".
+                $nick." :No such nick/channel");
             }
           }
           else {
-            $connection->send(":".__SERVERDOMAIN__." 461 ".
-              $connection->getOption("nick")." KILL :Not enough parameters");
+            $connection->send(":".$this->self->getConfigFlag(
+              "serverdomain")." 461 ".$connection->getOption("nick")." KILL ".
+              ":Not enough parameters");
           }
         }
         else {
-          $connection->send(":".__SERVERDOMAIN__." 481 ".(
-            $connection->getOption("nick") ? $connection->getOption("nick") :
-            "*")." :Permission Denied - You're not an IRC operator");
+          $connection->send(":".$this->self->getConfigFlag(
+            "serverdomain")." 481 ".($connection->getOption("nick") ?
+            $connection->getOption("nick") : "*")." :Permission Denied - ".
+            "You're not an IRC operator");
         }
       }
       else {
-        $connection->send(":".__SERVERDOMAIN__." 451 ".(
-          $connection->getOption("nick") ? $connection->getOption("nick") :
-          "*")." :You have not registered");
+        $connection->send(":".$this->self->getConfigFlag(
+          "serverdomain")." 451 ".($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")." :You have not registered");
       }
     }
 
     public function isInstantiated() {
       $this->client = ModuleManagement::getModuleByName("Client");
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "kill");
       return true;
