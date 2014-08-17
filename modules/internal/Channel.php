@@ -295,7 +295,7 @@
         $omode = $this->modes->getModeByName($mode["name"]);
         $modes .= $omode[1];
         if (isset($mode["displayparam"])) {
-          $params .= " ".$mode["displayparam"]
+          $params .= " ".$mode["displayparam"];
         }
         elseif (isset($mode["param"])) {
           $params .= " ".$mode["param"];
