@@ -31,6 +31,7 @@
           if ($client != false && $this->channel->clientIsOnChannel(
               $client->getOption("id"), $channel["name"])) {
             $mode["param"] = $client->getOption("id");
+            $mode["displayparam"] = $client->getOption("nick");
             if (!isset($h[$mode["param"]])) {
               $h[$mode["param"]] = false;
             }
