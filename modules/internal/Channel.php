@@ -239,7 +239,7 @@
       $source = $data[0];
       $channel = $data[1];
       $modes = $data[2];
-
+      Logger::info(var_export($modes, true));
       $source->setOption("idle", time());
 
       if (count($modes) == 0) {
