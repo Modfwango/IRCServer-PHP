@@ -18,7 +18,7 @@
 
       if ($connection->getOption("registered") == true) {
         $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 323 ".$connection->getOption("nick")." Channel ".
+          "serverdomain")." 321 ".$connection->getOption("nick")." Channel ".
           ":Users Name");
         if (count($command) > 0) {
           $c = $this->channel->getChannelByName($command[0]);
