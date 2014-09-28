@@ -42,8 +42,8 @@
         }
         else {
           $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 461 ".$connection->getOption("nick")." ISON :Not ".
-          "enough parameters");
+            "serverdomain")." 461 ".$connection->getOption("nick")." ISON :Not ".
+            "enough parameters");
         }
       }
       else {
