@@ -14,7 +14,8 @@
     public function loadConfig($name = null, $data = null) {
       $motd = StorageHandling::loadFile($this, "motd.txt");
       if ($motd == false) {
-        $motd = "This is a test!";
+        $motd = "This is an example MOTD.\nConfiguration files are located at ".
+          "\"".StorageHandling::getPath($this)."\"";
         StorageHandling::saveFile($this, "motd.txt", $motd);
       }
       if (count($this->config) == 0) {
@@ -22,11 +23,12 @@
           "config.json")), true);
         if (!is_array($config)) {
           $config = array(
-            "netname" => "PHPNet",
+            "netname" => "DefaultIRC",
             "pingtime" => 120,
-            "version" => "IRCServer-PHP-dev",
-            "serverdomain" => "home.clayfreeman.com",
-            "serverdescription" => "Oh, look; a server!"
+            "version" => "IRCServer-PHP;Modfwango-v".__MODFWANGOVERSION__,
+            "serverdomain" => "irc.default.tld",
+            "serverdescription" => "My owner hasn't given me a proper ".
+              "description yet... :("
           );
           StorageHandling::saveFile($this, "config.json", json_encode($config,
             JSON_PRETTY_PRINT));
