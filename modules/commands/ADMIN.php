@@ -21,13 +21,13 @@
         $this->self->getConfigFlag("serverdomain")." :Administrative Info");
         $connection->send(":".$this->self->getConfigFlag("serverdomain")." ".
         "257 ".$connection->getOption("nick")." :".
-        $this->self->getConfigFlag("admin1"));
+        $this->config["admin1"]);
         $connection->send(":".$this->self->getConfigFlag("serverdomain")." ".
         "258 ".$connection->getOption("nick")." :".
-        $this->self->getConfigFlag("admin2"));
+        $this->config["admin2"]);
         $connection->send(":".$this->self->getConfigFlag("serverdomain")." ".
         "259 ".$connection->getOption("nick")." :".
-        $this->self->getConfigFlag("adminemail"));
+        $this->config["adminemail"]);
       }
       else {
         $connection->send(":".$this->self->getConfigFlag(
