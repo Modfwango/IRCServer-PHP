@@ -17,15 +17,15 @@
       if (!is_array($config)) {
         $config = array(
           "RPL_WELCOME" =>
-            ":%1$s 001 %2$s :Welcome to the %3$s Internet Relay Chat Network ".
-            "%2$s",
+            ":%s 001 %s :Welcome to the %s Internet Relay Chat Network ".
+            "%s",
           "RPL_YOURHOST" =>
-            ":%1$s 002 %2$s :Your host is %1$s [%3$s/%4$s], running version ".
-            "%5$s",
+            ":%s 002 %s :Your host is %s [%s/%s], running version ".
+            "%s",
           "RPL_CREATED" =>
             ":%s 003 %s :This server was created %s at %s",
           "RPL_MYINFO" =>
-            ":%1$s 004 %2$s %1$s %3$s %4$s %5$s %6$s",
+            ":%s 004 %s %s %s %s %s %s",
           "RPL_ISUPPORT" =>
             ":%s 005 %s %s :are supported by this server",
           "RPL_UMODEIS" =>
@@ -42,7 +42,7 @@
           "RPL_LUSERME" =>
             ":%s 255 %s :I have %s clients and %s servers",
           "RPL_ADMINME" =>
-            ":%1$s 256 %2$s %1$s :Administrative Info",
+            ":%s 256 %s %s :Administrative Info",
           "RPL_ADMINLOC1" =>
             ":%s 257 %s :%s",
           "RPL_ADMINLOC2" =>
