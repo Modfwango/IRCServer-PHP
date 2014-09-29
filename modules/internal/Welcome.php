@@ -96,11 +96,13 @@
       $connection->send($this->numeric->get("RPL_WELCOME", array(
         $this->self->getConfigFlag("serverdomain"),
         $connection->getOption("nick"),
-        $this->self->getConfigFlag("netname")
+        $this->self->getConfigFlag("netname"),
+        $connection->getOption("nick")
       )));
       $connection->send($this->numeric->get("RPL_YOURHOST", array(
         $this->self->getConfigFlag("serverdomain"),
         $connection->getOption("nick"),
+        $this->self->getConfigFlag("serverdomain"),
         $connection->getLocalIP(),
         $connection->getPort(),
         $this->self->getConfigFlag("version")
@@ -114,6 +116,7 @@
       $connection->send($this->numeric->get("RPL_MYINFO", array(
         $this->self->getConfigFlag("serverdomain"),
         $connection->getOption("nick"),
+        $this->self->getConfigFlag("serverdomain"),
         $this->self->getConfigFlag("version"),
         implode($umodes),
         implode($cmodes),
@@ -125,7 +128,7 @@
         "CHANTYPES=# CHANMODES=".implode($cmodesb).",".implode($cmodesk).",".
         implode($cmodess).",".implode($cmodes)." PREFIX=(".implode($pmodes).")".
         implode($pprefixes)." NETWORK=".$this->self->getConfigFlag("netname").
-        " STATUSMSG=".implode($pprefixes)." :are supported by this server"
+        " STATUSMSG=".implode($pprefixes)
       )));
 
       $event = EventHandling::getEventByName("commandEvent");
