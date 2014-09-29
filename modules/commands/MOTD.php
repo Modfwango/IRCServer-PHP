@@ -20,7 +20,8 @@
         if (is_string($this->self->getConfigFlag("motd"))) {
           $connection->send($this->numeric->get("RPL_MOTDSTART", array(
             $this->self->getConfigFlag("serverdomain"),
-            $connection->getOption("nick")
+            $connection->getOption("nick"),
+            $this->self->getConfigFlag("serverdomain")
           )));
           if (stristr($this->self->getConfigFlag("motd"), "\n")) {
             foreach (explode("\n", $this->self->getConfigFlag("motd"))

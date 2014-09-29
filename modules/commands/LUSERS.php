@@ -48,12 +48,16 @@
           $this->self->getConfigFlag("serverdomain"),
           $connection->getOption("nick"),
           count(ConnectionManagement::getConnections()),
+          count(ConnectionManagement::getConnections()),
+          count(ConnectionManagement::getConnections()),
           count(ConnectionManagement::getConnections())
         )));
 
         $connection->send($this->numeric->get("RPL_GLOBALUSERS", array(
           $this->self->getConfigFlag("serverdomain"),
           $connection->getOption("nick"),
+          count(ConnectionManagement::getConnections()),
+          count(ConnectionManagement::getConnections()),
           count(ConnectionManagement::getConnections()),
           count(ConnectionManagement::getConnections())
         )));
