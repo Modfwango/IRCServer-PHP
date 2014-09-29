@@ -1,7 +1,9 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("CommandEvent", "Self");
+    public $depend = array("CommandEvent", "Numeric", "Self");
     public $name = "ADMIN";
+    private $config = null;
+    private $numeric = null;
     private $self = null;
 
     public function receiveCommand($name, $data) {
@@ -16,23 +18,32 @@
       $command = array_values($command);
 
       if ($connection->getOption("registered") == true) {
-        $connection->send(":".$this->self->getConfigFlag("serverdomain")." ".
-        "256 ".$connection->getOption("nick")." ".
-        $this->self->getConfigFlag("serverdomain")." :Administrative Info");
-        $connection->send(":".$this->self->getConfigFlag("serverdomain")." ".
-        "257 ".$connection->getOption("nick")." :".
-        $this->config["admin1"]);
-        $connection->send(":".$this->self->getConfigFlag("serverdomain")." ".
-        "258 ".$connection->getOption("nick")." :".
-        $this->config["admin2"]);
-        $connection->send(":".$this->self->getConfigFlag("serverdomain")." ".
-        "259 ".$connection->getOption("nick")." :".
-        $this->config["adminemail"]);
+        $connection->send($this->numeric->get("RPL_ADMINME", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $connection->getOption("nick")
+        )));
+        $connection->send($this->numeric->get("RPL_ADMINLOC1", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $connection->getOption("nick"),
+          $this->config["admin1"]
+        )));
+        $connection->send($this->numeric->get("RPL_ADMINLOC1", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $connection->getOption("nick"),
+          $this->config["admin2"]
+        )));
+        $connection->send($this->numeric->get("RPL_ADMINEMAIL", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $connection->getOption("nick"),
+          $this->config["adminemail"]
+        )));
       }
       else {
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 451 ".($connection->getOption("nick") ?
-          $connection->getOption("nick") : "*")." :You have not registered");
+        $connection->send($this->numeric->get("ERR_NOTREGISTERED", array(
+          $this->self->getConfigFlag("serverdomain"),
+          ($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")
+        )));
       }
     }
 
@@ -53,6 +64,7 @@
 
     public function isInstantiated() {
       $this->loadConfig();
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "admin");

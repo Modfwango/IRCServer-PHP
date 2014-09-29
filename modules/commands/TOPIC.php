@@ -1,9 +1,10 @@
 <?php
   class __CLASSNAME__ {
     public $depend = array("Channel", "CommandEvent", "ChannelTopicEvent",
-      "Self");
+      "Numeric", "Self");
     public $name = "TOPIC";
     private $channel = null;
+    private $numeric = null;
     private $self = null;
 
     public function receiveCommand($name, $data) {
@@ -33,15 +34,23 @@
                   }
                 }
                 else {
-                  $connection->send(":".$this->self->getConfigFlag(
-                    "serverdomain")." 442 ".$connection->getOption("nick")." ".
-                    $c["name"]." :You're not on that channel");
+                  $connection->send($this->numeric->get("ERR_NOTONCHANNEL",
+                    array(
+                      $this->self->getConfigFlag("serverdomain"),
+                      $connection->getOption("nick"),
+                      $c["name"]
+                    )
+                  ));
                 }
               }
               else {
-                $connection->send(":".$this->self->getConfigFlag(
-                  "serverdomain")." 403 ".$connection->getOption("nick")." ".
-                  $target." :No such channel");
+                $connection->send($this->numeric->get("ERR_NOSUCHCHANNEL",
+                  array(
+                    $this->self->getConfigFlag("serverdomain"),
+                    $connection->getOption("nick"),
+                    $target
+                  )
+                ));
               }
             }
             else {
@@ -49,42 +58,56 @@
               if ($c != false) {
                 if (!isset($c["topic"]) || $c["topic"]["text"] == null) {
                   if (!isset($data[2])) {
-                    $connection->send(":".$this->self->getConfigFlag(
-                      "serverdomain")." 331 ".
-                      $connection->getOption("nick")." ".$target." :No topic ".
-                      "is set.");
+                    $connection->send($this->numeric->get("RPL_NOTOPIC", array(
+                      $this->self->getConfigFlag("serverdomain"),
+                      $connection->getOption("nick"),
+                      $target
+                    )));
                   }
                 }
                 else {
-                  $base = ":".$this->self->getConfigFlag(
-                    "serverdomain")." 332 ".$connection->getOption("nick")." ".
-                    $target." :";
+                  $base = $this->numeric->get("RPL_TOPIC", array(
+                    $this->self->getConfigFlag("serverdomain"),
+                    $connection->getOption("nick"),
+                    $target,
+                    null
+                  ));
                   $connection->send($base.substr($c["topic"]["text"], 0,
                     (510 - strlen($base))));
-                  $connection->send(":".$this->self->getConfigFlag(
-                    "serverdomain")." 333 ".$connection->getOption("nick")." ".
-                    $target." ".$c["topic"]["author"]." ".
-                    $c["topic"]["timestamp"]);
+                  $connection->send($this->numeric->get("RPL_TOPICWHOTIME",
+                    array(
+                      $this->self->getConfigFlag("serverdomain"),
+                      $connection->getOption("nick"),
+                      $target,
+                      $c["topic"]["author"],
+                      $c["topic"]["timestamp"]
+                    )
+                  ));
                 }
               }
             }
           }
         }
         else {
-          $connection->send(":".$this->self->getConfigFlag(
-            "serverdomain")." 461 ".$connection->getOption("nick")." TOPIC ".
-            ":Not enough parameters");
+          $connection->send(":".$this->numeric->get("ERR_NEEDMOREPARAMS", array(
+            $this->self->getConfigFlag("serverdomain"),
+            $connection->getOption("nick"),
+            $this->name
+          )));
         }
       }
       else {
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 451 ".($connection->getOption("nick") ?
-          $connection->getOption("nick") : "*")." :You have not registered");
+        $connection->send($this->numeric->get("ERR_NOTREGISTERED", array(
+          $this->self->getConfigFlag("serverdomain"),
+          ($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")
+        )));
       }
     }
 
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "topic");

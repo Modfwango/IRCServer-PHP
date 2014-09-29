@@ -2,6 +2,7 @@
   class __CLASSNAME__ {
     public $depend = array("CommandEvent", "Self", "UserRegistrationEvent");
     public $name = "USER";
+    private $numeric = null;
     private $self = null;
 
     public function preprocessUserRegistration($name, $id, $connection) {
@@ -53,19 +54,24 @@
           }
         }
         elseif ($connection->getOption("nick") != false) {
-          $connection->send(":".$this->self->getConfigFlag(
-            "serverdomain")." 462 ".$connection->getOption("nick")." :You may ".
-            "not reregister");
+          $connection->send($this->numeric->get("ERR_ALREADYREGISTERED", array(
+            $this->self->getConfigFlag("serverdomain"),
+            $connection->getOption("nick")
+          )));
         }
       }
       else {
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 461 ".($connection->getOption("nick") ?
-          $connection->getOption("nick") : "*")." USER :Not enough parameters");
+        $connection->send($this->numeric->get("ERR_NEEDMOREPARAMS", array(
+          $this->self->getConfigFlag("serverdomain"),
+          ($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*"),
+          $this->name
+        )));
       }
     }
 
     public function isInstantiated() {
+      $this->Numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "user");

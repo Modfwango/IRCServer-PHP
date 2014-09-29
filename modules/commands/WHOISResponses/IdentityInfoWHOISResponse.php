@@ -1,7 +1,8 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Self", "WHOISResponseEvent");
+    public $depend = array("Numeric", "Self", "WHOISResponseEvent");
     public $name = "IdentityInfoWHOISResponse";
+    private $numeric = null;
     private $self = null;
 
     public function receiveWHOISResponse($name, $id, $data) {
@@ -14,10 +15,12 @@
         if (!isset($response[$weight])) {
           $response[$weight] = array();
         }
-        $response[$weight][] = ":".$this->self->getConfigFlag(
-          "serverdomain")." 313 ".$source->getOption("nick")." ".
-          $target->getOption("nick")." ".$target->getOption("loggedin")." :is ".
-          "logged in as";
+        $response[$weight][] = $this->numeric->get("RPL_WHOISACCOUNT", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $source->getOption("nick"),
+          $target->getOption("nick"),
+          $target->getOption("loggedin")
+        ));
         $data[2] = $response;
         return array(null, $data);
       }

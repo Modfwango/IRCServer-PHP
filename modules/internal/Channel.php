@@ -160,9 +160,12 @@
         $recipient->send(":".$source->getOption("nick")."!".
           $source->getOption("ident")."@".$source->getHost()." INVITE ".
           $recipient->getOption("nick")." :".$target);
-        $source->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 341 ".$source->getOption("nick")." ".
-          $recipient->getOption("nick")." ".$target);
+        $source->send($this->numeric->get("RPL_INVITING", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $source->getOption("nick"),
+          $recipient->getOption("nick"),
+          $target
+        )));
         return true;
       }
       return false;

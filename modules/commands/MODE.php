@@ -1,11 +1,12 @@
 <?php
   class __CLASSNAME__ {
     public $depend = array("Channel", "ChannelOperator", "Client",
-      "CommandEvent", "Modes", "Self");
+      "CommandEvent", "Modes", "Numeric", "Self");
     public $name = "MODE";
     private $channel = null;
     private $client = null;
     private $modes = null;
+    private $numeric = null;
     private $self = null;
 
     public function parseModes($type, $modeString) {
@@ -123,15 +124,23 @@
                   }
                 }
                 if ($okay == false) {
-                  $connection->send(":".$this->self->getConfigFlag(
-                    "serverdomain")." 482 ".$connection->getOption("nick")." ".
-                    $channel["name"]." :You're not a channel operator");
+                  $connection->send($this->numeric->get("ERR_CHANOPRIVSNEEDED",
+                    array(
+                      $this->self->getConfigFlag("serverdomain"),
+                      $connection->getOption("nick"),
+                      $channel["name"]
+                    )
+                  ));
                 }
                 else {
                   // Use as a filter to list modes for this channel.
-                  $connection->send(":".$this->self->getConfigFlag(
-                    "serverdomain")." 368 ".$connection->getOption("nick")." ".
-                    $channel["name"]." :End of Channel Ban List");
+                  $connection->send($this->numeric->get("RPL_ENDOFBANLIST",
+                    array(
+                      $this->self->getConfigFlag("serverdomain"),
+                      $connection->getOption("nick"),
+                      $channel["name"]
+                    )
+                  ));
                 }
               }
             }
@@ -150,15 +159,20 @@
                 }
               }
               else {
-                $connection->send(":".$this->self->getConfigFlag(
-                  "serverdomain")." 502 ".$connection->getOption("nick")." ".
-                  ":Can't change mode for other users");
+                $connection->send($this->numeric->get("ERR_USERSDONTMATCH",
+                  array(
+                    $this->self->getConfigFlag("serverdomain"),
+                    $connection->getOption("nick")
+                  )
+                ));
               }
             }
             else {
-              $connection->send(":".$this->self->getConfigFlag(
-                "serverdomain")." 403 ".$connection->getOption("nick")." ".
-                $command[0]." :No such channel");
+              $connection->send($this->numeric->get("ERR_NOSUCHCHANNEL", array(
+                $this->self->getConfigFlag("serverdomain"),
+                $connection->getOption("nick"),
+                $command[0]
+              )));
             }
           }
           else {
@@ -184,14 +198,20 @@
               $modes = "+".implode($modes);
               $params = implode(" ", $params);
               $modeString = $modes." ".$params;
-              $connection->send(":".$this->self->getConfigFlag(
-                "serverdomain")." 324 ".$connection->getOption("nick")." ".
-                $channel["name"]." ".$modeString);
+              $connection->send($this->numeric->get("RPL_CHANNELMODEIS", array(
+                $this->self->getConfigFlag("serverdomain"),
+                $connection->getOption("nick"),
+                $channel["name"],
+                $modeString
+              )));
               if (!isset($data[2])) {
-                $connection->send(":".$this->self->getConfigFlag(
-                  "serverdomain")." 329 ".$connection->getOption("nick")." ".
-                  $channel["name"]." ".(isset($channel["modetime"]) ?
-                  $channel["modetime"] :$channel["created"]));
+                $connection->send($this->numeric->get("RPL_CREATIONTIME", array(
+                  $this->self->getConfigFlag("serverdomain"),
+                  $connection->getOption("nick"),
+                  $channel["name"],
+                  (isset($channel["modetime"]) ?
+                  $channel["modetime"] : $channel["created"])
+                )));
               }
             }
             elseif ($client != false) {
@@ -216,33 +236,44 @@
                 $modes = "+".implode($modes);
                 $params = implode(" ", $params);
                 $modeString = $modes." ".$params;
-                $connection->send(":".$this->self->getConfigFlag(
-                  "serverdomain")." 221 ".$connection->getOption("nick")." ".
-                  $modeString);
+                $connection->send($this->numeric->get("RPL_UMODEIS", array(
+                  $this->self->getConfigFlag("serverdomain"),
+                  $connection->getOption("nick"),
+                  $modeString
+                )));
               }
               else {
-                $connection->send(":".$this->self->getConfigFlag(
-                  "serverdomain")." 502 ".$connection->getOption("nick")." ".
-                  ":Can't change mode for other users");
+                $connection->send($this->numeric->get("ERR_USERSDONTMATCH",
+                  array(
+                    $this->self->getConfigFlag("serverdomain"),
+                    $connection->getOption("nick")
+                  )
+                ));
               }
             }
             else {
-              $connection->send(":".$this->self->getConfigFlag(
-                "serverdomain")." 403 ".$connection->getOption("nick")." ".
-                $command[0]." :No such channel");
+              $connection->send($this->numeric->get("ERR_NOSUCHCHANNEL", array(
+                $this->self->getConfigFlag("serverdomain"),
+                $connection->getOption("nick"),
+                $command[0]
+              )));
             }
           }
         }
         else {
-          $connection->send(":".$this->self->getConfigFlag(
-            "serverdomain")." 461 ".$connection->getOption("nick")." MODE ".
-            ":Not enough parameters");
+          $connection->send(":".$this->numeric->get("ERR_NEEDMOREPARAMS", array(
+            $this->self->getConfigFlag("serverdomain"),
+            $connection->getOption("nick"),
+            $this->name
+          )));
         }
       }
       else {
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 451 ".($connection->getOption("nick") ?
-          $connection->getOption("nick") : "*")." :You have not registered");
+        $connection->send($this->numeric->get("ERR_NOTREGISTERED", array(
+          $this->self->getConfigFlag("serverdomain"),
+          ($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")
+        )));
       }
     }
 
@@ -250,6 +281,7 @@
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "mode");

@@ -1,10 +1,11 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Channel", "Modes", "Self", "Util",
+    public $depend = array("Channel", "Modes", "Numeric", "Self", "Util",
       "WHOISResponseEvent");
     public $name = "ChannelInfoWHOISResponse";
     private $channel = null;
     private $modes = null;
+    private $numeric = null;
     private $self = null;
     private $util = null;
 
@@ -62,10 +63,13 @@
         }
       }
       if (count($ret) > 0) {
-        foreach ($this->util->getStringsWithBaseAndMaxLengthAndObjects(":".
-            $this->self->getConfigFlag("serverdomain")." 319 ".
-            $source->getOption("nick")." ".$target->getOption("nick")." :",
-            $ret, false, 510) as $line) {
+        foreach ($this->util->getStringsWithBaseAndMaxLengthAndObjects(
+            $this->numeric->get("RPL_WHOISCHANNELS", array(
+              $this->self->getConfigFlag("serverdomain"),
+              $source->getOption("nick"),
+              $target->getOption("nick"),
+              null
+            )), $ret, false, 510) as $line) {
           $response[$weight][] = $line;
         }
         $data[2] = $response;

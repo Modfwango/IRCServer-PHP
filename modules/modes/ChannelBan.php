@@ -2,11 +2,13 @@
   class __CLASSNAME__ {
     public $depend = array("BanShouldPreventActionEvent", "Channel", "Client",
       "ChannelJoinEvent", "ChannelMessageEvent", "ChannelModeEvent",
-      "ChannelNoticeEvent", "Modes", "Self");
+      "ChannelNoticeEvent", "Modes", "Numeric", "Self");
     public $name = "ChannelBan";
     private $channel = null;
     private $client = null;
     private $modes = null;
+    private $numeric = null;
+    private $self = null;
 
     public function receiveChannelMode($name, $id, $data) {
       $source = $data[0];
@@ -79,14 +81,18 @@
             // Prevent the action, and inform the user.
             if ($name == "channelMessageEvent"
                 || $name == "channelNoticeEvent") {
-              $source->send(":".$this->self->getConfigFlag(
-                "serverdomain")." 404 ".$source->getOption("nick")." ".
-                $channel." :Cannot send to channel");
+              $source->send($this->numeric->get("ERR_CANNOTSENDTOCHAN", array(
+                $this->self->getConfigFlag("serverdomain"),
+                $source->getOption("nick"),
+                $channel
+              )));
             }
             if ($name == "channelJoinEvent") {
-              $source->send(":".$this->self->getConfigFlag(
-                "serverdomain")." 474 ".$source->getOption("nick")." ".
-                $channel." :Cannot join channel (+b) - you are banned");
+              $source->send($this->numeric->get("ERR_BANNEDFROMCHAN", array(
+                $this->self->getConfigFlag("serverdomain"),
+                $source->getOption("nick"),
+                $channel
+              )));
             }
             return array(false);
           }
@@ -100,6 +106,7 @@
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       $this->modes->setMode(array("ChannelBan", "b", "0", "3"));
       EventHandling::registerAsEventPreprocessor("channelJoinEvent", $this,

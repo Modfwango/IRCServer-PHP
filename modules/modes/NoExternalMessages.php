@@ -2,10 +2,12 @@
   class __CLASSNAME__ {
     public $depend = array("Channel", "ChannelCreatedEvent",
       "ChannelMessageEvent", "ChannelModeEvent", "ChannelNoticeEvent", "Modes",
-      "Self");
+      "Numeric", "Self");
     public $name = "NoExternalMessages";
     private $channel = null;
     private $modes = null;
+    private $numeric = null;
+    private $self = null;
 
     public function receiveChannelCreated($name, $id, $channel) {
       if (!isset($channel["modes"])) {
@@ -59,9 +61,11 @@
       if ($modes != false &&
           !$this->channel->clientIsOnChannel($source->getOption("id"),
           $channel["name"])) {
-        $source->send(":".$this->self->getConfigFlag("serverdomain")." 404 ".
-          $source->getOption("nick")." ".$channel["name"].
-          " :Cannot send to channel");
+        $source->send($this->numeric->get("ERR_CANNOTSENDTOCHAN", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $source->getOption("nick"),
+          $channel["name"]
+        )));
         return array(false);
       }
     }
@@ -69,6 +73,7 @@
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       $this->modes->setMode(array("NoExternalMessages", "n", "0", "0"));
       EventHandling::registerAsEventPreprocessor("channelCreatedEvent", $this,

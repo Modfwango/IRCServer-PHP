@@ -1,9 +1,10 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Client", "CommandEvent", "NickChangeEvent", "Self",
-      "UserRegistrationEvent");
+    public $depend = array("Client", "CommandEvent", "NickChangeEvent",
+      "Numeric", "Self", "UserRegistrationEvent");
     public $name = "NICK";
     private $client = null;
+    private $numeric = null;
     private $self = null;
 
     private function nicknameAvailable($nick) {
@@ -62,25 +63,32 @@
           }
         }
         else {
-          $connection->send(":".$this->self->getConfigFlag(
-            "serverdomain")." 433 ".($connection->getOption("nick") ?
-            $connection->getOption("nick") : "*")." ".$command[0]." :Nickname ".
-            "is already in use.");
+          $connection->send($this->numeric->get("ERR_NICKNAMEINUSE", array(
+            $this->self->getConfigFlag("serverdomain"),
+            ($connection->getOption("nick") ?
+            $connection->getOption("nick") : "*"),
+            $command[0]
+          )));
         }
       }
       elseif (count($command) > 0) {
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 432 * ".$command[0]." :Erroneous Nickname");
+        $connection->send($this->numeric->get("ERR_ERRONEUSNICKNAME", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $command[0]
+        )));
       }
       else {
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 431 ".($connection->getOption("nick") ?
-          $connection->getOption("nick") : "*")." :No nickname given");
+        $connection->send($this->numeric->get("ERR_NONICKNAMEGIVEN", array(
+          $this->self->getConfigFlag("serverdomain"),
+          ($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")
+        )));
       }
     }
 
     public function isInstantiated() {
       $this->client = ModuleManagement::getModuleByName("Client");
+      $this->Numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "nick");

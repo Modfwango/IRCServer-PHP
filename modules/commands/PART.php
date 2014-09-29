@@ -1,9 +1,10 @@
 <?php
   class __CLASSNAME__ {
     public $depend = array("Channel", "CommandEvent", "ChannelPartEvent",
-      "Self");
+      "Numeric", "Self");
     public $name = "PART";
     private $channel = null;
+    private $numeric = null;
     private $self = null;
 
     public function receiveCommand($name, $data) {
@@ -41,27 +42,34 @@
               }
             }
             else {
-              $connection->send(":".$this->self->getConfigFlag(
-                "serverdomain")." 403 ".$connection->getOption("nick")." ".
-                $target." :No such channel");
+              $connection->send($this->numeric->get("ERR_NOSUCHCHANNEL", array(
+                $this->self->getConfigFlag("serverdomain"),
+                $connection->getOption("nick"),
+                $target
+              )));
             }
           }
         }
         else {
-          $connection->send(":".$this->self->getConfigFlag(
-            "serverdomain")." 461 ".$connection->getOption("nick")." PART ".
-            ":Not enough parameters");
+          $connection->send(":".$this->numeric->get("ERR_NEEDMOREPARAMS", array(
+            $this->self->getConfigFlag("serverdomain"),
+            $connection->getOption("nick"),
+            $this->name
+          )));
         }
       }
       else {
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 451 ".($connection->getOption("nick") ?
-          $connection->getOption("nick") : "*")." :You have not registered");
+        $connection->send($this->numeric->get("ERR_NOTREGISTERED", array(
+          $this->self->getConfigFlag("serverdomain"),
+          ($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")
+        )));
       }
     }
 
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "part");

@@ -1,10 +1,12 @@
 <?php
   class __CLASSNAME__ {
     public $depend = array("Channel", "ChannelCreatedEvent", "ChannelModeEvent",
-      "ChannelTopicEvent", "Modes", "Self");
+      "ChannelTopicEvent", "Modes", "Numeric", "Self");
     public $name = "ProtectTopic";
     private $channel = null;
     private $modes = null;
+    private $numeric = null;
+    private $self = null;
 
     public function receiveChannelCreated($name, $id, $channel) {
       if (!isset($channel["modes"])) {
@@ -64,9 +66,11 @@
             }
           }
         }
-        $source->send(":".$this->self->getConfigFlag("serverdomain")." 482 ".
-          $source->getOption("nick")." ".$channel["name"].
-          " :You're not a channel operator");
+        $source->send($this->numeric->get("ERR_CHANOPRIVSNEEDED", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $source->getOption("nick"),
+          $channel["name"]
+        )));
         return array(false);
       }
     }
@@ -74,6 +78,7 @@
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       $this->modes->setMode(array("ProtectTopic", "t", "0", "0"));
       EventHandling::registerAsEventPreprocessor("channelCreatedEvent", $this,

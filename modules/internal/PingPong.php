@@ -27,15 +27,18 @@
             $command[0]));
         }
         else {
-          $connection->send(":".$this->self->getConfigFlag(
-            "serverdomain")." 402 ".$connection->getOption("nick")." ".
-            $command[1]." :No such server");
+          $connection->send($this->numeric->get("ERR_NOSUCHSERVER", array(
+            $this->self->getConfigFlag("serverdomain"),
+            $connection->getOption("nick"),
+            $command[1]
+          )));
         }
       }
       else {
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 409 ".$connection->getOption(
-          "nick")." :No origin specified");
+        $connection->send($this->numeric->get("ERR_NOORIGIN", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $connection->getOption("nick")
+        )));
       }
     }
 

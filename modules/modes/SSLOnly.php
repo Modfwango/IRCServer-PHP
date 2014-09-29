@@ -1,11 +1,13 @@
 <?php
   class __CLASSNAME__ {
     public $depend = array("Channel", "Client", "ChannelJoinEvent",
-      "ChannelModeEvent", "Modes", "Self");
+      "ChannelModeEvent", "Modes", "Numeric", "Self");
     public $name = "SSLOnly";
     private $channel = null;
     private $client = null;
     private $modes = null;
+    private $numeric = null;
+    private $self = null;
 
     public function receiveChannelMode($name, $id, $data) {
       $source = $data[0];
@@ -61,9 +63,11 @@
         }
       }
       if ($sendWarning == true) {
-        $source->send(":".$this->self->getConfigFlag("serverdomain")." 490 ".
-          $source->getOption("nick")." ".$channel["name"].
-          " :all members of the channel must be connected via SSL");
+        $source->send($this->numeric->get("ERR_SECUREONLYCHAN", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $source->getOption("nick"),
+          $channel["name"]
+        )));
       }
       $data[2] = $modes;
       return array(null, $data);
@@ -75,9 +79,11 @@
 
       $modes = $this->channel->hasModes($channel, array("SSLOnly"));
       if ($modes != false && $source->getSSL() == false) {
-        $source->send(":".$this->self->getConfigFlag("serverdomain")." 489 ".
-          $source->getOption("nick")." ".$channel.
-          " :Cannot join channel; SSL users only (+S)");
+        $source->send($this->numeric->get("ERR_SECUREONLYCHAN", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $source->getOption("nick"),
+          $channel
+        )));
         return array(false);
       }
     }
@@ -86,6 +92,7 @@
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       $this->modes->setMode(array("SSLOnly", "S", "0", "0"));
       EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,

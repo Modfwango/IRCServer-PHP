@@ -1,7 +1,8 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Client", "CommandEvent", "QUIT", "Self");
+    public $depend = array("Client", "CommandEvent", "Numeric", "QUIT", "Self");
     public $name = "KILL";
+    private $numeric = null;
     private $self = null;
 
     public function receiveCommand($name, $data) {
@@ -33,33 +34,43 @@
               $client->disconnect();
             }
             else {
-              $connection->send(":".$this->self->getConfigFlag(
-                "serverdomain")." 401 ".$connection->getOption("nick")." ".
-                $nick." :No such nick/channel");
+              $connection->send($this->numeric->get("ERR_NOSUCHNICK", array(
+                $this->self->getConfigFlag("serverdomain"),
+                $connection->getOption("nick"),
+                $nick
+              )));
             }
           }
           else {
-            $connection->send(":".$this->self->getConfigFlag(
-              "serverdomain")." 461 ".$connection->getOption("nick")." KILL ".
-              ":Not enough parameters");
+            $connection->send(":".$this->numeric->get("ERR_NEEDMOREPARAMS",
+              array(
+                $this->self->getConfigFlag("serverdomain"),
+                $connection->getOption("nick"),
+                $this->name
+              )
+            ));
           }
         }
         else {
-          $connection->send(":".$this->self->getConfigFlag(
-            "serverdomain")." 481 ".($connection->getOption("nick") ?
-            $connection->getOption("nick") : "*")." :Permission Denied - ".
-            "You're not an IRC operator");
+          $connection->send($this->numeric->get("ERR_NOPRIVILEGES", array(
+            $this->self->getConfigFlag("serverdomain"),
+            ($connection->getOption("nick") ?
+            $connection->getOption("nick") : "*")
+          )));
         }
       }
       else {
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 451 ".($connection->getOption("nick") ?
-          $connection->getOption("nick") : "*")." :You have not registered");
+        $connection->send($this->numeric->get("ERR_NOTREGISTERED", array(
+          $this->self->getConfigFlag("serverdomain"),
+          ($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")
+        )));
       }
     }
 
     public function isInstantiated() {
       $this->client = ModuleManagement::getModuleByName("Client");
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "kill");

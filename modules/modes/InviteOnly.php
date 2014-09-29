@@ -1,10 +1,12 @@
 <?php
   class __CLASSNAME__ {
     public $depend = array("Channel", "ChannelJoinEvent", "ChannelModeEvent",
-      "InviteOnlyShouldPreventJoinEvent", "Modes", "Self");
+      "InviteOnlyShouldPreventJoinEvent", "Modes", "Numeric", "Self");
     public $name = "InviteOnly";
     private $channel = null;
     private $modes = null;
+    private $numeric = null;
+    private $self = null;
 
     public function receiveChannelMode($name, $id, $data) {
       $source = $data[0];
@@ -63,9 +65,11 @@
             }
 
             // Prevent the action, and inform the user.
-            $source->send(":".$this->self->getConfigFlag(
-              "serverdomain")." 473 ".$source->getOption("nick")." ".
-              $channel." :Cannot join channel (+i) - you must be invited");
+            $source->send($this->numeric->get("ERR_INVITEONLYCHAN", array(
+              $this->self->getConfigFlag("serverdomain"),
+              $source->getOption("nick"),
+              $channel
+            )));
             return array(false);
           }
         }
@@ -77,6 +81,7 @@
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       $this->modes->setMode(array("InviteOnly", "i", "0", "0"));
       EventHandling::registerAsEventPreprocessor("channelJoinEvent", $this,

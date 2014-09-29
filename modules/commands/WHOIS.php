@@ -1,9 +1,10 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Client", "CommandEvent", "Self",
+    public $depend = array("Client", "CommandEvent", "Numeric", "Self",
       "WHOISResponseEvent");
     public $name = "WHOIS";
     private $client = null;
+    private $numeric = null;
     private $self = null;
 
     public function receiveCommand($name, $data) {
@@ -19,9 +20,6 @@
 
       if ($connection->getOption("registered") == true) {
         if (count($command) > 0) {
-          // array_reverse(ksort($response, SORT_NUMERIC));
-          // :kelabs.arinity.org 401 lol bobdhk :No such nick/channel
-          // :kelabs.arinity.org 318 lol bobdhk :End of /WHOIS list.
           $client = $this->client->getClientByNick($command[0]);
           if ($client != false) {
             $event = EventHandling::getEventByName("WHOISResponseEvent");
@@ -35,24 +33,32 @@
             }
           }
           else {
-            $connection->send(":".$this->self->getConfigFlag(
-              "serverdomain")." 401 ".$connection->getOption("nick")." ".
-              $command[0]." :No such nick/channel");
+            $connection->send($this->numeric->get("ERR_NOSUCHNICK", array(
+              $this->self->getConfigFlag("serverdomain"),
+              $connection->getOption("nick"),
+              $command[0]
+            )));
           }
-          $connection->send(":".$this->self->getConfigFlag(
-            "serverdomain")." 318 ".$connection->getOption("nick")." ".
-            $command[0]." :End of /WHOIS list.");
+          $connection->send($this->numeric->get("RPL_ENDOFWHOIS", array(
+            $this->self->getConfigFlag("serverdomain"),
+            $connection->getOption("nick"),
+            $command[0]
+          )));
         }
         else {
-          $connection->send(":".$this->self->getConfigFlag(
-            "serverdomain")." 461 ".$connection->getOption("nick")." WHOIS ".
-            ":Not enough parameters");
+          $connection->send(":".$this->numeric->get("ERR_NEEDMOREPARAMS", array(
+            $this->self->getConfigFlag("serverdomain"),
+            $connection->getOption("nick"),
+            $this->name
+          )));
         }
       }
       else {
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 451 ".($connection->getOption("nick") ?
-          $connection->getOption("nick") : "*")." :You have not registered");
+        $connection->send($this->numeric->get("ERR_NOTREGISTERED", array(
+          $this->self->getConfigFlag("serverdomain"),
+          ($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")
+        )));
       }
     }
 
@@ -71,6 +77,7 @@
 
     public function isInstantiated() {
       $this->client = ModuleManagement::getModuleByName("Client");
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "whois");

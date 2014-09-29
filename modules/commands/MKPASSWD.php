@@ -1,7 +1,8 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("CommandEvent", "Self");
+    public $depend = array("CommandEvent", "Numeric", "Self");
     public $name = "MKPASSWD";
+    private $numeric = null;
     private $self = null;
 
     public function receiveCommand($name, $data) {
@@ -23,19 +24,24 @@
             PASSWORD_DEFAULT));
         }
         else {
-          $connection->send(":".$this->self->getConfigFlag(
-            "serverdomain")." 461 ".$connection->getOption("nick")." MKPASSWD ".
-            ":Not enough parameters");
+          $connection->send(":".$this->numeric->get("ERR_NEEDMOREPARAMS", array(
+            $this->self->getConfigFlag("serverdomain"),
+            $connection->getOption("nick"),
+            $this->name
+          )));
         }
       }
       else {
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 451 ".($connection->getOption("nick") ?
-          $connection->getOption("nick") : "*")." :You have not registered");
+        $connection->send($this->numeric->get("ERR_NOTREGISTERED", array(
+          $this->self->getConfigFlag("serverdomain"),
+          ($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")
+        )));
       }
     }
 
     public function isInstantiated() {
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "mkpasswd");

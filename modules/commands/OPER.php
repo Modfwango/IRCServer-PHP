@@ -1,9 +1,10 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Client", "CommandEvent", "Self");
+    public $depend = array("Client", "CommandEvent", "Numeric", "Self");
     public $name = "OPER";
     private $client = null;
     private $config = array();
+    private $numeric = null;
     private $self = null;
 
     public function receiveCommand($name, $data) {
@@ -36,41 +37,54 @@
                   if ($matches == true) {
                     if (password_verify($command[1], $oper["hash"])) {
                       $connection->setOption("operator", true);
-                      $connection->send(":".$this->self->getConfigFlag(
-                        "serverdomain")." 381 ".$connection->getOption(
-                        "nick")." :You are now an IRC operator");
+                      $connection->send($this->numeric->get("RPL_YOUREOPER",
+                        array(
+                          $this->self->getConfigFlag("serverdomain"),
+                          $connection->getOption("nick")
+                        )
+                      ));
                       return;
                     }
                     else {
-                      $connection->send(":".$this->self->getConfigFlag(
-                        "serverdomain")." 464 ".$connection->getOption(
-                        "nick")." :Password Incorrect");
+                      $connection->send($this->numeric->get(
+                        "ERR_PASSWDMISMATCH",
+                        array(
+                          $this->self->getConfigFlag("serverdomain"),
+                          $connection->getOption("nick")
+                        )
+                      ));
                       return;
                     }
                   }
                 }
               }
             }
-            $connection->send(":".$this->self->getConfigFlag(
-              "serverdomain")." 491 ".$connection->getOption("nick")." :No ".
-              "appropriate operator blocks were found for your host");
+            $connection->send($this->numeric->get("ERR_NOOPERHOST", array(
+              $this->self->getConfigFlag("serverdomain"),
+              $connection->getOption("nick")
+            )));
           }
           else {
-            $connection->send(":".$this->self->getConfigFlag(
-              "serverdomain")." 381 ".$connection->getOption("nick")." :You ".
-              "are now an IRC operator");
+            $connection->send($this->numeric->get("RPL_YOUREOPER", array(
+              $this->self->getConfigFlag("serverdomain"),
+              $connection->getOption("nick")
+            )));
           }
         }
         else {
-          $connection->send(":".$this->self->getConfigFlag(
-            "serverdomain")." 461 ".$connection->getOption("nick")." OPER ".
-            ":Not enough parameters");
+          $connection->send(":".$this->numeric->get("ERR_NEEDMOREPARAMS", array(
+            $this->self->getConfigFlag("serverdomain"),
+            $connection->getOption("nick"),
+            $this->name
+          )));
         }
       }
       else {
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 451 ".($connection->getOption("nick") ?
-          $connection->getOption("nick") : "*")." :You have not registered");
+        $connection->send($this->numeric->get("ERR_NOTREGISTERED", array(
+          $this->self->getConfigFlag("serverdomain"),
+          ($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")
+        )));
       }
     }
 
@@ -102,6 +116,7 @@
     public function isInstantiated() {
       $this->loadConfig();
       $this->client = ModuleManagement::getModuleByName("Client");
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "oper");

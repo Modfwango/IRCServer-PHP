@@ -92,30 +92,40 @@
 
       $cmodespp = array_merge($cmodesp, $cmodesb);
 
-      $connection->send(":".$this->self->getConfigFlag("serverdomain")." 001 ".
-        $connection->getOption("nick")." :Welcome to the ".
-        $this->self->getConfigFlag("netname")." Internet Relay Chat Network ".
-        $connection->getOption("nick"));
-      $connection->send(":".$this->self->getConfigFlag("serverdomain")." 002 ".
-        $connection->getOption("nick")." :Your host is ".
-        $this->self->getConfigFlag("serverdomain")."[".
-        $connection->getLocalIP()."/".$connection->getPort().
-        "], running version ".$this->self->getConfigFlag("version"));
-      $connection->send(":".$this->self->getConfigFlag("serverdomain")." 003 ".
-        $connection->getOption("nick")." :This server was created ".
-        date("D M d Y", __STARTTIME__)." at ".date("H:i:s e", __STARTTIME__));
-      $connection->send(":".$this->self->getConfigFlag("serverdomain")." 004 ".
-        $connection->getOption("nick")." ".
-        $this->self->getConfigFlag("serverdomain")." ".
-        $this->self->getConfigFlag("version")." ".implode($umodes)." ".
-        implode($cmodes)." ".implode($cmodespp));
-      $connection->send(":".$this->self->getConfigFlag("serverdomain")." 005 ".
-        $connection->getOption("nick")." CHANTYPES=# CHANMODES=".
-        implode($cmodesb).",".implode($cmodesk).",".implode($cmodess).",".
-        implode($cmodes)." PREFIX=(".implode($pmodes).")".
-        implode($pprefixes)." NETWORK=".
-        $this->self->getConfigFlag("netname")." STATUSMSG=".
-        implode($pprefixes)." :are supported by this server");
+      $connection->send($this->numeric->get("RPL_WELCOME", array(
+        $this->self->getConfigFlag("serverdomain"),
+        $connection->getOption("nick"),
+        $this->self->getConfigFlag("netname")
+      )));
+      $connection->send($this->numeric->get("RPL_YOURHOST", array(
+        $this->self->getConfigFlag("serverdomain"),
+        $connection->getOption("nick"),
+        $connection->getLocalIP(),
+        $connection->getPort(),
+        $this->self->getConfigFlag("version")
+      )));
+      $connection->send($this->numeric->get("RPL_CREATED", array(
+        $this->self->getConfigFlag("serverdomain"),
+        $connection->getOption("nick"),
+        date("D M d Y", __STARTTIME__),
+        date("H:i:s e", __STARTTIME__)
+      )));
+      $connection->send($this->numeric->get("RPL_MYINFO", array(
+        $this->self->getConfigFlag("serverdomain"),
+        $connection->getOption("nick"),
+        $this->self->getConfigFlag("version"),
+        implode($umodes),
+        implode($cmodes),
+        implode($cmodespp)
+      )));
+      $connection->send($this->numeric->get("RPL_ISUPPORT", array(
+        $this->self->getConfigFlag("serverdomain"),
+        $connection->getOption("nick"),
+        "CHANTYPES=# CHANMODES=".implode($cmodesb).",".implode($cmodesk).",".
+        implode($cmodess).",".implode($cmodes)." PREFIX=(".implode($pmodes).")".
+        implode($pprefixes)." NETWORK=".$this->self->getConfigFlag("netname").
+        " STATUSMSG=".implode($pprefixes)." :are supported by this server"
+      )));
 
       $event = EventHandling::getEventByName("commandEvent");
       if ($event != false) {

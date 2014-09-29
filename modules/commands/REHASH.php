@@ -1,7 +1,8 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("CommandEvent", "RehashEvent", "Self");
+    public $depend = array("CommandEvent", "RehashEvent", "Numeric", "Self");
     public $name = "REHASH";
+    private $numeric = null;
     private $self = null;
 
     public function receiveCommand($name, $data) {
@@ -27,21 +28,25 @@
           }
         }
         else {
-          $connection->send(":".$this->self->getConfigFlag(
-            "serverdomain")." 481 ".($connection->getOption("nick") ?
-            $connection->getOption("nick") : "*")." :Permission Denied - ".
-            "You're not an IRC operator");
+          $connection->send($this->numeric->get("ERR_NOPRIVILEGES", array(
+            $this->self->getConfigFlag("serverdomain"),
+            ($connection->getOption("nick") ?
+            $connection->getOption("nick") : "*")
+          )));
         }
       }
       else {
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 451 ".($connection->getOption("nick") ?
-          $connection->getOption("nick") : "*")." :You have not registered");
+        $connection->send($this->numeric->get("ERR_NOTREGISTERED", array(
+          $this->self->getConfigFlag("serverdomain"),
+          ($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")
+        )));
       }
     }
 
     public function isInstantiated() {
-    $this->self = ModuleManagement::getModuleByName("Self");
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "rehash");
       return true;

@@ -1,8 +1,9 @@
 <?php
   class __CLASSNAME__ {
     public $depend = array("Channel", "ChannelJoinEvent", "CommandEvent",
-      "Self");
+      "Numeric", "Self");
     public $name = "JOIN";
+    private $numeric = null;
     private $self = null;
 
     public function receiveCommand($name, $data) {
@@ -36,32 +37,41 @@
                 }
               }
               else {
-                $connection->send(":".$this->self->getConfigFlag(
-                  "serverdomain")." 479 ".$connection->getOption("nick")." ".
-                  $channel." :Illegal channel name");
+                $connection->send($this->numeric->get("ERR_BADCHANNAME", array(
+                  $this->self->getConfigFlag("serverdomain"),
+                  $connection->getOption("nick"),
+                  $channel
+                )));
               }
             }
             else {
-              $connection->send(":".$this->self->getConfigFlag(
-                "serverdomain")." 479 ".$connection->getOption("nick")." ".
-                $channel." :Illegal channel name");
+              $connection->send($this->numeric->get("ERR_BADCHANNAME", array(
+                $this->self->getConfigFlag("serverdomain"),
+                $connection->getOption("nick"),
+                $channel
+              )));
             }
           }
         }
         else {
-          $connection->send(":".$this->self->getConfigFlag(
-            "serverdomain")." 461 ".$connection->getOption("nick")." JOIN ".
-            ":Not enough parameters");
+          $connection->send(":".$this->numeric->get("ERR_NEEDMOREPARAMS", array(
+            $this->self->getConfigFlag("serverdomain"),
+            $connection->getOption("nick"),
+            $this->name
+          )));
         }
       }
       else {
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 451 ".($connection->getOption("nick") ?
-          $connection->getOption("nick") : "*")." :You have not registered");
+        $connection->send($this->numeric->get("ERR_NOTREGISTERED", array(
+          $this->self->getConfigFlag("serverdomain"),
+          ($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")
+        )));
       }
     }
 
     public function isInstantiated() {
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "join");

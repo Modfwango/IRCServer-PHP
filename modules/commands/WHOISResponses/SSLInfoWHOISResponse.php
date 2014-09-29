@@ -1,7 +1,8 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Self", "WHOISResponseEvent");
+    public $depend = array("Numeric", "Self", "WHOISResponseEvent");
     public $name = "SSLInfoWHOISResponse";
+    private $numeric = null;
     private $self = null;
 
     public function receiveWHOISResponse($name, $id, $data) {
@@ -14,9 +15,11 @@
         if (!isset($response[$weight])) {
           $response[$weight] = array();
         }
-        $response[$weight][] = ":".$this->self->getConfigFlag(
-          "serverdomain")." 671 ".$source->getOption("nick")." ".
-          $target->getOption("nick")." :is using a secure connection";
+        $response[$weight][] = $this->numeric->get("RPL_WHOISSECURE", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $source->getOption("nick"),
+          $target->getOption("nick")
+        ));
         $data[2] = $response;
         return array(null, $data);
       }

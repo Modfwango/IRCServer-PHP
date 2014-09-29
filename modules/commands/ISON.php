@@ -1,8 +1,9 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Client", "CommandEvent", "Self");
+    public $depend = array("Client", "CommandEvent", "Numeric", "Self");
     public $name = "ISON";
     private $client = null;
+    private $numeric = null;
     private $self = null;
 
     public function receiveCommand($name, $data) {
@@ -22,39 +23,48 @@
           foreach ($command as $user) {
             $c = $this->client->getClientByNick($user);
             if ($c != false) {
-              if (strlen(":".$this->self->getConfigFlag(
-                  "serverdomain")." 303 ".$connection->getOption("nick")." :".
-                  implode(" ", $online)) < 512) {
+              if (strlen($this->numeric->get("RPL_ISON", array(
+                  $this->self->getConfigFlag("serverdomain"),
+                  $connection->getOption("nick"),
+                  implode(" ", $online)))) < 510) {
                 $online[] = $c->getOption("nick");
               }
             }
           }
 
-          while (strlen(":".$this->self->getConfigFlag("serverdomain")." 303 ".
-                  $connection->getOption("nick")." :".implode(" ", $online))
-                  > 512) {
+          while (strlen($this->numeric->get("RPL_ISON", array(
+                  $this->self->getConfigFlag("serverdomain"),
+                  $connection->getOption("nick"),
+                  implode(" ", $online)))) > 510) {
             array_pop($online);
           }
 
-          $connection->send(":".$this->self->getConfigFlag(
-            "serverdomain")." 303 ".$connection->getOption("nick")." :".
-            implode(" ", $online));
+          $connection->send($this->numeric->get("RPL_ISON", array(
+            $this->self->getConfigFlag("serverdomain"),
+            $connection->getOption("nick"),
+            implode(" ", $online)
+          )));
         }
         else {
-          $connection->send(":".$this->self->getConfigFlag(
-            "serverdomain")." 461 ".$connection->getOption("nick")." ISON :Not ".
-            "enough parameters");
+          $connection->send(":".$this->numeric->get("ERR_NEEDMOREPARAMS", array(
+            $this->self->getConfigFlag("serverdomain"),
+            $connection->getOption("nick"),
+            $this->name
+          )));
         }
       }
       else {
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 451 ".($connection->getOption("nick") ?
-          $connection->getOption("nick") : "*")." :You have not registered");
+        $connection->send($this->numeric->get("ERR_NOTREGISTERED", array(
+          $this->self->getConfigFlag("serverdomain"),
+          ($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")
+        )));
       }
     }
 
     public function isInstantiated() {
       $this->client = ModuleManagement::getModuleByName("Client");
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "ison");

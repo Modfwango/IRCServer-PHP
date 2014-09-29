@@ -1,7 +1,8 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("CommandEvent", "Self");
+    public $depend = array("CommandEvent", "Numeric", "Self");
     public $name = "LUSERS";
+    private $numeric = null;
     private $self = null;
 
     public function receiveCommand($name, $data) {
@@ -16,47 +17,66 @@
       $command = array_values($command);
 
       if ($connection->getOption("registered") == true) {
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 251 ".$connection->getOption("nick")." :There are ".
-          count(ConnectionManagement::getConnections())." users and 0 ".
-          "invisible on 1 servers");
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 252 ".$connection->getOption("nick")." 0 :IRC ".
-          "Operators online");
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 254 ".$connection->getOption("nick")." 0 ".
-          ":channels formed");
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 255 ".$connection->getOption("nick")." :I have ".
-          count(ConnectionManagement::getConnections())." clients and 0 ".
-          "servers");
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 265 ".$connection->getOption("nick")." ".
-          count(ConnectionManagement::getConnections())." ".count(
-          ConnectionManagement::getConnections())." :Current local users ".
-          count(ConnectionManagement::getConnections()).", max ".count(
-          ConnectionManagement::getConnections()));
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 266 ".$connection->getOption("nick")." ".count(
-          ConnectionManagement::getConnections())." ".count(
-          ConnectionManagement::getConnections())." :Current global users ".
-          count(ConnectionManagement::getConnections()).", max ".count(
-          ConnectionManagement::getConnections()));
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 250 ".$connection->getOption("nick")." :Highest ".
-          "connection count: ".
-          count(ConnectionManagement::getConnections())." (".count(
-          ConnectionManagement::getConnections())." clients) (".count(
-          ConnectionManagement::getConnections())." connections received)");
+        $connection->send($this->numeric->get("RPL_LUSERCLIENT", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $connection->getOption("nick"),
+          count(ConnectionManagement::getConnections()),
+          count(ConnectionManagement::getConnections()),
+          "1"
+        )));
+
+        $connection->send($this->numeric->get("RPL_LUSEROP", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $connection->getOption("nick"),
+          "0"
+        )));
+
+        $connection->send($this->numeric->get("RPL_LUSERCHANNELS", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $connection->getOption("nick"),
+          "0"
+        )));
+
+        $connection->send($this->numeric->get("RPL_LUSERME", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $connection->getOption("nick"),
+          count(ConnectionManagement::getConnections()),
+          "1"
+        )));
+
+        $connection->send($this->numeric->get("RPL_LOCALUSERS", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $connection->getOption("nick"),
+          count(ConnectionManagement::getConnections()),
+          count(ConnectionManagement::getConnections())
+        )));
+
+        $connection->send($this->numeric->get("RPL_GLOBALUSERS", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $connection->getOption("nick"),
+          count(ConnectionManagement::getConnections()),
+          count(ConnectionManagement::getConnections())
+        )));
+
+        $connection->send($this->numeric->get("RPL_STATSCONN", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $connection->getOption("nick"),
+          count(ConnectionManagement::getConnections()),
+          count(ConnectionManagement::getConnections()),
+          count(ConnectionManagement::getConnections())
+        )));
       }
       else {
-        $connection->send(":".$this->self->getConfigFlag(
-        "serverdomain")." 451 ".($connection->getOption("nick") ?
-        $connection->getOption("nick") : "*")." :You have not registered");
+        $connection->send($this->numeric->get("ERR_NOTREGISTERED", array(
+          $this->self->getConfigFlag("serverdomain"),
+          ($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")
+        )));
       }
     }
 
     public function isInstantiated() {
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "lusers");

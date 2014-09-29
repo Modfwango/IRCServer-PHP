@@ -1,8 +1,9 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Channel", "CommandEvent", "Self");
+    public $depend = array("Channel", "CommandEvent", "Numeric", "Self");
     public $name = "LIST";
     private $channel = null;
+    private $numeric = null;
     private $self = null;
 
     public function receiveCommand($name, $data) {
@@ -17,9 +18,10 @@
       $command = array_values($command);
 
       if ($connection->getOption("registered") == true) {
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 321 ".$connection->getOption("nick")." Channel ".
-          ":Users Name");
+        $connection->send($this->numeric->get("RPL_LISTSTART", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $connection->getOption("nick")
+        )));
         if (count($command) > 0) {
           $c = $this->channel->getChannelByName($command[0]);
           if ($c != false) {
@@ -38,16 +40,21 @@
               }
             }
             if ($show == true) {
-              $connection->send(":".$this->self->getConfigFlag(
-                "serverdomain")." 322 ".$connection->getOption("nick")." ".
-                $c["name"]." ".count($c["members"])." :".(
-                isset($c["topic"]["text"]) ? $c["topic"]["text"] : null));
+              $connection->send($this->numeric->get("RPL_LIST", array(
+                $this->self->getConfigFlag("serverdomain"),
+                $connection->getOption("nick"),
+                $c["name"],
+                count($c["members"]),
+                (isset($c["topic"]["text"]) ? $c["topic"]["text"] : null)
+              )));
             }
           }
           else {
-            $connection->send(":".$this->self->getConfigFlag(
-              "serverdomain")." 401 ".$connection->getOption("nick")." :No ".
-              "such nick/channel");
+            $connection->send($this->numeric->get("ERR_NOSUCHNICK", array(
+              $this->self->getConfigFlag("serverdomain"),
+              $connection->getOption("nick"),
+              $command[0]
+            )));
           }
         }
         else {
@@ -65,25 +72,32 @@
                 }
               }
             }
-            $connection->send(":".$this->self->getConfigFlag(
-              "serverdomain")." 322 ".$connection->getOption("nick")." ".
-              $c["name"]." ".count($c["members"])." :".(
-              isset($c["topic"]["text"]) ? $c["topic"]["text"] : null));
+            $connection->send($this->numeric->get("RPL_LIST", array(
+              $this->self->getConfigFlag("serverdomain"),
+              $connection->getOption("nick"),
+              $c["name"],
+              count($c["members"]),
+              (isset($c["topic"]["text"]) ? $c["topic"]["text"] : null)
+            )));
           }
         }
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 323 ".$connection->getOption("nick")." :End of ".
-          "/LIST");
+        $connection->send($this->numeric->get("RPL_LISTEND", array(
+          $this->self->getConfigFlag("serverdomain"),
+          $connection->getOption("nick")
+        )));
       }
       else {
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 451 ".($connection->getOption("nick") ?
-          $connection->getOption("nick") : "*")." :You have not registered");
+        $connection->send($this->numeric->get("ERR_NOTREGISTERED", array(
+          $this->self->getConfigFlag("serverdomain"),
+          ($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")
+        )));
       }
     }
 
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "list");

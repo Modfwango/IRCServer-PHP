@@ -1,11 +1,12 @@
 <?php
   class __CLASSNAME__ {
     public $depend = array("Channel", "Client", "CommandEvent", "Modes",
-      "Self");
+      "Numeric", "Self");
     public $name = "WHO";
     private $channel = null;
     private $client = null;
     private $modes = null;
+    private $numeric = null;
     private $self = null;
 
     public function receiveCommand($name, $data) {
@@ -105,28 +106,39 @@
                 $prefix = $user[1];
                 $user = $user[0];
               }
-              $connection->send(":".$this->self->getConfigFlag(
-                "serverdomain")." 352 ".$connection->getOption("nick")." ".
-                $match." ".$user->getOption("ident")." ".$user->getHost()." ".
-                $this->self->getConfigFlag("serverdomain")." ".
-                $user->getOption("nick")." H".$prefix." :0 ".
-                $user->getOption("realname"));
+              $connection->send($this->numeric->get("RPL_WHOREPLY", array(
+                $this->self->getConfigFlag("serverdomain"),
+                $connection->getOption("nick"),
+                $match,
+                $user->getOption("ident"),
+                $user->getHost(),
+                $user->getOption("nick"),
+                " H".$prefix,
+                "0",
+                $user->getOption("realname")
+              )));
             }
           }
-          $connection->send(":".$this->self->getConfigFlag(
-            "serverdomain")." 315 ".$connection->getOption("nick")." ".
-            $command[0]." :End of /WHO list.");
+          $connection->send($this->numeric->get("RPL_ENDOFWHO", array(
+            $this->self->getConfigFlag("serverdomain"),
+            $connection->getOption("nick"),
+            $command[0]
+          )));
         }
         else {
-          $connection->send(":".$this->self->getConfigFlag(
-            "serverdomain")." 461 ".$connection->getOption("nick")." WHO :Not ".
-            "enough parameters");
+          $connection->send(":".$this->numeric->get("ERR_NEEDMOREPARAMS", array(
+            $this->self->getConfigFlag("serverdomain"),
+            $connection->getOption("nick"),
+            $this->name
+          )));
         }
       }
       else {
-        $connection->send(":".$this->self->getConfigFlag(
-          "serverdomain")." 451 ".($connection->getOption("nick") ?
-          $connection->getOption("nick") : "*")." :You have not registered");
+        $connection->send($this->numeric->get("ERR_NOTREGISTERED", array(
+          $this->self->getConfigFlag("serverdomain"),
+          ($connection->getOption("nick") ?
+          $connection->getOption("nick") : "*")
+        )));
       }
     }
 
@@ -134,6 +146,7 @@
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "who");
