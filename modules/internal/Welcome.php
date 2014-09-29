@@ -90,7 +90,6 @@
         }
       }
       $cmodesp = array_merge($cmodesp, $cmodesk);
-
       $cmodespp = array_merge($cmodesp, $cmodesb);
 
       $connection->send($this->numeric->get("RPL_WELCOME", array(

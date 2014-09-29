@@ -17,11 +17,9 @@
       if (!is_array($config)) {
         $config = array(
           "RPL_WELCOME" =>
-            ":%s 001 %s :Welcome to the %s Internet Relay Chat Network ".
-            "%s",
+            ":%s 001 %s :Welcome to the %s Internet Relay Chat Network %s",
           "RPL_YOURHOST" =>
-            ":%s 002 %s :Your host is %s [%s/%s], running version ".
-            "%s",
+            ":%s 002 %s :Your host is %s [%s/%s], running version %s",
           "RPL_CREATED" =>
             ":%s 003 %s :This server was created %s at %s",
           "RPL_MYINFO" =>
