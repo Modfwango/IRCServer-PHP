@@ -112,8 +112,9 @@
                 $match,
                 $user->getOption("ident"),
                 $user->getHost(),
+                $this->self->getConfigFlag("serverdomain"),
                 $user->getOption("nick"),
-                " H".$prefix,
+                "H".$prefix,
                 "0",
                 $user->getOption("realname")
               )));
