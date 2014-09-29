@@ -172,6 +172,7 @@
     }
 
     public function isInstantiated() {
+      $this->loadConfig();
       EventHandling::registerForEvent("rehashEvent", $this, "loadConfig");
       return true;
     }
