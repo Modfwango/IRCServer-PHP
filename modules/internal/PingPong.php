@@ -1,7 +1,9 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("CommandEvent", "QUIT", "Self", "Timer", "USER");
+    public $depend = array("CommandEvent", "QUIT", "Numeric", "Self", "Timer",
+      "USER");
     public $name = "PingPong";
+    private $numeric = null;
     private $quit = null;
     private $responses = array();
     private $self = null;
@@ -91,6 +93,7 @@
     }
 
     public function isInstantiated() {
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->quit = ModuleManagement::getModuleByName("QUIT");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this,

@@ -1,10 +1,11 @@
 <?php
   class __CLASSNAME__ {
     public $depend = array("Client", "CommandEvent", "ConnectionCreatedEvent",
-      "LUSERS", "Modes", "MOTD", "Self", "USER");
+      "LUSERS", "Modes", "MOTD", "Numeric", "Self", "USER");
     public $name = "Welcome";
     private $client = null;
     private $modes = null;
+    private $numeric = null;
     private $self = null;
 
     public function receiveConnectionCreated($name, $connection) {
@@ -147,6 +148,7 @@
     public function isInstantiated() {
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("connectionCreatedEvent", $this,
         "receiveConnectionCreated");

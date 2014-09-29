@@ -3,11 +3,12 @@
     public $depend = array("ChannelCreatedEvent", "ChannelInviteEvent",
       "ChannelJoinEvent", "ChannelMessageEvent", "ChannelModeEvent",
       "ChannelNoticeEvent", "ChannelPartEvent", "ChannelTopicEvent", "Client",
-      "Modes", "NickChangeEvent", "Self", "UserQuitEvent");
+      "Modes", "NickChangeEvent", "Numeric", "Self", "UserQuitEvent");
     public $name = "Channel";
     private $client = null;
     private $channels = array();
     private $modes = null;
+    private $numeric = null;
     private $self = null;
 
     public function broadcast($name, $data, $exclude = null) {
@@ -449,6 +450,7 @@
     public function isInstantiated() {
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("channelCreatedEvent", $this,
         "receiveChannelCreated");
