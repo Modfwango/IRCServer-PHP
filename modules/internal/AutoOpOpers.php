@@ -5,7 +5,6 @@
     private $channel = null;
 
     public function receiveChannelJoin($name, $data) {
-      Logger::info(var_export($data, true));
       $source = $data[0];
       $channel = $this->channel->getChannelByName($data[1]);
 
@@ -14,9 +13,12 @@
         foreach ($event[2] as $id => $registration) {
           // Trigger the channelModeEvent event for each
           // registered module.
-          EventHandling::triggerEvent("channelModeEvent", $id,
-            array($source, $channel, array(array("ChannelOperator",
-            $source->getOption("nick")))));
+          EventHandling::triggerEvent("channelModeEvent", $id, array($source,
+            $channel, array(array(
+              "operation" => "+",
+              "name" => "ChannelOperator",
+              "param" => $source->getOption("nick")
+            ))));
         }
       }
     }
