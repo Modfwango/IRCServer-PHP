@@ -1,7 +1,8 @@
 <?php
   class __CLASSNAME__ {
     public $name = "AutoOpOpers";
-    public $depend = array("ChannelModeEvent");
+    public $depend = array("Channel", "ChannelModeEvent");
+    private $channel = null;
 
     public function receiveChannelJoin($name, $id, $channel) {
       $source = $data[0];
@@ -20,6 +21,7 @@
     }
 
     public function isInstantiated() {
+      $this->channel = ModuleManagement::getModuleByName("Channel");
       EventHandling::registerForEvent("channelJoinEvent", $this,
         "receiveChannelJoin");
       return true;
