@@ -5,6 +5,7 @@
     private $channel = null;
 
     public function receiveChannelJoin($name, $data) {
+      Logger::info(var_export($data, true));
       $source = $data[0];
       $channel = $this->channel->getChannelByName($data[1]);
 
