@@ -15,7 +15,7 @@
           // registered module.
           EventHandling::triggerEvent("channelModeEvent", $id,
             array($source, $channel, array(array("ChannelOperator",
-            $source->getOption("id")))));
+            $source->getOption("nick")))));
         }
       }
     }
