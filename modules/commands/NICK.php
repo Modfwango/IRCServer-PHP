@@ -88,7 +88,7 @@
 
     public function isInstantiated() {
       $this->client = ModuleManagement::getModuleByName("Client");
-      $this->Numeric = ModuleManagement::getModuleByName("Numeric");
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "nick");
