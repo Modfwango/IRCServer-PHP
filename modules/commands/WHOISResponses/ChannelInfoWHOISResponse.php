@@ -81,6 +81,7 @@
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       $this->util = ModuleManagement::getModuleByName("Util");
       EventHandling::registerAsEventPreprocessor("WHOISResponseEvent", $this,
