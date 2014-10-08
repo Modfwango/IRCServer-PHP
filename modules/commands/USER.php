@@ -71,7 +71,7 @@
     }
 
     public function isInstantiated() {
-      $this->Numeric = ModuleManagement::getModuleByName("Numeric");
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         "user");
