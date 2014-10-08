@@ -4,7 +4,7 @@
     public $depend = array("Channel", "ChannelModeEvent");
     private $channel = null;
 
-    public function receiveChannelJoin($name, $id, $channel) {
+    public function receiveChannelJoin($name, $data) {
       $source = $data[0];
       $channel = $this->channel->getChannelByName($data[1]);
 
