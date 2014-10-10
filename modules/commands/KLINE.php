@@ -149,7 +149,7 @@
 
       if ($connection->getOption("registered") == true) {
         if ($connection->getOption("operator") != false) {
-          if (count($command) > 1) {
+          if (count($command) > 0) {
             $mask = array_shift($command);
             $reason = implode(" ", $command);
             if (!stristr($mask, "!")) {
