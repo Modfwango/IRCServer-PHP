@@ -126,7 +126,7 @@
       $host = array_pop($ident);
       $ident = array_shift($ident);
 
-      $matches = array_unique(array_merge(
+      $matches = array_unique(array_intersect(
         $this->getClientIDsByMatchingNick($nick),
         $this->getClientIDsByMatchingIdent($ident),
         $this->getClientIDsByMatchingHost($host)));
