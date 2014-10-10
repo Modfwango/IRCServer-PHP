@@ -9,7 +9,7 @@
       $channel = $this->channel->getChannelByName($data[1]);
 
       $event = EventHandling::getEventByName("channelModeEvent");
-      if ($event != false && $source->getOption("operator") == true) {
+      if ($event != false && $source->getOption("operator") != false) {
         foreach ($event[2] as $id => $registration) {
           // Trigger the channelModeEvent event for each
           // registered module.

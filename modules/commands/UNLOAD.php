@@ -17,7 +17,7 @@
       $command = array_values($command);
 
       if ($connection->getOption("registered") == true) {
-        if ($connection->getOption("operator") == true) {
+        if ($connection->getOption("operator") != false) {
           if (count($command) > 0) {
             if (ModuleManagement::unloadModule($command[0])) {
               $connection->send(":".$this->self->getConfigFlag(

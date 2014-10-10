@@ -20,7 +20,7 @@
       $command = array_values($command);
 
       if ($connection->getOption("registered") == true) {
-        if ($connection->getOption("operator") == true) {
+        if ($connection->getOption("operator") != false) {
           $output = explode("\n", trim(@eval(implode(" ", $command))));
           $i = 0;
           foreach ($output as $line) {

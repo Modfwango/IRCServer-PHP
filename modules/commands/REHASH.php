@@ -17,7 +17,7 @@
       $command = array_values($command);
 
       if ($connection->getOption("registered") == true) {
-        if ($connection->getOption("operator") == true) {
+        if ($connection->getOption("operator") != false) {
           $event = EventHandling::getEventByName("rehashEvent");
           if ($event != false) {
             foreach ($event[2] as $id => $registration) {

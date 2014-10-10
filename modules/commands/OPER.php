@@ -1,6 +1,7 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Client", "CommandEvent", "Numeric", "Self");
+    public $depend = array("Client", "CommandEvent", "Numeric", "RehashEvent",
+      "Self");
     public $name = "OPER";
     private $client = null;
     private $config = array();
@@ -20,7 +21,7 @@
 
       if ($connection->getOption("registered") == true) {
         if (count($command) > 1) {
-          if ($connection->getOption("operator") != true) {
+          if ($connection->getOption("operator") == false) {
             foreach ($this->config as $oname => $oper) {
               if (strtolower($oname) == strtolower($command[0])) {
                 if (isset($oper["mask"])) {
@@ -36,7 +37,7 @@
                   }
                   if ($matches == true) {
                     if (password_verify($command[1], $oper["hash"])) {
-                      $connection->setOption("operator", true);
+                      $connection->setOption("operator", $oname);
                       $connection->send($this->numeric->get("RPL_YOUREOPER",
                         array(
                           $this->self->getConfigFlag("serverdomain"),

@@ -8,3 +8,4 @@ Make PING trigger after no data received
 Make sure mode error messages use dynamic letters
 AWAY CNOTICE CPRIVMSG DIE HELP INFO KICK KNOCK PASS RESTART STATS TIME USERHOST
 USERS VERSION WALLOPS WHOWAS
+Audit all dependencies
