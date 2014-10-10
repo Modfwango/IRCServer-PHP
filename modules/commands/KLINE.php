@@ -13,7 +13,7 @@
         if ($this->client->clientMatchesMask($connection, $mask)) {
           $message = "K-Lined";
           $connection->send("ERROR :Closing Link: ".$connection->getHost().
-            " (".$message.")");
+            " (".$message.": ".$entry["reason"].")");
           ModuleManagement::getModuleByName("QUIT")->notifyQuit(
             null, $connection, $message);
           $connection->setOption("registered", false);
@@ -85,7 +85,7 @@
                       && $client->getOption("operator") == false) {
                     $message = "K-Lined";
                     $client->send("ERROR :Closing Link: ".$client->getHost().
-                      " (".$message.")");
+                      " (".$message.": ".$reason.")");
                     ModuleManagement::getModuleByName("QUIT")->notifyQuit(
                       null, $client, $message);
                     $client->setOption("registered", false);
