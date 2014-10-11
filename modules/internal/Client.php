@@ -28,9 +28,9 @@
 
       // If the client's nick, ident, and host match the provided mask,
       // return true.
-      if ($this->matchGlob($nick, $client->getOption("nick"))
-          && $this->matchGlob($ident, $client->getOption("ident"))
-          && $this->matchGlob($host, $client->getHost())) {
+      if ($this->clientNickMatchesPattern($client, $nick)
+          && $this->clientIdentMatchesPattern($client, $ident)
+          && $this->clientHostMatchesPattern($client, $host)) {
         return true;
       }
       return false;
@@ -67,13 +67,16 @@
 
     public function getClientIDsByMatchingHost($pattern) {
       $clients = array();
-      foreach ($this->clients["byhost"] as $host => $id) {
-        if ($this->matchGlob($pattern, $host)) {
-          Logger::debug("Client host [".$host."] matches [".$pattern."]");
-          $clients[] = $id;
-        }
-        else {
-          Logger::debug("Client host [".$host."] doesn't match [".$pattern."]");
+      foreach ($this->clients["byhost"] as $host => $ids) {
+        foreach ($ids as $id) {
+          if ($this->matchGlob($pattern, $host)) {
+            Logger::debug("Client host [".$host."] matches [".$pattern."]");
+            $clients[] = $id;
+          }
+          else {
+            Logger::debug("Client host [".$host."] doesn't match [".
+              $pattern."]");
+          }
         }
       }
       return $clients;
@@ -81,14 +84,16 @@
 
     public function getClientIDsByMatchingIdent($pattern) {
       $clients = array();
-      foreach ($this->clients["byident"] as $ident => $id) {
-        if ($this->matchGlob($pattern, $ident)) {
-          Logger::debug("Client ident [".$ident."] matches [".$pattern."]");
-          $clients[] = $id;
-        }
-        else {
-          Logger::debug("Client ident [".$ident."] doesn't match [".
-            $pattern."]");
+      foreach ($this->clients["byident"] as $ident => $ids) {
+        foreach ($ids as $id) {
+          if ($this->matchGlob($pattern, $ident)) {
+            Logger::debug("Client ident [".$ident."] matches [".$pattern."]");
+            $clients[] = $id;
+          }
+          else {
+            Logger::debug("Client ident [".$ident."] doesn't match [".
+              $pattern."]");
+          }
         }
       }
       return $clients;
@@ -128,15 +133,17 @@
 
     public function getClientIDsByMatchingRealname($pattern) {
       $clients = array();
-      foreach ($this->clients["byrealname"] as $realname => $id) {
-        if ($this->matchGlob($pattern, $realname)) {
-          Logger::debug("Client realname [".$realname."] matches [".
-            $pattern."]");
-          $clients[] = $id;
-        }
-        else {
-          Logger::debug("Client realname [".$realname."] doesn't match [".
-            $pattern."]");
+      foreach ($this->clients["byrealname"] as $realname => $ids) {
+        foreach ($ids as $id) {
+          if ($this->matchGlob($pattern, $realname)) {
+            Logger::debug("Client realname [".$realname."] matches [".
+              $pattern."]");
+            $clients[] = $id;
+          }
+          else {
+            Logger::debug("Client realname [".$realname."] doesn't match [".
+              $pattern."]");
+          }
         }
       }
       return $clients;
@@ -375,11 +382,20 @@
       if ($client->getOption("id") != false) {
         $this->clients["byid"][$client->getOption("id")] = $client;
         if ($client->getHost() != false) {
-          $this->clients["byhost"][strtolower($client->getHost())] =
+          if (!isset($this->clients["byhost"][strtolower(
+              $client->getHost())])) {
+            $this->clients["byhost"][strtolower($client->getHost())] = array();
+          }
+          $this->clients["byhost"][strtolower($client->getHost())][] =
             $client->getOption("id");
         }
         if ($client->getOption("ident") != false) {
-          $this->clients["byident"][strtolower($client->getOption("ident"))] =
+          if (!isset($this->clients["byident"][strtolower($client->getOption(
+              "ident"))])) {
+            $this->clients["byident"][strtolower($client->getOption("ident"))] =
+              array();
+          }
+          $this->clients["byident"][strtolower($client->getOption("ident"))][] =
             $client->getOption("id");
         }
         if ($client->getOption("nick") != false) {
@@ -387,8 +403,13 @@
             $client->getOption("id");
         }
         if ($client->getOption("realname") != false) {
+          if (!isset($this->clients["byrealname"][strtolower(
+              $client->getOption("realname"))])) {
+            $this->clients["byrealname"][strtolower($client->getOption(
+              "realname"))] = array();
+          }
           $this->clients["byrealname"][strtolower(
-            $client->getOption("realname"))] = $client->getOption("id");
+            $client->getOption("realname"))][] = $client->getOption("id");
         }
         return true;
       }
@@ -398,21 +419,25 @@
     public function unsetClient($client) {
       if (isset($this->clients["byid"][$client->getOption("id")])) {
         unset($this->clients["byid"][$client->getOption("id")]);
-        if (in_array($client->getOption("id"), $this->clients["byhost"])) {
-          $this->clients["byhost"] = array_diff($this->clients["byhost"],
-            array($client->getOption("id")));
+        foreach ($this->clients["byhost"] as &$byhost) {
+          if (in_array($client->getOption("id"), $byhost)) {
+            $byhost = array_diff($byhost, array($client->getOption("id")));
+          }
         }
-        if (in_array($client->getOption("id"), $this->clients["byident"])) {
-          $this->clients["byident"] = array_diff($this->clients["byident"],
-            array($client->getOption("id")));
+        foreach ($this->clients["byident"] as &$byident) {
+          if (in_array($client->getOption("id"), $byident)) {
+            $byident = array_diff($byident, array($client->getOption("id")));
+          }
         }
         if (in_array($client->getOption("id"), $this->clients["bynick"])) {
           $this->clients["bynick"] = array_diff($this->clients["bynick"],
             array($client->getOption("id")));
         }
-        if (in_array($client->getOption("id"), $this->clients["byrealname"])) {
-          $this->clients["byrealname"] = array_diff(
-            $this->clients["byrealname"], array($client->getOption("id")));
+        foreach ($this->clients["byrealname"] as &$byrealname) {
+          if (in_array($client->getOption("id"), $byrealname)) {
+            $byrealname = array_diff($byrealname, array(
+              $client->getOption("id")));
+          }
         }
       }
     }
