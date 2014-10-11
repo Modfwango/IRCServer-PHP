@@ -48,16 +48,6 @@
         true : false);
     }
 
-    public function getClientByHost($host) {
-      // Retrieve the requested client if it exists, otherwise return false.
-      return $this->getClientByID($this->getClientIDByHost($host));
-    }
-
-    public function getClientByIdent($ident) {
-      // Retrieve the requested client if it exists, otherwise return false.
-      return $this->getClientByID($this->getClientIDByIdent($ident));
-    }
-
     public function getClientByID($id) {
       // Retrieve the requested client if it exists, otherwise return false.
       return (isset($this->clients["byid"][$id]) ? $this->clients["byid"][$id] :
@@ -69,39 +59,17 @@
       return $this->getClientByID($this->getClientIDByNick($nick));
     }
 
-    public function getClientByRealname($realname) {
-      // Retrieve the requested client if it exists, otherwise return false.
-      return $this->getClientByID($this->getClientIDByRealname($realname));
-    }
-
-    public function getClientIDByHost($host) {
-      // Retrieve the requested ID if it exists, otherwise return false.
-      return (isset($this->clients["byhost"][strtolower($host)]) ?
-        $this->clients["byhost"][strtolower($host)] : false);
-    }
-
-    public function getClientIDByIdent($ident) {
-      // Retrieve the requested ID if it exists, otherwise return false.
-      return (isset($this->clients["byident"][strtolower($ident)]) ?
-        $this->clients["byident"][strtolower($ident)] : false);
-    }
-
     public function getClientIDByNick($nick) {
       // Retrieve the requested ID if it exists, otherwise return false.
       return (isset($this->clients["bynick"][strtolower($nick)]) ?
         $this->clients["bynick"][strtolower($nick)] : false);
     }
 
-    public function getClientIDByRealname($realname) {
-      // Retrieve the requested ID if it exists, otherwise return false.
-      return (isset($this->clients["byrealname"][strtolower($realname)]) ?
-        $this->clients["byrealname"][strtolower($realname)] : false);
-    }
-
     public function getClientIDsByMatchingHost($pattern) {
       $clients = array();
       foreach ($this->clients["byhost"] as $host => $id) {
         if ($this->matchGlob($pattern, $host)) {
+          Logger::debug("Client host [".$host."] matches glob [".$pattern."]");
           $clients[] = $id;
         }
       }
@@ -112,6 +80,8 @@
       $clients = array();
       foreach ($this->clients["byident"] as $ident => $id) {
         if ($this->matchGlob($pattern, $ident)) {
+          Logger::debug("Client ident [".$ident."] matches glob [".
+            $pattern."]");
           $clients[] = $id;
         }
       }
@@ -126,6 +96,9 @@
       $host = array_pop($ident);
       $ident = array_shift($ident);
 
+      Logger::debug("Returning client IDs that intersect with matching globs ".
+        "for nick: [".$nick."]  ident: [".$ident."]  and host [".$host."]");
+
       $matches = array_unique(array_intersect(
         $this->getClientIDsByMatchingNick($nick),
         $this->getClientIDsByMatchingIdent($ident),
@@ -137,6 +110,7 @@
       $clients = array();
       foreach ($this->clients["bynick"] as $nick => $id) {
         if ($this->matchGlob($pattern, $nick)) {
+          Logger::debug("Client nick [".$nick."] matches glob [".$pattern."]");
           $clients[] = $id;
         }
       }
@@ -147,6 +121,8 @@
       $clients = array();
       foreach ($this->clients["byrealname"] as $realname => $id) {
         if ($this->matchGlob($pattern, $realname)) {
+          Logger::debug("Client realname [".$realname."] matches glob [".
+            $pattern."]");
           $clients[] = $id;
         }
       }
