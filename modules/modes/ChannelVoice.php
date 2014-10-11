@@ -97,6 +97,10 @@
       }
     }
 
+    public function isUnloadable() {
+      return false;
+    }
+
     public function isInstantiated() {
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
