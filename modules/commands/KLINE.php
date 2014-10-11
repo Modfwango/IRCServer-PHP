@@ -11,6 +11,9 @@
     public function receiveConnectionCreated($name, $connection) {
       foreach ($this->config as $mask => $entry) {
         if ($this->client->clientMatchesMask($connection, $mask)) {
+          Logger::debug("Matched client [".$connection->getOption("nick").
+            "!".$connection->getOption("ident")."@".$connection->getHost().
+            "] with mask [".$mask."]");
           $message = "K-Lined";
           $connection->send("ERROR :Closing Link: ".$connection->getHost().
             " (".$message.": ".$entry["reason"].")");
@@ -81,6 +84,9 @@
                 // Kill affected clients
                 foreach ($this->client->getClientsByMatchingMask($mask) as
                           $client) {
+                  Logger::debug("Matched client [".$client->getOption("nick").
+                    "!".$client->getOption("ident")."@".$client->getHost().
+                    "] with mask [".$mask."]");
                   if ($client != false
                       && $client->getOption("operator") == false) {
                     $message = "K-Lined";
