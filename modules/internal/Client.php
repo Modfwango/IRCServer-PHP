@@ -69,8 +69,11 @@
       $clients = array();
       foreach ($this->clients["byhost"] as $host => $id) {
         if ($this->matchGlob($pattern, $host)) {
-          Logger::debug("Client host [".$host."] matches glob [".$pattern."]");
+          Logger::debug("Client host [".$host."] matches [".$pattern."]");
           $clients[] = $id;
+        }
+        else {
+          Logger::debug("Client host [".$host."] doesn't match [".$pattern."]");
         }
       }
       return $clients;
@@ -80,9 +83,12 @@
       $clients = array();
       foreach ($this->clients["byident"] as $ident => $id) {
         if ($this->matchGlob($pattern, $ident)) {
-          Logger::debug("Client ident [".$ident."] matches glob [".
-            $pattern."]");
+          Logger::debug("Client ident [".$ident."] matches [".$pattern."]");
           $clients[] = $id;
+        }
+        else {
+          Logger::debug("Client ident [".$ident."] doesn't match [".
+            $pattern."]");
         }
       }
       return $clients;
@@ -110,8 +116,11 @@
       $clients = array();
       foreach ($this->clients["bynick"] as $nick => $id) {
         if ($this->matchGlob($pattern, $nick)) {
-          Logger::debug("Client nick [".$nick."] matches glob [".$pattern."]");
+          Logger::debug("Client nick [".$nick."] matches [".$pattern."]");
           $clients[] = $id;
+        }
+        else {
+          Logger::debug("Client nick [".$nick."] doesn't match [".$pattern."]");
         }
       }
       return $clients;
@@ -121,9 +130,13 @@
       $clients = array();
       foreach ($this->clients["byrealname"] as $realname => $id) {
         if ($this->matchGlob($pattern, $realname)) {
-          Logger::debug("Client realname [".$realname."] matches glob [".
+          Logger::debug("Client realname [".$realname."] matches [".
             $pattern."]");
           $clients[] = $id;
+        }
+        else {
+          Logger::debug("Client realname [".$realname."] doesn't match [".
+            $pattern."]");
         }
       }
       return $clients;
