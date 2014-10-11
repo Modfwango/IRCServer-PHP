@@ -209,8 +209,7 @@
                   $this->self->getConfigFlag("serverdomain"),
                   $connection->getOption("nick"),
                   $channel["name"],
-                  (isset($channel["modetime"]) ?
-                  $channel["modetime"] : $channel["created"])
+                  $channel["time"]
                 )));
               }
             }

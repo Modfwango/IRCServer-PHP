@@ -194,7 +194,7 @@
             "invites" => array(),
             "modes" => array(),
             "members" => array($source->getOption("id")),
-            "created" => time()
+            "time" => time()
           );
           $this->setChannel($channel);
           $event = EventHandling::getEventByName("channelCreatedEvent");
@@ -285,7 +285,7 @@
         return;
       }
 
-      $ch["modetime"] = time();
+      $ch["time"] = time();
       $this->setChannel($ch);
 
       $modes = null;
@@ -365,6 +365,7 @@
         $ch["topic"]["author"] = $source->getOption("nick")."!".
           $source->getOption("ident")."@".$source->getHost();
         $ch["topic"]["timestamp"] = time();
+        $ch["time"] = time();
         $this->setChannel($ch);
         $this->broadcast($ch["name"], ":".$ch["topic"]["author"]." TOPIC ".
           $ch["name"]." :".$ch["topic"]["text"]);
