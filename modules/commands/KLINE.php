@@ -11,8 +11,7 @@
     public function receiveConnectionCreated($name, $connection) {
       foreach ($this->config as $mask => $entry) {
         if ($this->client->clientMatchesMask($connection, $mask)) {
-          Logger::debug("Matched client [".$connection->getOption("nick").
-            "!".$connection->getOption("ident")."@".$connection->getHost().
+          Logger::debug("Matched client [".$connection->getHost().
             "] with mask [".$mask."]");
           $message = "K-Lined";
           $connection->send("ERROR :Closing Link: ".$connection->getHost().
