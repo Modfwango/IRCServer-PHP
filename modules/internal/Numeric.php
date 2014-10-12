@@ -143,9 +143,9 @@
           "ERR_PASSWDMISMATCH" =>
             ":%s 464 %s :Password Incorrect",
           "ERR_INVITEONLYCHAN" =>
-            ":%s 473 %s %s :Cannot join channel (+i) - you must be invited",
+            ":%s 473 %s %s :Cannot join channel (+%s) - you must be invited",
           "ERR_BANNEDFROMCHAN" =>
-            ":%s 474 %s %s :Cannot join channel (+b) - you are banned",
+            ":%s 474 %s %s :Cannot join channel (+%s) - you are banned",
           "ERR_BADCHANNAME" =>
             ":%s 479 %s %s :Illegal channel name",
           "ERR_NOPRIVILEGES" =>
@@ -156,7 +156,7 @@
             ":%s 489 %s %s :all members of the channel must be connected via ".
             "SSL",
           "ERR_SECUREONLYCHAN" =>
-            ":%s 490 %s %s :Cannot join channel; SSL users only (+S)",
+            ":%s 490 %s %s :Cannot join channel; SSL users only (+%s)",
           "ERR_NOOPERHOST" =>
             ":%s 491 %s :No appropriate operator blocks were found for your ".
             "host",

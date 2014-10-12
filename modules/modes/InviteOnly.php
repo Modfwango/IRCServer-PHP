@@ -68,7 +68,8 @@
             $source->send($this->numeric->get("ERR_INVITEONLYCHAN", array(
               $this->self->getConfigFlag("serverdomain"),
               $source->getOption("nick"),
-              $channel
+              $channel,
+              "i"
             )));
             return array(false);
           }

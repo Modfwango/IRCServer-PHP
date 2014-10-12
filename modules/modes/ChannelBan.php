@@ -91,7 +91,8 @@
               $source->send($this->numeric->get("ERR_BANNEDFROMCHAN", array(
                 $this->self->getConfigFlag("serverdomain"),
                 $source->getOption("nick"),
-                $channel
+                $channel,
+                "b"
               )));
             }
             return array(false);

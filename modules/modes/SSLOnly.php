@@ -66,7 +66,8 @@
         $source->send($this->numeric->get("ERR_SECUREONLYCHAN", array(
           $this->self->getConfigFlag("serverdomain"),
           $source->getOption("nick"),
-          $channel["name"]
+          $channel["name"],
+          "S"
         )));
       }
       $data[2] = $modes;
@@ -82,7 +83,8 @@
         $source->send($this->numeric->get("ERR_SECUREONLYCHAN", array(
           $this->self->getConfigFlag("serverdomain"),
           $source->getOption("nick"),
-          $channel
+          $channel,
+          "S"
         )));
         return array(false);
       }
