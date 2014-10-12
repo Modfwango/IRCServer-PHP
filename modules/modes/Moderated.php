@@ -75,10 +75,10 @@
       $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       $this->modes->setMode(array("Moderated", "m", "0", "0"));
-      EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
-        "receiveChannelMode");
       EventHandling::registerAsEventPreprocessor("channelMessageEvent", $this,
         "receiveChannelEvent");
+      EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
+        "receiveChannelMode");
       EventHandling::registerAsEventPreprocessor("channelNoticeEvent", $this,
         "receiveChannelEvent");
       return true;

@@ -1,7 +1,7 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Channel", "ChannelJoinEvent", "CommandEvent",
-      "Numeric", "Self");
+    public $depend = array("ChannelJoinEvent", "CommandEvent", "Numeric",
+      "Self");
     public $name = "JOIN";
     private $numeric = null;
     private $self = null;
@@ -19,9 +19,9 @@
 
       if ($connection->getOption("registered") == true) {
         if (count($command) > 0) {
-          $channels = array($command[0]);
-          if (stristr($command[0], ",")) {
-            $channels = explode(",", $command[0]);
+          $channels = array(array_shift($command));
+          if (stristr($channels[0], ",")) {
+            $channels = explode(",", $channels[0]);
           }
           foreach ($channels as $channel) {
             if (strlen($channel) < 51) {
@@ -32,7 +32,7 @@
                     // Trigger the channelJoinEvent event for each registered
                     // module.
                     EventHandling::triggerEvent("channelJoinEvent", $id,
-                        array($connection, $channel));
+                        array($connection, $channel, &$command));
                   }
                 }
               }

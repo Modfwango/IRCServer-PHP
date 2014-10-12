@@ -99,10 +99,10 @@
       $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       $this->modes->setMode(array("SSLOnly", "S", "0", "0"));
-      EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
-        "receiveChannelMode");
       EventHandling::registerAsEventPreprocessor("channelJoinEvent", $this,
         "receiveChannelJoin");
+      EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
+        "receiveChannelMode");
       return true;
     }
   }

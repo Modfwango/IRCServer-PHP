@@ -1,6 +1,6 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("CommandEvent", "Numeric", "Self");
+    public $depend = array("CommandEvent", "Numeric", "RehashEvent", "Self");
     public $name = "ADMIN";
     private $config = null;
     private $numeric = null;

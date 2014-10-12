@@ -1,6 +1,7 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Channel", "Client", "ChannelModeEvent", "Modes");
+    public $depend = array("Channel", "Client", "ChannelModeEvent",
+      "InviteOnlyShouldPreventJoinEvent", "Modes");
     public $name = "InviteException";
     private $channel = null;
     private $client = null;

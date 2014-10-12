@@ -3,7 +3,8 @@
     public $depend = array("ChannelCreatedEvent", "ChannelInviteEvent",
       "ChannelJoinEvent", "ChannelMessageEvent", "ChannelModeEvent",
       "ChannelNoticeEvent", "ChannelPartEvent", "ChannelTopicEvent", "Client",
-      "Modes", "NickChangeEvent", "Numeric", "Self", "UserQuitEvent");
+      "CommandEvent", "Modes", "NickChangeEvent", "Numeric", "Self",
+      "UserQuitEvent");
     public $name = "Channel";
     private $client = null;
     private $channels = array();

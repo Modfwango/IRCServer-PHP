@@ -1,7 +1,7 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Channel", "Modes", "Numeric", "Self", "Util",
-      "WHOISResponseEvent");
+    public $depend = array("Channel", "Modes", "Numeric", "Self",
+      "ShouldExposeChannelToUserEvent", "Util", "WHOISResponseEvent");
     public $name = "ChannelInfoWHOISResponse";
     private $channel = null;
     private $modes = null;

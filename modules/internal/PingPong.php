@@ -1,10 +1,9 @@
 <?php
   class __CLASSNAME__ {
     public $depend = array("CommandEvent", "QUIT", "Numeric", "Self", "Timer",
-      "USER");
+      "UserRegistrationEvent");
     public $name = "PingPong";
     private $numeric = null;
-    private $quit = null;
     private $responses = array();
     private $self = null;
 
@@ -82,7 +81,8 @@
         }
         $connection->send("ERROR :Closing Link: ".$connection->getHost().
           " (".$message.")");
-        $this->quit->notifyQuit(null, $connection, $message);
+        ModuleManagement::getModuleByName("QUIT")->notifyQuit(null, $connection,
+          $message);
         $connection->setOption("registered", false);
         $connection->disconnect();
       }
@@ -94,7 +94,6 @@
 
     public function isInstantiated() {
       $this->numeric = ModuleManagement::getModuleByName("Numeric");
-      $this->quit = ModuleManagement::getModuleByName("QUIT");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this,
         "receivePingCommand", "ping");

@@ -1,7 +1,7 @@
 <?php
   class __CLASSNAME__ {
     public $depend = array("Client", "CommandEvent", "ConnectionCreatedEvent",
-      "LUSERS", "Modes", "MOTD", "Numeric", "Self", "USER");
+      "LUSERS", "Modes", "MOTD", "Numeric", "Self", "UserRegistrationEvent");
     public $name = "Welcome";
     private $client = null;
     private $modes = null;

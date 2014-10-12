@@ -1,6 +1,7 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("CommandEvent", "Self", "UserRegistrationEvent");
+    public $depend = array("CommandEvent", "Numeric", "Self",
+      "UserRegistrationEvent");
     public $name = "USER";
     private $numeric = null;
     private $self = null;

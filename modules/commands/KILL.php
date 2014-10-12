@@ -2,6 +2,7 @@
   class __CLASSNAME__ {
     public $depend = array("Client", "CommandEvent", "Numeric", "QUIT", "Self");
     public $name = "KILL";
+    private $client = null;
     private $numeric = null;
     private $self = null;
 

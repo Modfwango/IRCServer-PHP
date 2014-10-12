@@ -1,7 +1,7 @@
 <?php
   class __CLASSNAME__ {
     public $name = "AutoOpOpers";
-    public $depend = array("Channel", "ChannelModeEvent");
+    public $depend = array("Channel", "ChannelJoinEvent", "ChannelModeEvent");
     private $channel = null;
 
     public function receiveChannelJoin($name, $data) {

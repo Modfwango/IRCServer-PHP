@@ -1,6 +1,7 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Channel", "ChannelModeEvent", "Modes");
+    public $depend = array("Channel", "ChannelModeEvent",
+      "LackOfChannelOperatorShouldPreventInvitationEvent", "Modes");
     public $name = "UnrestrictedInvite";
     private $channel = null;
     private $modes = null;

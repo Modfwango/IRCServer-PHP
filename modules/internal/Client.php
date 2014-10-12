@@ -1,7 +1,8 @@
 <?php
   class __CLASSNAME__ {
     public $depend = array("Modes", "NickChangeEvent", "PrivateMessageEvent",
-      "PrivateNoticeEvent", "UserModeEvent", "UserRegistrationEvent");
+      "PrivateNoticeEvent", "UserModeEvent", "UserQuitEvent",
+      "UserRegistrationEvent");
     public $name = "Client";
     private $clients = array("byhost" => array(), "byident" => array(),
       "byid" => array(), "bynick" => array(), "byrealname" => array());

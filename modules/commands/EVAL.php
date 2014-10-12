@@ -1,6 +1,7 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("CommandEvent", "Numeric", "Self");
+    public $depend = array("Channel", "Client", "CommandEvent", "Modes",
+      "Numeric", "Self");
     public $name = "EVAL";
     private $channel = null;
     private $client = null;

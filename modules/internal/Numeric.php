@@ -5,6 +5,8 @@
 
     public function get($numeric, $params = array()) {
       if (isset($this->config[$numeric])) {
+        Logger::debug("Fetching numeric [".$numeric."] with params [".
+          json_encode($params)."]");
         return call_user_func_array("sprintf", array_merge(array(
           $this->config[$numeric]), array_values($params)));
       }

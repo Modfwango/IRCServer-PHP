@@ -60,10 +60,10 @@
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->modes = ModuleManagement::getModuleByName("Modes");
       $this->modes->setMode(array("StripColors", "c", "0", "0"));
-      EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
-        "receiveChannelMode");
       EventHandling::registerAsEventPreprocessor("channelMessageEvent", $this,
         "receiveChannelEvent");
+      EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
+        "receiveChannelMode");
       EventHandling::registerAsEventPreprocessor("channelNoticeEvent", $this,
         "receiveChannelEvent");
       return true;

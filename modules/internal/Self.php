@@ -1,6 +1,5 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array();
     public $name = "Self";
     private $config = array();
 
@@ -34,11 +33,8 @@
             JSON_PRETTY_PRINT));
         }
         $this->config = $config;
-        $this->config["motd"] = $motd;
       }
-      else {
-        $this->config["motd"] = $motd;
-      }
+      $this->config["motd"] = $motd;
     }
 
     public function isUnloadable() {

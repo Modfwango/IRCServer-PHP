@@ -12,6 +12,7 @@
         return false;
       }
 
+      // TODO: Make a $this->client->getUnregisteredClients() method
       foreach (ConnectionManagement::getConnections() as $connection) {
         if (strtolower($connection->getOption("nick")) == strtolower($nick)) {
           return false;

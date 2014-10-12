@@ -1,7 +1,7 @@
 <?php
   class __CLASSNAME__ {
     public $depend = array("Channel", "Client", "CommandEvent", "Modes",
-      "Numeric", "Self", "Util");
+      "Numeric", "Self", "ShouldExposeChannelToUserEvent", "Util");
     public $name = "NAMES";
     private $channel = null;
     private $client = null;

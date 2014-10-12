@@ -1,7 +1,7 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Channel", "ChannelOperator", "Client",
-      "CommandEvent", "Modes", "Numeric", "Self");
+    public $depend = array("Channel", "ChannelModeEvent", "ChannelOperator",
+      "Client", "CommandEvent", "Modes", "Numeric", "Self", "UserModeEvent");
     public $name = "MODE";
     private $channel = null;
     private $client = null;
@@ -115,33 +115,33 @@
               if ($opped == false) {
                 return;
                 // TODO: Move this logic to individual list mode modules.
-                $okay = false;
-                $ms = $this->modes->getModeNamesByType("3");
-                foreach (str_split($command[1]) as $mode) {
-                  $m = $this->modes->getModeByChar("0", $mode);
-                  if ($m != false && !in_array($m["name"], $ms)) {
-                    $okay = false;
-                  }
-                }
-                if ($okay == false) {
-                  $connection->send($this->numeric->get("ERR_CHANOPRIVSNEEDED",
-                    array(
-                      $this->self->getConfigFlag("serverdomain"),
-                      $connection->getOption("nick"),
-                      $channel["name"]
-                    )
-                  ));
-                }
-                else {
-                  // Use as a filter to list modes for this channel.
-                  $connection->send($this->numeric->get("RPL_ENDOFBANLIST",
-                    array(
-                      $this->self->getConfigFlag("serverdomain"),
-                      $connection->getOption("nick"),
-                      $channel["name"]
-                    )
-                  ));
-                }
+                // $okay = false;
+                // $ms = $this->modes->getModeNamesByType("3");
+                // foreach (str_split($command[1]) as $mode) {
+                //   $m = $this->modes->getModeByChar("0", $mode);
+                //   if ($m != false && !in_array($m["name"], $ms)) {
+                //     $okay = false;
+                //   }
+                // }
+                // if ($okay == false) {
+                //   $connection->send($this->numeric->get("ERR_CHANOPRIVSNEEDED",
+                //     array(
+                //       $this->self->getConfigFlag("serverdomain"),
+                //       $connection->getOption("nick"),
+                //       $channel["name"]
+                //     )
+                //   ));
+                // }
+                // else {
+                //   // Use as a filter to list modes for this channel.
+                //   $connection->send($this->numeric->get("RPL_ENDOFBANLIST",
+                //     array(
+                //       $this->self->getConfigFlag("serverdomain"),
+                //       $connection->getOption("nick"),
+                //       $channel["name"]
+                //     )
+                //   ));
+                // }
               }
             }
             elseif ($client != false) {

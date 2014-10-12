@@ -82,10 +82,10 @@
       $this->modes->setMode(array("NoExternalMessages", "n", "0", "0"));
       EventHandling::registerAsEventPreprocessor("channelCreatedEvent", $this,
         "receiveChannelCreated");
-      EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
-        "receiveChannelMode");
       EventHandling::registerAsEventPreprocessor("channelMessageEvent", $this,
         "receiveChannelEvent");
+      EventHandling::registerAsEventPreprocessor("channelModeEvent", $this,
+        "receiveChannelMode");
       EventHandling::registerAsEventPreprocessor("channelNoticeEvent", $this,
         "receiveChannelEvent");
       return true;

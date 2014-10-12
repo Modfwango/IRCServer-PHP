@@ -71,12 +71,12 @@
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
       $this->modes->setMode(array("Deaf", "d", "1", "0"));
-      EventHandling::registerAsEventPreprocessor("userModeEvent", $this,
-        "receiveUserMode");
       EventHandling::registerAsEventPreprocessor("channelMessageEvent", $this,
         "receiveChannelEvent");
       EventHandling::registerAsEventPreprocessor("channelNoticeEvent", $this,
         "receiveChannelEvent");
+      EventHandling::registerAsEventPreprocessor("userModeEvent", $this,
+        "receiveUserMode");
       return true;
     }
   }
