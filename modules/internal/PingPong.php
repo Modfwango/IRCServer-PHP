@@ -64,11 +64,13 @@
     }
 
     public function sendPingRequest($connection) {
-      if ($this->responses[$connection->getOption("id")] == true
-          && time() - $connection->getOption("idle") >=
-          $this->self->getConfigFlag("pingtime")) {
-        $this->responses[$connection->getOption("id")] = false;
-        $connection->send("PING :".$this->self->getConfigFlag("serverdomain"));
+      if ($this->responses[$connection->getOption("id")] == true) {
+        if (time() - $connection->getOption("idle") >=
+            $this->self->getConfigFlag("pingtime")) {
+          $this->responses[$connection->getOption("id")] = false;
+          $connection->send("PING :".$this->self->getConfigFlag(
+            "serverdomain"));
+        }
         ModuleManagement::getModuleByName("Timer")->newTimer(
           $this->self->getConfigFlag("pingtime"), $this, "sendPingRequest",
           $connection);
