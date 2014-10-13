@@ -30,8 +30,13 @@
           foreach ($modules as $name => $info) {
             $connection->send(":".$this->self->getConfigFlag(
               "serverdomain")." NOTICE ".$connection->getOption("nick")." ".
-              ":*** ".$name." (".$info[0]."); depends on [".implode(", ",
-              $info[1])."]");
+              ":*** ".$name.":");
+            $connection->send(":".$this->self->getConfigFlag(
+              "serverdomain")." NOTICE ".$connection->getOption("nick")." ".
+              ":    *** Class:    ".$info[0]);
+            $connection->send(":".$this->self->getConfigFlag(
+              "serverdomain")." NOTICE ".$connection->getOption("nick")." ".
+              ":    *** Depends:  ".implode(", ",$info[1]));
           }
         }
         else {
