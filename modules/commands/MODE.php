@@ -179,30 +179,13 @@
             $channel = $this->channel->getChannelByName($command[0]);
             $client = $this->client->getClientByNick($command[0]);
             if ($channel != false) {
-              $modes = array();
-              $params = array();
-              if (isset($channel["modes"]) && is_array($channel["modes"])) {
-                foreach ($channel["modes"] as $mode) {
-                  $m = $this->modes->getModeByName($mode["name"]);
-                  if ($m != false) {
-                    if ($m[3] == "0") {
-                      $modes[] = $m[1];
-                    }
-                    if ($m[3] == "1" || $m[3] == "2") {
-                      $modes[] = $m[1];
-                      $params[] = $mode["param"];
-                    }
-                  }
-                }
-              }
-              $modes = "+".implode($modes);
-              $params = implode(" ", $params);
-              $modeString = $modes." ".$params;
+              $ms = $this->modes->getModeStringComponents($channel["modes"],
+                true);
               $connection->send($this->numeric->get("RPL_CHANNELMODEIS", array(
                 $this->self->getConfigFlag("serverdomain"),
                 $connection->getOption("nick"),
                 $channel["name"],
-                $modeString
+                "+".implode($ms[0])." ".implode(" ", $ms[1])
               )));
               if (!isset($data[2])) {
                 $connection->send($this->numeric->get("RPL_CREATIONTIME", array(
@@ -216,29 +199,12 @@
             elseif ($client != false) {
               if ($client->getOption("nick")
                   == $connection->getOption("nick")) {
-                $modes = array();
-                $params = array();
-                if (is_array($client->getOption("modes"))) {
-                  foreach ($client->getOption("modes") as $mode) {
-                    $m = $this->modes->getModeByName($mode["name"]);
-                    if ($m != false) {
-                      if ($m == "0") {
-                        $modes[] = $m[1];
-                      }
-                      if ($m == "1" || $m == "2") {
-                        $modes[] = $m[1];
-                        $params[] = $mode["param"];
-                      }
-                    }
-                  }
-                }
-                $modes = "+".implode($modes);
-                $params = implode(" ", $params);
-                $modeString = $modes." ".$params;
+                $ms = $this->modes->getModeStringComponents(
+                  $connection->getOption("modes"), true);
                 $connection->send($this->numeric->get("RPL_UMODEIS", array(
                   $this->self->getConfigFlag("serverdomain"),
                   $connection->getOption("nick"),
-                  $modeString
+                  "+".implode($ms[0])." ".implode(" ", $ms[1])
                 )));
               }
               else {

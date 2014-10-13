@@ -70,7 +70,7 @@
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
-      $this->modes->setMode(array("Deaf", "d", "1", "0"));
+      $this->modes->setMode(array("Deaf", "D", "1", "0"));
       EventHandling::registerAsEventPreprocessor("channelMessageEvent", $this,
         "receiveChannelEvent");
       EventHandling::registerAsEventPreprocessor("channelNoticeEvent", $this,

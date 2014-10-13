@@ -97,6 +97,27 @@
       return false;
     }
 
+    public function getModeStringComponents($ms, $letters = false,
+        $ignore = array()) {
+      $modes = array();
+      $params = array();
+      foreach ($ms as $mode) {
+        if (is_array($ignore) && !in_array($mode["name"], $ignore)) {
+          $m = $this->getModeByName($mode["name"]);
+          if ($m != false) {
+            if ($m[3] == "0") {
+              $modes[] = ($letters == false ? $m[0] : $m[1]);
+            }
+            if ($m[3] == "1" || $m[3] == "2") {
+              $modes[] = ($letters == false ? $m[0] : $m[1]);
+              $params[] = $mode["param"];
+            }
+          }
+        }
+      }
+      return array($modes, $params);
+    }
+
     public function setMode($mode) {
       $this->unsetMode($mode);
       for ($i = 0; $i < 4; $i++) {
