@@ -56,7 +56,8 @@
           $connection->getOption("id"))).$this->getClientUID($connection);
       }
       else {
-        return ":".$this->config["sid"]." JOIN ".$c["time"]." ".$c["name"]." +";
+        return ":".$this->getClientUID($connection)." JOIN ".$c["time"]." ".
+          $c["name"]." +";
       }
     }
 
