@@ -24,7 +24,7 @@
           $modules = array();
           foreach (ModuleManagement::getLoadedModules() as $m) {
             $modules[$m->name] = array(get_class($m), (isset($m->depend) ?
-              $m->depend : array()));
+              $m->depend : array("n/a")));
           }
           ksort($modules);
           foreach ($modules as $name => $info) {
