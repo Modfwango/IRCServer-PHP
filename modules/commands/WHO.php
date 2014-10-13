@@ -22,14 +22,6 @@
 
       if ($connection->getOption("registered") == true) {
         if (count($command) > 0) {
-          $modenames = array();
-          $prefixes = array();
-          foreach ($this->modes->getModesAndWeight() as $weight => $modes) {
-            foreach ($modes as $mode) {
-              $modenames[] = $mode[0];
-              $prefixes[$mode[0]] = array($mode[4], $mode[5]);
-            }
-          }
           $match = "*";
           $users = array();
           $show = true;
@@ -52,28 +44,8 @@
             $match = $command[0];
             foreach ($channel["members"] as $member) {
               $c = $this->client->getClientByID($member);
-              $p = array();
-              $has = $this->channel->hasModes($channel["name"], $modenames);
-              if ($has != false) {
-                foreach ($has as $m) {
-                  if ($m["param"] == $c->getOption("id")
-                      && isset($prefixes[$m["name"]])) {
-                    if (!isset($p[$prefixes[$m["name"]][1]])) {
-                      $p[$prefixes[$m["name"]][1]] = array();
-                    }
-                    $p[$prefixes[$m["name"]][1]][] =
-                      $prefixes[$m["name"]][0];
-                  }
-                }
-              }
-              ksort($p);
-              end($p);
-              $weight = key($p);
-              $p = array_pop($p);
-              if (is_array($p)) {
-                $p = array_shift($p);
-              }
-              $users[] = array($c, $p);
+              $users[] = array($c, $this->channel->getChannelMemberPrefixByID(
+                $channel["name"], $c->getOption("id")));
             }
           }
           else {

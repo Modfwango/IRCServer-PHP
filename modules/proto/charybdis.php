@@ -41,28 +41,9 @@
         $connection->getOption("realname");
     }
 
-    public function joinChannel($connection, $channel, $s = true) {
+    public function joinChannel($connection, $channel, $burst = false) {
       $c = $this->channel->getChannelByName($channel);
-      if ($s == true) {
-        $modenames = array();
-        $prefixes = array();
-        foreach ($this->modes->getModesAndWeight() as $modes) {
-          foreach ($modes as $mode) {
-            $modenames[] = $mode[0];
-            $prefixes[$mode[0]] = array($mode[0], $mode[5]);
-          }
-        }
-        $prefix = array("", 0);
-        $has = $this->channel->hasModes($channel, $modenames);
-        if ($has != false) {
-          foreach ($has as $m) {
-            if ($m["param"] == $connection->getOption("id")) {
-              if ($prefixes[$m["name"]][1] > $prefix[1]) {
-                $prefix = $prefixes[$m["name"]];
-              }
-            }
-          }
-        }
+      if ($burst == true || count($c["members"]) <= 1) {
         $modeString = $this->modes->getModeStringComponents($c["modes"], false,
           array_merge($this->modes->getModesByType("3"),
           $this->modes->getModesByType("4")));
@@ -70,8 +51,9 @@
           "getModeCharForName"), $modeString[0]))." ".implode(" ",
           $modeString[1]));
         return ":".$this->config["sid"]." SJOIN ".$c["time"]." ".$c["name"]." ".
-          $modeString." :".$this->getModePrefixForName($prefix[0]).
-          $this->getClientUID($connection);
+          $modeString." :".$this->getModePrefixForName(
+          $this->channel->getChannelMemberPrefixModeByID($channel,
+          $connection->getOption("id"))).$this->getClientUID($connection);
       }
       else {
         return ":".$this->config["sid"]." JOIN ".$c["time"]." ".$c["name"]." +";

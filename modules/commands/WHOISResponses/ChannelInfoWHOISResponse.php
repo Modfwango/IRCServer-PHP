@@ -22,14 +22,6 @@
         $target->getOption("id"));
       $ret = array();
       if (count($membership) > 0) {
-        $modenames = array();
-        $prefixes = array();
-        foreach ($this->modes->getModesAndWeight() as $modes) {
-          foreach ($modes as $mode) {
-            $modenames[] = $mode[0];
-            $prefixes[$mode[0]] = array($mode[4], $mode[5]);
-          }
-        }
         foreach ($membership as $channel) {
           $c = $this->channel->getChannelByName($channel);
           if ($c != false) {
@@ -47,18 +39,8 @@
               }
             }
 
-            $prefix = array("", 0);
-            $has = $this->channel->hasModes($channel, $modenames);
-            if ($has != false) {
-              foreach ($has as $m) {
-                if ($m["param"] == $target->getOption("id")) {
-                  if ($prefixes[$m["name"]][1] > $prefix[1]) {
-                    $prefix = $prefixes[$m["name"]];
-                  }
-                }
-              }
-            }
-            $ret[] = $prefix[0].$channel;
+            $ret[] = $this->channel->getChannelMemberPrefixByID($channel,
+              $target->getOption("id")).$channel;
           }
         }
       }

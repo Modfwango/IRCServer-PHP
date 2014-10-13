@@ -27,14 +27,6 @@
           if (stristr($command[0], ",")) {
             $channels = explode(",", $command[0]);
           }
-          $modenames = array();
-          $prefixes = array();
-          foreach ($this->modes->getModesAndWeight() as $weight => $modes) {
-            foreach ($modes as $mode) {
-              $modenames[] = $mode[0];
-              $prefixes[$mode[0]] = array($mode[4], $mode[5]);
-            }
-          }
           foreach ($channels as $channel) {
             $channel = $this->channel->getChannelByName($channel);
             if ($channel != false) {
@@ -56,27 +48,9 @@
               foreach ($channel["members"] as $id) {
                 $c = $this->client->getClientByID($id);
                 if ($c != false) {
-                  $p = array();
-                  $has = $this->channel->hasModes($channel["name"],
-                    $modenames);
-                  if ($has != false) {
-                    foreach ($has as $m) {
-                      if ($m["param"] == $c->getOption("id")
-                          && isset($prefixes[$m["name"]])) {
-                        if (!isset($p[$prefixes[$m["name"]][1]])) {
-                          $p[$prefixes[$m["name"]][1]] = array();
-                        }
-                        $p[$prefixes[$m["name"]][1]][] =
-                          $prefixes[$m["name"]][0];
-                      }
-                    }
-                  }
-                  ksort($p);
-                  $p = array_pop($p);
-                  if (is_array($p)) {
-                    $p = array_shift($p);
-                  }
-                  $members[] = $p.$c->getOption("nick");
+                  $members[] = $this->channel->getChannelMemberPrefixByID(
+                    $channel["name"], $c->getOption("id")).$c->getOption(
+                    "nick");
                 }
               }
 

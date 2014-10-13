@@ -77,6 +77,38 @@
       return false;
     }
 
+    public function getChannelMemberPrefixByID($name, $id) {
+      $mode = $this->modes->getModeByName(
+        $this->getChannelMemberPrefixModeByID($name, $id));
+      if (is_array($mode)) {
+        return $mode[4];
+      }
+      return "";
+    }
+
+    public function getChannelMemberPrefixModeByID($name, $id) {
+      $modenames = array();
+      $prefixes = array();
+      foreach ($this->modes->getModesAndWeight() as $modes) {
+        foreach ($modes as $mode) {
+          $modenames[] = $mode[0];
+          $prefixes[$mode[0]] = array($mode[0], $mode[5]);
+        }
+      }
+      $prefix = array("", 0);
+      $has = $this->hasModes($name, $modenames);
+      if ($has != false) {
+        foreach ($has as $m) {
+          if ($m["param"] == $id) {
+            if ($prefixes[$m["name"]][1] > $prefix[1]) {
+              $prefix = $prefixes[$m["name"]];
+            }
+          }
+        }
+      }
+      return $prefix[0];
+    }
+
     public function getChannelMembershipByID($id) {
       $channels = array();
       foreach ($this->getChannels() as $channel) {
