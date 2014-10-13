@@ -6,4 +6,5 @@ CNOTICE CPRIVMSG USERHOST USERS VERSION
 
 Make TOPIC, PRIVMSG, NOTICE, MODE, INVITE respect shouldExposeChannelToUserEvent
 
-Move (superior) prefix fetching to the Channel module
+Move (superior) prefix fetching to the Channel module from NAMES, WHO,
+ChannelInfoWHOISResponse, and charybdis modules
