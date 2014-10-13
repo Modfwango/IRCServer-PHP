@@ -32,7 +32,7 @@
 
     public function introduceClient($connection) {
       return ":".$this->config["sid"]." EUID ".$connection->getOption(
-        "nick")." 0 ".$connection->getOption("nickts")." ".implode(array_map(
+        "nick")." 0 ".$connection->getOption("nickts")." +".implode(array_map(
         array($this, "getModeCharForName"), array_shift(
         $this->modes->getModeStringComponents(
         $connection->getOption("modes")))))." ".
