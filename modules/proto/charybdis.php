@@ -66,8 +66,9 @@
         $modeString = $this->modes->getModeStringComponents($c["modes"], false,
           array_merge($this->modes->getModesByType("3"),
           $this->modes->getModesByType("4")));
-        $modeString = "+".implode($modeString[0])." ".implode(" ",
-          $modeString[1]);
+        $modeString = trim("+".implode(array_map(array($this,
+          "getModeCharForName"), $modeString[0]))." ".implode(" ",
+          $modeString[1]));
         return ":".$this->config["sid"]." SJOIN ".$c["time"]." ".$c["name"]." ".
           $modeString." :".$this->getModePrefixForName($prefix[0]).
           $this->getClientUID($connection);

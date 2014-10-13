@@ -185,7 +185,7 @@
                 $this->self->getConfigFlag("serverdomain"),
                 $connection->getOption("nick"),
                 $channel["name"],
-                "+".implode($ms[0])." ".implode(" ", $ms[1])
+                trim("+".implode($ms[0])." ".implode(" ", $ms[1]))
               )));
               if (!isset($data[2])) {
                 $connection->send($this->numeric->get("RPL_CREATIONTIME", array(
@@ -204,7 +204,7 @@
                 $connection->send($this->numeric->get("RPL_UMODEIS", array(
                   $this->self->getConfigFlag("serverdomain"),
                   $connection->getOption("nick"),
-                  "+".implode($ms[0])." ".implode(" ", $ms[1])
+                  trim("+".implode($ms[0])." ".implode(" ", $ms[1]))
                 )));
               }
               else {
