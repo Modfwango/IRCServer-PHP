@@ -49,7 +49,7 @@
                 $c = $this->client->getClientByID($id);
                 if ($c != false) {
                   $members[] = $this->channel->getChannelMemberPrefixByID(
-                    $channel["name"], $c->getOption("id")).$c->getOption(
+                    $channel["name"], $c->getOption("id"), false).$c->getOption(
                     "nick");
                 }
               }

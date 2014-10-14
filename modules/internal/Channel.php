@@ -77,16 +77,30 @@
       return false;
     }
 
-    public function getChannelMemberPrefixByID($name, $id) {
-      $mode = $this->modes->getModeByName(
-        $this->getChannelMemberPrefixModeByID($name, $id));
-      if (is_array($mode)) {
-        return $mode[4];
+    public function getChannelMemberPrefixByID($name, $id, $super = true) {
+      $prefix = $this->getChannelMemberPrefixModeByID($name, $id, $super);
+      if (is_array($prefix)) {
+        $ret = null;
+        foreach ($prefix as $p) {
+          foreach ($p as $m) {
+            $mode = $this->modes->getModeByName($m);
+            if (is_array($mode)) {
+              $ret .= $mode[4];
+            }
+          }
+        }
+        return $ret;
+      }
+      elseif (is_string($prefix) && trim($prefix) != null) {
+        $mode = $this->modes->getModeByName($prefix);
+        if (is_array($mode)) {
+          return $mode[4];
+        }
       }
       return "";
     }
 
-    public function getChannelMemberPrefixModeByID($name, $id) {
+    public function getChannelMemberPrefixModeByID($name, $id, $super = true) {
       $modenames = array();
       $prefixes = array();
       foreach ($this->modes->getModesAndWeight() as $modes) {
@@ -95,18 +109,30 @@
           $prefixes[$mode[0]] = array($mode[0], $mode[5]);
         }
       }
-      $prefix = array("", 0);
+      $prefix = array();
       $has = $this->hasModes($name, $modenames);
       if ($has != false) {
         foreach ($has as $m) {
-          if ($m["param"] == $id) {
-            if ($prefixes[$m["name"]][1] > $prefix[1]) {
-              $prefix = $prefixes[$m["name"]];
+          if ($m["param"] == $c->getOption("id")
+              && isset($prefixes[$m["name"]])) {
+            if (!isset($p[$prefixes[$m["name"]][1]])) {
+              $p[$prefixes[$m["name"]][1]] = array();
             }
+            $p[$prefixes[$m["name"]][1]][] =
+              $prefixes[$m["name"]][0];
           }
         }
       }
-      return $prefix[0];
+      krsort($prefix);
+      if (count($prefix) > 0) {
+        if ($super == true) {
+          return array_shift(array_shift($prefix));
+        }
+        else {
+          return $prefix;
+        }
+      }
+      return "";
     }
 
     public function getChannelMembershipByID($id) {

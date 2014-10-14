@@ -40,7 +40,7 @@
             }
 
             $ret[] = $this->channel->getChannelMemberPrefixByID($channel,
-              $target->getOption("id")).$channel;
+              $target->getOption("id"), false).$channel;
           }
         }
       }

@@ -41,24 +41,49 @@
         $connection->getOption("realname");
     }
 
-    public function joinChannel($connection, $channel, $burst = false) {
+    public function joinChannel($channel, $connection = null) {
       $c = $this->channel->getChannelByName($channel);
-      if ($burst == true || count($c["members"]) <= 1) {
-        $modeString = $this->modes->getModeStringComponents($c["modes"], false,
-          array_merge($this->modes->getModesByType("3"),
-          $this->modes->getModesByType("4")));
-        $modeString = trim("+".implode(array_map(array($this,
-          "getModeCharForName"), $modeString[0]))." ".implode(" ",
-          $modeString[1]));
-        return ":".$this->config["sid"]." SJOIN ".$c["time"]." ".$c["name"]." ".
-          $modeString." :".$this->getModePrefixForName(
-          $this->channel->getChannelMemberPrefixModeByID($channel,
-          $connection->getOption("id"))).$this->getClientUID($connection);
+      if (is_array($c)) {
+        if (!is_object($connection)) {
+          $modeString = $this->modes->getModeStringComponents($c["modes"],
+            false, array_merge($this->modes->getModesByType("3"),
+            $this->modes->getModesByType("4")));
+          $modeString = trim("+".implode(array_map(array($this,
+            "getModeCharForName"), $modeString[0]))." ".implode(" ",
+            $modeString[1]));
+          $noprefix = array();
+          $prefix = array();
+          foreach ($this->channel->getChannelMembers($c["name"]) as $id) {
+            $prefixes = $this->channel->getChannelMemberPrefixModeByID(
+              $c["name"], $id, false);
+            foreach ($prefixes as &$names) {
+              foreach ($names as &$name) {
+                $name = $this->getModePrefixForName($name);
+              }
+              $names = implode($names);
+            }
+            if (count($prefixes) == 0) {
+              $noprefix[] = $this->getClientUID($id);
+            }
+            else {
+              reset($prefixes);
+              $key = key($prefixes);
+              if (!isset($prefix[$key])) {
+                $prefix[$key] = array();
+              }
+              $prefix[$key][] = implode($prefixes).$this->getClientUID($id);
+            }
+          }
+          $userString = trim(implode(" ", $prefix)." ".implode(" ", $noprefix));
+          return ":".$this->config["sid"]." SJOIN ".$c["time"]." ".
+            $c["name"]." ".$modeString." :".$userString;
+        }
+        else {
+          return ":".$this->getClientUID($connection)." JOIN ".$c["time"]." ".
+            $c["name"]." +";
+        }
       }
-      else {
-        return ":".$this->getClientUID($connection)." JOIN ".$c["time"]." ".
-          $c["name"]." +";
-      }
+      return false;
     }
 
     private function getModeCharForName($name) {
