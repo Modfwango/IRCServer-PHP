@@ -119,10 +119,10 @@
       if ($has != false) {
         foreach ($has as $m) {
           if ($m["param"] == $id && isset($prefixes[$m["name"]])) {
-            if (!isset($p[$prefixes[$m["name"]][1]])) {
-              $p[$prefixes[$m["name"]][1]] = array();
+            if (!isset($prefix[$prefixes[$m["name"]][1]])) {
+              $prefix[$prefixes[$m["name"]][1]] = array();
             }
-            $p[$prefixes[$m["name"]][1]][] = $prefixes[$m["name"]][0];
+            $prefix[$prefixes[$m["name"]][1]][] = $prefixes[$m["name"]][0];
           }
         }
       }
