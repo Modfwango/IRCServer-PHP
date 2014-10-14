@@ -42,6 +42,16 @@
     }
 
     public function joinChannel($channel, $connection = null) {
+      // [ STACK ] Entering module: CommandEvent::preprocessEvent
+      // [ DEBUG ] Event 'commandEvent' has been triggered for 'EVAL'
+      // [ STACK ] Entering module: EVAL::receiveCommand
+      // [ DEBUG ] Channel::getChannelMemberPrefixModeByID returning:
+      // [ DEBUG ] array (
+      // [ DEBUG ]   1000 =>
+      // [ DEBUG ]   array (
+      // [ DEBUG ]     0 => 'ChannelOperator',
+      // [ DEBUG ]   ),
+      // [ DEBUG ] )
       $c = $this->channel->getChannelByName($channel);
       if (is_array($c)) {
         if (!is_object($connection)) {
@@ -56,16 +66,14 @@
           foreach ($this->channel->getChannelMembers($c["name"]) as $id) {
             $prefixes = $this->channel->getChannelMemberPrefixModeByID(
               $c["name"], $id, false);
-            foreach ($prefixes as &$names) {
-              foreach ($names as &$name) {
-                $name = $this->getModePrefixForName($name);
-              }
-              $names = implode($names);
-            }
             if (count($prefixes) == 0) {
               $noprefix[] = $this->getClientUID($id);
             }
             else {
+              for ($i = 0; $i < count($prefixes); $i++) {
+                $prefixes[$i] = implode(array_map(array($this,
+                  "getModePrefixForName"), $prefixes[$i]));
+              }
               reset($prefixes);
               $key = key($prefixes);
               if (!isset($prefix[$key])) {
