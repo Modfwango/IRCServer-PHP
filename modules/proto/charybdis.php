@@ -97,7 +97,7 @@
           $lastOperation = $mode["operation"];
           $modes .= $mode["operation"];
         }
-        $modes .= $this->getModeCharFromName($mode["name"]);
+        $modes .= $this->getModeCharForName($mode["name"]);
         if (isset($mode["param"])) {
           if ($this->client->getClientByID($mode["param"]) != false) {
             $params .= " ".$this->getClientUIDByID($mode["param"]);
