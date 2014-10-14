@@ -89,33 +89,37 @@
       return false;
     }
 
-    public function mode($ms, $connection = null) {
-      $modes = null;
-      $params = null;
-      $lastOperation = null;
-      foreach ($ms as $mode) {
-        if ($lastOperation != $mode["operation"]) {
-          $lastOperation = $mode["operation"];
-          $modes .= $mode["operation"];
-        }
-        $modes .= $this->getModeCharForName($mode["name"]);
-        if (isset($mode["param"])) {
-          if ($this->client->getClientByID($mode["param"]) != false) {
-            $params .= " ".$this->getClientUIDByID($mode["param"]);
+    public function mode($channel, $ms, $connection = null) {
+      $c = $this->channel->getChannelByName($channel);
+      if (is_array($c)) {
+        $modes = null;
+        $params = null;
+        $lastOperation = null;
+        foreach ($ms as $mode) {
+          if ($lastOperation != $mode["operation"]) {
+            $lastOperation = $mode["operation"];
+            $modes .= $mode["operation"];
           }
-          else {
-            $params .= " ".$mode["param"];
+          $modes .= $this->getModeCharForName($mode["name"]);
+          if (isset($mode["param"])) {
+            if ($this->client->getClientByID($mode["param"]) != false) {
+              $params .= " ".$this->getClientUIDByID($mode["param"]);
+            }
+            else {
+              $params .= " ".$mode["param"];
+            }
           }
         }
+        if (is_object($connection)) {
+          $source = $this->getClientUID($connection);
+        }
+        else {
+          $source = $this->config["sid"];
+        }
+        return ":".$source." TMODE ".$c["time"]." ".
+          $c["name"]." ".$modes.$params;
       }
-      if (is_object($connection)) {
-        $source = $this->getClientUID($connection);
-      }
-      else {
-        $source = $this->config["sid"];
-      }
-      return ":".$source." TMODE ".$c["time"]." ".
-        $c["name"]." ".$modes.$params;
+      return false;
     }
 
     public function nick($connection) {
