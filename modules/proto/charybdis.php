@@ -45,6 +45,15 @@
         $connection->getOption("realname");
     }
 
+    public function invite($connection, $recipient, $channel) {
+      $c = $this->channel->getChannelByName($channel);
+      if (is_array($c)) {
+        return ":".$this->getClientUID($connection)." INVITE ".
+          $this->getClientUID($recipient)." ".$c["name"]." ".$c["time"];
+      }
+      return false;
+    }
+
     public function joinChannel($channel, $connection = null) {
       $c = $this->channel->getChannelByName($channel);
       if (is_array($c)) {
