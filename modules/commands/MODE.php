@@ -117,36 +117,10 @@
                   }
                 }
               }
-              if ($opped == false) {
+              if ($opped == false/* and potentially an event check for
+                  LackOfChannelOperatorShouldPreventChannelModeEvent */) {
                 return;
-                // TODO: Move this logic to individual list mode modules.
-                // $okay = false;
-                // $ms = $this->modes->getModeNamesByType("3");
-                // foreach (str_split($command[1]) as $mode) {
-                //   $m = $this->modes->getModeByChar("0", $mode);
-                //   if ($m != false && !in_array($m["name"], $ms)) {
-                //     $okay = false;
-                //   }
-                // }
-                // if ($okay == false) {
-                //   $connection->send($this->numeric->get("ERR_CHANOPRIVSNEEDED",
-                //     array(
-                //       $this->self->getConfigFlag("serverdomain"),
-                //       $connection->getOption("nick"),
-                //       $channel["name"]
-                //     )
-                //   ));
-                // }
-                // else {
-                //   // Use as a filter to list modes for this channel.
-                //   $connection->send($this->numeric->get("RPL_ENDOFBANLIST",
-                //     array(
-                //       $this->self->getConfigFlag("serverdomain"),
-                //       $connection->getOption("nick"),
-                //       $channel["name"]
-                //     )
-                //   ));
-                // }
+                // TODO: Check for existence of a lack of permissions numeric
               }
             }
             elseif ($client != false) {
