@@ -45,16 +45,6 @@
     }
 
     public function joinChannel($channel, $connection = null) {
-      // [ STACK ] Entering module: CommandEvent::preprocessEvent
-      // [ DEBUG ] Event 'commandEvent' has been triggered for 'EVAL'
-      // [ STACK ] Entering module: EVAL::receiveCommand
-      // [ DEBUG ] Channel::getChannelMemberPrefixModeByID returning:
-      // [ DEBUG ] array (
-      // [ DEBUG ]   1000 =>
-      // [ DEBUG ]   array (
-      // [ DEBUG ]     0 => 'ChannelOperator',
-      // [ DEBUG ]   ),
-      // [ DEBUG ] )
       $c = $this->channel->getChannelByName($channel);
       if (is_array($c)) {
         if (!is_object($connection)) {
@@ -96,6 +86,35 @@
         }
       }
       return false;
+    }
+
+    public function mode($ms, $connection = null) {
+      $modes = null;
+      $params = null;
+      $lastOperation = null;
+      foreach ($ms as $mode) {
+        if ($lastOperation != $mode["operation"]) {
+          $lastOperation = $mode["operation"];
+          $modes .= $mode["operation"];
+        }
+        $modes .= $this->getModeCharFromName($mode["name"]);
+        if (isset($mode["param"])) {
+          if ($this->client->getClientByID($mode["param"]) != false) {
+            $params .= " ".$this->getClientUIDByID($mode["param"]);
+          }
+          else {
+            $params .= " ".$mode["param"];
+          }
+        }
+      }
+      if (is_object($connection)) {
+        $source = $this->getClientUID($connection);
+      }
+      else {
+        $source = $this->config["sid"];
+      }
+      return ":".$source." TMODE ".$c["time"]." ".
+        $c["name"]." ".$modes.$params;
     }
 
     public function nick($connection) {
