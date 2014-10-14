@@ -44,9 +44,8 @@
             $match = $command[0];
             foreach ($channel["members"] as $member) {
               $c = $this->client->getClientByID($member);
-              $users[] = array($c, implode(array_map("implode",
-                $this->channel->getChannelMemberPrefixByID($channel["name"],
-                $c->getOption("id"), false))));
+              $users[] = array($c, $this->channel->getChannelMemberPrefixByID(
+                $channel["name"], $c->getOption("id"), false));
             }
           }
           else {

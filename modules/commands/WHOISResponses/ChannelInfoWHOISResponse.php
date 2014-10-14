@@ -39,9 +39,8 @@
               }
             }
 
-            $ret[] = implode(array_map("implode",
-              $this->channel->getChannelMemberPrefixByID($channel,
-              $target->getOption("id"), false))).$channel;
+            $ret[] = $this->channel->getChannelMemberPrefixByID($channel,
+              $target->getOption("id"), false).$channel;
           }
         }
       }
