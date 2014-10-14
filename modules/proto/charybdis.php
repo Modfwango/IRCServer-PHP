@@ -26,8 +26,11 @@
     );
 
     public function getClientUID($connection) {
-      return $this->config["sid"].strtoupper(substr($connection->getOption(
-        "id"), 0, 6));
+      return $this->getClientUIDByID($connection->getOption("id"));
+    }
+
+    public function getClientUIDByID($id) {
+      return $this->config["sid"].strtoupper(substr($id, 0, 6));
     }
 
     public function introduceClient($connection) {
@@ -67,7 +70,7 @@
             $prefixes = $this->channel->getChannelMemberPrefixModeByID(
               $c["name"], $id, false);
             if (count($prefixes) == 0) {
-              $noprefix[] = $this->getClientUID($id);
+              $noprefix[] = $this->getClientUIDByID($id);
             }
             else {
               for ($i = 0; $i < count($prefixes); $i++) {
@@ -79,7 +82,7 @@
               if (!isset($prefix[$key])) {
                 $prefix[$key] = array();
               }
-              $prefix[$key][] = implode($prefixes).$this->getClientUID($id);
+              $prefix[$key][] = implode($prefixes).$this->getClientUIDByID($id);
             }
           }
           $userString = trim(implode(" ", $prefix)." ".implode(" ", $noprefix));
