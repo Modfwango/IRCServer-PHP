@@ -1,8 +1,9 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Channel", "Modes");
+    public $depend = array("Channel", "Client", "Modes");
     public $name = "charybdis";
     private $channel = null;
+    private $client = null;
     private $config = array();
     private $modes = null;
     private $modeMap = array(
@@ -157,6 +158,7 @@
     public function isInstantiated() {
       $this->loadConfig();
       $this->channel = ModuleManagement::getModuleByName("Channel");
+      $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
       return true;
     }
