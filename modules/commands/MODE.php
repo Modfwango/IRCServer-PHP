@@ -98,16 +98,21 @@
                 foreach ($has as $m) {
                   if ($m["param"] == $connection->getOption("id")) {
                     $opped = true;
-                    $modes = $this->parseModes("0", $command[1]);
-                    $event = EventHandling::getEventByName(
-                      "channelModeEvent");
-                    if ($event != false) {
-                      foreach ($event[2] as $id => $registration) {
-                        // Trigger the channelModeEvent event for each
-                        // registered module.
-                        EventHandling::triggerEvent("channelModeEvent", $id,
-                            array($connection, $channel, $modes));
-                      }
+                    break;
+                  }
+                }
+                // TODO: Insert an event to bypass op requirement for list modes
+                // named: LackOfChannelOperatorShouldPreventChannelModeEvent
+                if ($opped == true) {
+                  $modes = $this->parseModes("0", $command[1]);
+                  $event = EventHandling::getEventByName(
+                    "channelModeEvent");
+                  if ($event != false) {
+                    foreach ($event[2] as $id => $registration) {
+                      // Trigger the channelModeEvent event for each
+                      // registered module.
+                      EventHandling::triggerEvent("channelModeEvent", $id,
+                          array($connection, $channel, $modes));
                     }
                   }
                 }
