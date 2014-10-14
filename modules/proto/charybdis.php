@@ -100,7 +100,7 @@
 
     public function nick($connection) {
       return ":".$this->getClientUID($connection)." NICK ".
-        $connection->getOption("nick").$connection->getOption("nickts");
+        $connection->getOption("nick")." :".$connection->getOption("nickts");
     }
 
     private function getModeCharForName($name) {
