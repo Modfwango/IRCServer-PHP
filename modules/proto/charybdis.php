@@ -85,7 +85,8 @@
               $prefix[$key][] = implode($prefixes).$this->getClientUIDByID($id);
             }
           }
-          $userString = trim(implode(" ", $prefix)." ".implode(" ", $noprefix));
+          $userString = trim(implode(" ", array_map("implode", array_fill(0,
+            count($prefix), " "), $prefix))." ".implode(" ", $noprefix));
           return ":".$this->config["sid"]." SJOIN ".$c["time"]." ".
             $c["name"]." ".$modeString." :".$userString;
         }
