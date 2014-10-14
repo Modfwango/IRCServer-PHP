@@ -37,6 +37,7 @@
         if ($this->nicknameAvailable(substr($command[0], 0, 30)) != false) {
           $oldnick = $connection->getOption("nick");
           $connection->setOption("nick", substr($command[0], 0, 30));
+          $connection->setOption("nickts", time());
           if ($connection->getOption("registered") == false) {
             if ($connection->getOption("ident") != false) {
               $connection->setOption("registered", true);

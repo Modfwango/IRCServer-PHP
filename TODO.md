@@ -10,3 +10,7 @@ Move (superior) prefix fetching to the Channel module from NAMES, WHO,
 ChannelInfoWHOISResponse, and charybdis modules
 
 Check WHO compatibility with OPER / AWAY
+
+Implement a ShouldAllowNickChangeEvent
+
+Revamp nickname change event system

@@ -270,7 +270,6 @@
       $source = $data[0];
       $oldnick = $data[1];
 
-      $source->setOption("nickts", time());
       $source->setOption("idle", time());
 
       $source->send(":".$oldnick."!".$source->getOption("ident").
