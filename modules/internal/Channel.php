@@ -89,14 +89,19 @@
             }
           }
         }
+        Logger::debug("Channel::getChannelMemberPrefixByID returning [".
+          $ret."]");
         return $ret;
       }
       elseif (is_string($prefix) && trim($prefix) != null) {
         $mode = $this->modes->getModeByName($prefix);
         if (is_array($mode)) {
+          Logger::debug("Channel::getChannelMemberPrefixByID returning [".
+            $ret."]");
           return $mode[4];
         }
       }
+      Logger::debug("Channel::getChannelMemberPrefixByID returning []");
       return "";
     }
 
@@ -124,12 +129,18 @@
       krsort($prefix);
       if (count($prefix) > 0) {
         if ($super == true) {
-          return array_shift(array_shift($prefix));
+          $ret = array_shift(array_shift($prefix));
+          Logger::debug("Channel::getChannelMemberPrefixModeByID returning [".
+            $ret."]");
+          return $ret;
         }
         else {
+          Logger::debug("Channel::getChannelMemberPrefixModeByID returning:");
+          Logger::debug(var_export($prefix, true));
           return $prefix;
         }
       }
+      Logger::debug("Channel::getChannelMemberPrefixModeByID returning []");
       return "";
     }
 
