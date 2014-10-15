@@ -17,6 +17,8 @@
       $h = array();
       $has = $this->channel->hasModes($channel["name"],
         array("InviteException"));
+      Logger::debug("Channel [".$channel["name"]."] has modes:");
+      Logger::debug(var_export($has, true));
       if (is_array($has) && count($has) > 0) {
         foreach ($has as $m) {
           $h[strtolower($m["param"])] = true;
