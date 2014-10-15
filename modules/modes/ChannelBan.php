@@ -56,8 +56,11 @@
           else {
             unset($modes[$key]);
             foreach ($has as $mo) {
-              Logger::debug("Found list mode with param [".$mo["param"].
-                "] author [".$mo["author"]."] and time [".$mo["time"]."]");
+              Logger::debug("Found list mode for [".$channel["name"].
+                "] with param [".$mo["param"]."] author [".$mo["author"].
+                "] and time [".$mo["time"]."]");
+              Logger::debug("Sending to client [".
+                $source->getOption("nick")."]");
               $source->send($this->numeric->get("RPL_BANLIST", array(
                 $this->self->getConfigFlag("serverdomain"),
                 $source->getOption("nick"),
