@@ -25,7 +25,7 @@
       }
       foreach ($modes as $key => &$mode) {
         if ($mode["name"] == "ChannelBan") {
-          if (isset($mode["param"])) {
+          if (isset($mode["param"]) && trim($mode["param"]) != null) {
             $mode["author"] = $source->getOption("nick")."!".
               $source->getOption("ident").$source->getHost();
             $mode["time"] = time();
