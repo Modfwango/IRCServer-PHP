@@ -55,6 +55,8 @@
           else {
             unset($modes[$key]);
             foreach ($has as $mo) {
+              Logger::debug("Found list mode with param [".$mo["param"].
+                "] author [".$mo["author"]."] and time [".$mo["time"]."]");
               $source->send($this->numeric->get("RPL_EXCEPTLIST", array(
                 $this->self->getConfigFlag("serverdomain"),
                 $source->getOption("nick"),
