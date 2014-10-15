@@ -107,7 +107,8 @@
               if ($opped == false) {
                 foreach ($modes as $mo) {
                   $mod = $this->mode->getModeByName($mo["name"]);
-                  if ($mod[3] != 3) {
+                  if ($mod[3] != 3 || (isset($mo["param"])
+                      && trim($mo["param"]) != null)) {
                     $permitted = false;
                   }
                 }
