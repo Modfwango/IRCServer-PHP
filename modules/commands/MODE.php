@@ -38,7 +38,7 @@
               }
             }
             elseif ($operation == "+" && in_array($mode[3],
-                    array("0"))) {
+                    array("0", "3"))) {
               $modes[] = array(
                 "operation" => $operation,
                 "name" => $mode[0]
@@ -56,7 +56,7 @@
               }
             }
             elseif ($operation == "-" && in_array($mode[3],
-                    array("0", "2"))) {
+                    array("0", "2", "3"))) {
               $modes[] = array(
                 "operation" => $operation,
                 "name" => $mode[0]
