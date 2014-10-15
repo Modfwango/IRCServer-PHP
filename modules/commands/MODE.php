@@ -92,6 +92,8 @@
             $client = $this->client->getClientByNick($command[0]);
             if ($channel != false) {
               $opped = false;
+              $permitted = true;
+              $modes = $this->parseModes("0", $command[1]);
               $has = $this->channel->hasModes($channel["name"],
                 array("ChannelOperator"));
               if (is_array($has)) {
@@ -101,26 +103,35 @@
                     break;
                   }
                 }
-                // TODO: Insert an event to bypass op requirement for list modes
-                // named: LackOfChannelOperatorShouldPreventChannelModeEvent
-                if ($opped == true) {
-                  $modes = $this->parseModes("0", $command[1]);
-                  $event = EventHandling::getEventByName(
-                    "channelModeEvent");
-                  if ($event != false) {
-                    foreach ($event[2] as $id => $registration) {
-                      // Trigger the channelModeEvent event for each
-                      // registered module.
-                      EventHandling::triggerEvent("channelModeEvent", $id,
-                          array($connection, $channel, $modes));
-                    }
+              }
+              if ($opped == false) {
+                foreach ($modes as $mo) {
+                  $mod = $this->mode->getModeByName($mo["name"]);
+                  if ($mod[3] != 3) {
+                    $permitted = false;
                   }
                 }
               }
-              if ($opped == false/* and potentially an event check for
-                  LackOfChannelOperatorShouldPreventChannelModeEvent */) {
-                return;
-                // TODO: Check for existence of a lack of permissions numeric
+              if ($opped == true || $permitted == true) {
+                $event = EventHandling::getEventByName(
+                  "channelModeEvent");
+                if ($event != false) {
+                  foreach ($event[2] as $id => $registration) {
+                    // Trigger the channelModeEvent event for each
+                    // registered module.
+                    EventHandling::triggerEvent("channelModeEvent", $id,
+                      array($connection, $channel, $modes));
+                  }
+                }
+              }
+              else {
+                $connection->send($this->numeric->get("ERR_CHANOPRIVSNEEDED",
+                  array(
+                    $this->self->getConfigFlag("serverdomain"),
+                    $connection->getOption("nick"),
+                    $channel["name"]
+                  )
+                ));
               }
             }
             elseif ($client != false) {

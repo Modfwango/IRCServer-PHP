@@ -25,25 +25,49 @@
       }
       foreach ($modes as $key => &$mode) {
         if ($mode["name"] == "ChannelBan") {
-          $mode["param"] = $this->client->getPrettyMask($mode["param"]);
-          if (!isset($h[strtolower($mode["param"])])) {
-            $h[strtolower($mode["param"])] = false;
-          }
-          if ($mode["operation"] == "+") {
-            if ($h[strtolower($mode["param"])] != false) {
-              unset($modes[$key]);
-            }
-            else {
-              $h[strtolower($mode["param"])] = true;
-            }
-          }
-          if ($mode["operation"] == "-") {
-            if ($h[strtolower($mode["param"])] == false) {
-              unset($modes[$key]);
-            }
-            else {
+          if (isset($mode["param"])) {
+            $mode["author"] = $source->getOption("nick")."!".
+              $source->getOption("ident").$source->getHost();
+            $mode["time"] = time();
+
+            $mode["param"] = $this->client->getPrettyMask($mode["param"]);
+            if (!isset($h[strtolower($mode["param"])])) {
               $h[strtolower($mode["param"])] = false;
             }
+            if ($mode["operation"] == "+") {
+              if ($h[strtolower($mode["param"])] != false) {
+                unset($modes[$key]);
+              }
+              else {
+                $h[strtolower($mode["param"])] = true;
+              }
+            }
+            if ($mode["operation"] == "-") {
+              if ($h[strtolower($mode["param"])] == false) {
+                unset($modes[$key]);
+              }
+              else {
+                $h[strtolower($mode["param"])] = false;
+              }
+            }
+          }
+          else {
+            unset($modes[$key]);
+            foreach ($has as $mo) {
+              $source->send($this->numeric->get("RPL_BANLIST", array(
+                $this->self->getConfigFlag("serverdomain"),
+                $source->getOption("nick"),
+                $channel["name"],
+                $mo["param"],
+                $mo["author"],
+                $mo["time"]
+              )));
+            }
+            $source->send($this->numeric->get("RPL_ENDOFBANLIST", array(
+              $this->self->getConfigFlag("serverdomain"),
+              $source->getOption("nick"),
+              $channel["name"]
+            )));
           }
         }
       }

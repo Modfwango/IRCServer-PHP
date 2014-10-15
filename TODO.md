@@ -11,6 +11,3 @@ Check WHO compatibility with OPER / AWAY
 Implement a ShouldAllowNickChangeEvent
 
 Revamp nickname change event system
-
-Allow modes to decide if MODE command should be restricted to ChannelOperator
-(enables list functionality)

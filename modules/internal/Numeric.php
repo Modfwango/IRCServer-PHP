@@ -87,12 +87,22 @@
             ":%s 333 %s %s %s %s",
           "RPL_INVITING" =>
             ":%s 341 %s %s %s",
+          "RPL_INVITELIST" =>
+            ":%s 346 %s %s %s %s %s",
+          "RPL_ENDOFINVITELIST" =>
+            ":%s 347 %s %s :End of Channel Invite List",
+          "RPL_EXCEPTLIST" =>
+            ":%s 348 %s %s %s %s %s",
+          "RPL_ENDOFEXCEPTLIST" =>
+            ":%s 349 %s %s :End of Channel Exception List",
           "RPL_WHOREPLY" =>
             ":%s 352 %s %s %s %s %s %s %s :%s %s",
           "RPL_NAMREPLY" =>
             ":%s 353 %s = %s :%s",
           "RPL_ENDOFNAMES" =>
             ":%s 366 %s %s :End of /NAMES list.",
+          "RPL_BANLIST" =>
+            ":%s 367 %s %s %s %s %s",
           "RPL_ENDOFBANLIST" =>
             ":%s 368 %s %s :End of Channel Ban List",
           "RPL_MOTD" =>
