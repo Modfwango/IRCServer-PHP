@@ -65,6 +65,8 @@
           }
         }
       }
+      Logger::debug("Modes parsed:");
+      Logger::debug(var_export($modes, true));
       return $modes;
     }
 
