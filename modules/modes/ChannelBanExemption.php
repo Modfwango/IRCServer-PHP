@@ -26,7 +26,7 @@
         if ($mode["name"] == "ChannelBanExemption") {
           if (isset($mode["param"]) && trim($mode["param"]) != null) {
             $mode["author"] = $source->getOption("nick")."!".
-              $source->getOption("ident").$source->getHost();
+              $source->getOption("ident")."@".$source->getHost();
             $mode["time"] = time();
 
             $mode["param"] = $this->client->getPrettyMask($mode["param"]);
