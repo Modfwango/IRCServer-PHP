@@ -160,23 +160,18 @@
 
     public function hasModes($channel, $modes) {
       $c = $this->getChannelByName($channel);
-      if ($c != false) {
-        $return = array();
+      $return = array();
+      if ($c != false && isset($c["modes"]) && is_array($c["modes"]) &&
+          count($c["modes"]) > 0) {
         foreach ($modes as $mode) {
-          if (isset($c["modes"]) && is_array($c["modes"])
-              && count($c["modes"]) > 0) {
-            foreach ($c["modes"] as $cm) {
-              if ($cm["name"] == $mode) {
-                $return[] = $cm;
-              }
+          foreach ($c["modes"] as $cm) {
+            if ($cm["name"] == $mode) {
+              $return[] = $cm;
             }
           }
         }
-        if (count($return) > 0) {
-          return $return;
-        }
       }
-      return array();
+      return $return;
     }
 
     public function receiveChannelCreated($name, $data) {
