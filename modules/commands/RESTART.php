@@ -18,6 +18,7 @@
 
       if ($connection->getOption("registered") == true) {
         if ($connection->getOption("operator") != false) {
+          getMain()->shutdown(false);
           if (function_exists("pcntl_exec")) {
             pcntl_exec(PHP_BINDIR."/php", $GLOBALS['argv']);
           }
@@ -25,6 +26,7 @@
             passthru(PHP_BINDIR."/php ".array_map("escapeshellarg",
               $GLOBALS['argv']));
           }
+          exit(0);
         }
         else {
           $connection->send($this->numeric->get("ERR_NOPRIVILEGES", array(
