@@ -176,7 +176,7 @@
           return $return;
         }
       }
-      return false;
+      return array();
     }
 
     public function receiveChannelCreated($name, $data) {
