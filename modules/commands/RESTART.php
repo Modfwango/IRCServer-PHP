@@ -18,8 +18,13 @@
 
       if ($connection->getOption("registered") == true) {
         if ($connection->getOption("operator") != false) {
-          exec("screen -dm php ".escapeshellarg(__PROJECTROOT__."/main.php"));
-          getMain()->shutdown();
+          if (function_exists("pcntl_exec")) {
+            pcntl_exec(PHP_BINDIR."/php", $GLOBALS['argv']);
+          }
+          else {
+            passthru(PHP_BINDIR."/php ".array_map("escapeshellarg",
+              $GLOBALS['argv']));
+          }
         }
         else {
           $connection->send($this->numeric->get("ERR_NOPRIVILEGES", array(
