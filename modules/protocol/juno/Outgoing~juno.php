@@ -24,8 +24,15 @@ class __CLASSNAME__ {
     $connection->send("PASS ".$connection->getOption("sendpass"));
     $connection->setOption("sentpass", true);
     if ($connection->getOption("authenticated") == true) {
+      $connection->send("READY");
       $this->burst($connection);
     }
+  }
+
+  public function burst($connection) {
+    $connection->send(":".$this->config["sid"]." BURST ".time());
+    // burst here
+    $connection->send(":".$this->config["sid"]." ENDBURST ".time());
   }
 
   private function loadConfig($name = null, $data = null) {
@@ -61,7 +68,7 @@ class __CLASSNAME__ {
 
   public function tryConnections() {
     foreach ($this->config["connections"] as $host => $c) {
-      if ($c["autoconn"] == true) {
+      if (!isset($this->servers[strtolower($host)]) && $c["autoconn"] == true) {
         $connection = new Connection("0", array(
           $c["ip"],
           $c["port"],
@@ -69,11 +76,14 @@ class __CLASSNAME__ {
           array(
             "server" => true,
             "protocol" => "juno",
+            "servhost" => $host,
             "sendpass" => $c["sendpass"],
             "recvpass" => $c["recvpass"]
           )
         ));
+        $connection->connect();
         ConnectionManagement::newConnection($connection);
+        $this->servers[strtolower($host)] = $connection;
       }
     }
   }
