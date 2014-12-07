@@ -125,12 +125,12 @@
       }
       // [name, char, [0 (channel), 1 (user)], type, {prefix}, {weight}]
       // Types:
-      // 0 - Never requires a parameter.
-      // 1 - Parameter required when set/unset.
-      // 2 - Parameter required when set.
-      // 3 - List type mode.
-      // 4 - Status type mode.
-      // 5 - Key.
+      // 0 - Never requires a parameter
+      // 1 - Parameter required when set/unset
+      // 2 - Parameter required when set
+      // 3 - List type mode
+      // 4 - Status type mode
+      // 5 - Key
       $this->modes["byname"][$mode[0]] = array($mode[0], $mode[1], $mode[2],
         $mode[3], (isset($mode[4]) ? $mode[4] : null),
         (isset($mode[5]) ? $mode[5] : null));

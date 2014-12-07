@@ -1,0 +1,30 @@
+<?php
+  class __CLASSNAME__ {
+    public $depend = array("Outgoing~juno");
+    public $name = "ENDBURST~juno";
+    private $juno = null;
+
+    public function receiveCommand($name, $data) {
+      $connection = $data[0];
+      $command = $data[1];
+
+      foreach ($command as $key => $param) {
+        if (trim($param) == null) {
+          unset($command[$key]);
+        }
+      }
+      $command = array_values($command);
+      $source = array_shift($command);
+
+      $connection->setOption("endburst", $command[0]);
+      $this->juno->burst($connection);
+    }
+
+    public function isInstantiated() {
+      $this->juno = ModuleManagement::getModuleByName("Outgoing~juno");
+      EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
+        array("burst", true, "juno"));
+      return true;
+    }
+  }
+?>
