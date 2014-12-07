@@ -85,7 +85,7 @@
             }
 
             // Filter non-matching protocol preference (if specified)
-            if ($connection->getOption("protocol") != $registration[2][0]) {
+            if ($connection->getOption("protocol") != $registration[2][1]) {
               continue;
             }
 
