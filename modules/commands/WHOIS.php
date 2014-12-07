@@ -80,7 +80,7 @@
       $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
-        "whois");
+        array("whois", false));
       EventHandling::registerForEvent("WHOISResponseEvent", $this,
         "receiveWHOISResponse");
       return true;

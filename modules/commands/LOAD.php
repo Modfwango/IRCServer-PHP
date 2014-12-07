@@ -61,7 +61,7 @@
       $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
-        "load");
+        array("load", false));
       return true;
     }
   }

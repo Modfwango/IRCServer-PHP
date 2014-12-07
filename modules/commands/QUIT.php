@@ -49,7 +49,7 @@
 
     public function isInstantiated() {
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
-        "quit");
+        array("quit", false));
       EventHandling::registerForEvent("connectionDisconnectedEvent", $this,
         "notifyQuit");
       return true;

@@ -98,7 +98,7 @@
       $this->self = ModuleManagement::getModuleByName("Self");
       $this->util = ModuleManagement::getModuleByName("Util");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
-        "names");
+        array("names", false));
       return true;
     }
   }

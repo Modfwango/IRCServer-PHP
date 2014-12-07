@@ -1,12 +1,15 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Modes", "NickChangeEvent", "PrivateMessageEvent",
-      "PrivateNoticeEvent", "UserModeEvent", "UserQuitEvent",
+    public $depend = array("Modes", "NickChangeEvent", "Numeric",
+      "PrivateMessageEvent", "PrivateNoticeEvent", "Self",
+      "UnknownCommandEvent", "UserModeEvent", "UserQuitEvent",
       "UserRegistrationEvent");
     public $name = "Client";
     private $clients = array("byhost" => array(), "byident" => array(),
       "byid" => array(), "bynick" => array(), "byrealname" => array());
     private $modes = null;
+    private $numeric = null;
+    private $self = null;
 
     public function clientHostMatchesPattern($client, $pattern) {
       // Check if the client's host matches the provided glob pattern.
@@ -299,6 +302,16 @@
       }
     }
 
+    public function receiveUnknownCommandEvent($name, $data) {
+      $connection = $data[0];
+      $cmd = $data[1];
+      $connection->send($this->numeric->get("ERR_UNKNOWNCOMMAND", array(
+        $this->self->getConfigFlag("serverdomain"),
+        ($connection->getOption("nick") ? $connection->getOption("nick") : "*"),
+        $cmd
+      )));
+    }
+
     public function receiveUserMode($name, $data) {
       $source = $data[0];
       $modes = $data[1];
@@ -448,12 +461,16 @@
 
     public function isInstantiated() {
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->numeric = ModuleManagement::getModuleByName("Numeric");
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("nickChangeEvent", $this,
         "receiveNickChange");
       EventHandling::registerForEvent("privateMessageEvent", $this,
         "receivePrivateEvent");
       EventHandling::registerForEvent("privateNoticeEvent", $this,
         "receivePrivateEvent");
+      EventHandling::registerForEvent("unknownCommandEvent", $this,
+        "receiveUnknownCommandEvent");
       EventHandling::registerForEvent("userQuitEvent", $this,
         "receiveUserQuit");
       EventHandling::registerForEvent("userModeEvent", $this,

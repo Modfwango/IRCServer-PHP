@@ -67,7 +67,7 @@
       $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
-        "admin");
+        array("admin", false));
       EventHandling::registerForEvent("rehashEvent", $this, "loadConfig");
       return true;
     }

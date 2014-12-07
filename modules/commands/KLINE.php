@@ -247,9 +247,9 @@
       $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveKLINE",
-        "kline");
+        array("kline", false));
       EventHandling::registerForEvent("commandEvent", $this, "receiveUNKLINE",
-        "unkline");
+        array("unkline", false));
       EventHandling::registerForEvent("connectionCreatedEvent", $this,
         "receiveConnectionCreated");
       EventHandling::registerForEvent("rehashEvent", $this, "loadConfig");

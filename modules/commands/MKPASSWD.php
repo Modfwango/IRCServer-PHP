@@ -44,7 +44,7 @@
       $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
-        "mkpasswd");
+        array("mkpasswd", false));
       return true;
     }
   }

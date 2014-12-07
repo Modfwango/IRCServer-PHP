@@ -75,7 +75,7 @@
       $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
-        "user");
+        array("user", false));
       EventHandling::registerAsEventPreprocessor("userRegistrationEvent", $this,
         "preprocessUserRegistration");
       return true;

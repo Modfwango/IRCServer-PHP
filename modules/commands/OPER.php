@@ -120,7 +120,7 @@
       $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
-        "oper");
+        array("oper", false));
       EventHandling::registerForEvent("rehashEvent", $this, "loadConfig");
       return true;
     }

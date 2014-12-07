@@ -100,9 +100,9 @@
       $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this,
-        "receivePingCommand", "ping");
+        "receivePingCommand", array("ping", false));
       EventHandling::registerForEvent("commandEvent", $this,
-        "receivePongCommand", "pong");
+        "receivePongCommand", array("pong", false));
       EventHandling::registerForEvent("userRegistrationEvent", $this,
         "receiveUserRegistration");
       return true;
