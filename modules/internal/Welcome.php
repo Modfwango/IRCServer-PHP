@@ -9,23 +9,25 @@
     private $self = null;
 
     public function receiveConnectionCreated($name, $connection) {
-      $connection->send(":".$this->self->getConfigFlag("serverdomain").
-        " NOTICE * :*** Looking up your hostname...");
-      $ip = $connection->getIP();
-      $host = $connection->getHost();
-      if ($ip == $host) {
+      if ($connection->getOption("server") == false) {
         $connection->send(":".$this->self->getConfigFlag("serverdomain").
-          " NOTICE * :*** Couldn't look up your hostname");
-        $connection->setOption("id", hash("sha256", rand().$ip));
+          " NOTICE * :*** Looking up your hostname...");
+        $ip = $connection->getIP();
+        $host = $connection->getHost();
+        if ($ip == $host) {
+          $connection->send(":".$this->self->getConfigFlag("serverdomain").
+            " NOTICE * :*** Couldn't look up your hostname");
+          $connection->setOption("id", hash("sha256", rand().$ip));
+        }
+        else {
+          $connection->send(":".$this->self->getConfigFlag("serverdomain").
+            " NOTICE * :*** Found your hostname");
+          $connection->setOption("id", hash("sha256", rand().$host));
+        }
+        $connection->setOption("signon", time());
+        $connection->setOption("idle", time());
+        $this->client->setClient($connection);
       }
-      else {
-        $connection->send(":".$this->self->getConfigFlag("serverdomain").
-          " NOTICE * :*** Found your hostname");
-        $connection->setOption("id", hash("sha256", rand().$host));
-      }
-      $connection->setOption("signon", time());
-      $connection->setOption("idle", time());
-      $this->client->setClient($connection);
       return true;
     }
 
