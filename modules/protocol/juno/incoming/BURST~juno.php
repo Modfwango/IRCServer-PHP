@@ -12,7 +12,6 @@
         }
       }
       $command = array_values($command);
-      $source = array_shift($command);
 
       $connection->setOption("startburst", $command[0]);
     }

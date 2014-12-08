@@ -31,8 +31,7 @@
         }
       }
 
-      if ($connection->getOption("server") == false &&
-          substr($params[0], 0, 1) == ":") {
+      if (substr($params[0], 0, 1) == ":") {
         unset($params[0]);
         $params = array_values($params);
       }

@@ -11,8 +11,7 @@
     public function acquaint($connection) {
       $connection->send("SERVER ".$this->config["sid"]." ".
         $this->self->getConfigFlag("serverdomain")." ".
-        $this->config["version"]." ".
-        $this->self->getConfigFlag("version")." :".
+        $this->getVersion()." ".$this->self->getConfigFlag("version")." :".
         $this->self->getConfigFlag("serverdescription"));
       $connection->setOption("acquainted", true);
       if ($connection->getOption("sid") != false) {
@@ -29,9 +28,48 @@
     }
 
     public function burst($connection) {
-      $connection->send(":".$this->config["sid"]." BURST ".time());
-      // burst here
-      $connection->send(":".$this->config["sid"]." ENDBURST ".time());
+      $connection->send(":".$this->getSID()." BURST ".time());
+
+      $aum = $this->config["umodemap"];
+      foreach ($aum as $key => $um) {
+        $name = $um;
+        $um = $this->modes->getModeByName($key);
+        $aum[$key] = $name.":".$um[1];
+      }
+      $aum = implode(" ", $aum);
+
+      $acm = $this->config["cmodemap"];
+      foreach ($acm as $key => $cm) {
+        $name = $cm;
+        $cm = $this->modes->getModeByName($key);
+        $acm[$key] = $name.":".$cm[1].":".$cm[3];
+      }
+      $acm = implode(" ", $acm);
+
+      $connection->send(":".$this->getSID()." AUM ".$aum);
+      $connection->send(":".$this->getSID()." ACM ".$acm);
+
+      $connection->send(":".$this->getSID()." ENDBURST ".time());
+    }
+
+    public function convertIncomingCModeName($name) {
+      $tmp = array_flip($this->config["cmodemap"]);
+      return (isset($tmp[$name]) ? $tmp[$name] : false);
+    }
+
+    public function convertIncomingUModeName($name) {
+      $tmp = array_flip($this->config["umodemap"]);
+      return (isset($tmp[$name]) ? $tmp[$name] : false);
+    }
+
+    public function convertOutgoingCModeName($name) {
+      return (isset($this->config["cmodemap"][$name]) ?
+        $this->config["cmodemap"][$name] : false);
+    }
+
+    public function convertOutgoingUModeName($name) {
+      return (isset($this->config["umodemap"][$name]) ?
+        $this->config["umodemap"][$name] : false);
     }
 
     public function getConnection($servhost) {
@@ -62,7 +100,20 @@
               "recvpass" => "k",
               "autoconn" => true
             )
-          )
+          ),
+          "cmodemap" => array(
+            "ChannelBan" => "ban",
+            "ChannelBanExemption" => "except",
+            "ChannelOperator" => "op",
+            "ChannelVoice" => "voice",
+            "InviteException" => "invite_except",
+            "InviteOnly" => "invite_only",
+            "Moderated" => "moderated",
+            "NoExternalMessages" => "no_ext",
+            "ProtectTopic" => "protect_topic",
+            "UnrestrictedInvite" => "free_invite"
+          ),
+          "umodemap" => array()
         );
         StorageHandling::saveFile($this, "config.json", json_encode($config,
           JSON_PRETTY_PRINT));

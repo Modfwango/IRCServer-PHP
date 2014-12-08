@@ -9,63 +9,6 @@
     private $numeric = null;
     private $self = null;
 
-    public function parseModes($type, $modeString) {
-      $mex = array($modeString);
-      if (stristr($mex[0], " ")) {
-        $mex = explode(" ", $mex[0]);
-      }
-
-      $operation = "+";
-      $modes = array();
-      $ms = str_split(array_shift($mex));
-      $mex = array_values($mex);
-      foreach ($ms as $m) {
-        if ($m == "+" || $m == "-") {
-          $operation = $m;
-        }
-        else {
-          $mode = $this->modes->getModeByChar($type, $m);
-          if ($mode != false) {
-            if ($operation == "+" && in_array($mode[3],
-                array("1", "2", "3", "4")) && isset($mex[0])) {
-              $modes[] = array(
-                "operation" => $operation,
-                "name" => $mode[0],
-                "param" => array_shift($mex)
-              );
-              $mex = array_values($mex);
-            }
-            elseif ($operation == "+" && in_array($mode[3],
-                    array("0", "3"))) {
-              $modes[] = array(
-                "operation" => $operation,
-                "name" => $mode[0]
-              );
-            }
-            elseif ($operation == "-" && in_array($mode[3],
-                    array("1", "3", "4")) && isset($mex[0])) {
-              $modes[] = array(
-                "operation" => $operation,
-                "name" => $mode[0],
-                "param" => array_shift($mex)
-              );
-              $mex = array_values($mex);
-            }
-            elseif ($operation == "-" && in_array($mode[3],
-                    array("0", "2", "3"))) {
-              $modes[] = array(
-                "operation" => $operation,
-                "name" => $mode[0]
-              );
-            }
-          }
-        }
-      }
-      Logger::debug("Modes parsed:");
-      Logger::debug(var_export($modes, true));
-      return $modes;
-    }
-
     public function receiveCommand($name, $data) {
       $connection = $data[0];
       $command = $data[1];
@@ -91,7 +34,7 @@
             if ($channel != false) {
               $opped = false;
               $permitted = true;
-              $modes = $this->parseModes("0", $command[1]);
+              $modes = $this->modes->parseModes("0", $command[1]);
               $has = $this->channel->hasModes($channel["name"],
                 array("ChannelOperator"));
               if (is_array($has)) {
@@ -136,7 +79,7 @@
             elseif ($client != false) {
               if ($client->getOption("nick")
                   == $connection->getOption("nick")) {
-                $modes = $this->parseModes("1", $command[1]);
+                $modes = $this->modes->parseModes("1", $command[1]);
                 $event = EventHandling::getEventByName("userModeEvent");
                 if ($event != false) {
                   foreach ($event[2] as $id => $registration) {

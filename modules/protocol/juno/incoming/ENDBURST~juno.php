@@ -14,7 +14,6 @@
         }
       }
       $command = array_values($command);
-      $source = array_shift($command);
 
       $connection->setOption("endburst", $command[0]);
       $this->juno->burst($connection);
