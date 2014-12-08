@@ -50,6 +50,7 @@
       $connection->send(":".$this->getSID()." ACM ".$acm);
 
       $connection->send(":".$this->getSID()." ENDBURST ".time());
+      $connection->setOption("sentburst", true);
     }
 
     public function convertIncomingCModeName($name) {

@@ -6,7 +6,9 @@
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];
-      $this->juno->burst($connection);
+      if ($connection->getOption("sentburst") == false) {
+        $this->juno->burst($connection);
+      }
     }
 
     public function isInstantiated() {

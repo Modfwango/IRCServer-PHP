@@ -16,7 +16,9 @@
       $command = array_values($command);
 
       $connection->setOption("endburst", $command[0]);
-      $this->juno->burst($connection);
+      if ($connection->getOption("sentburst") == false) {
+        $this->juno->burst($connection);
+      }
     }
 
     public function isInstantiated() {
