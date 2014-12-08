@@ -100,7 +100,6 @@
     }
 
     public function isInstantiated() {
-      $this->loadConfig();
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
@@ -108,6 +107,7 @@
       EventHandling::registerForEvent("connectionConnectedEvent", $this,
         "receiveConnectionConnected");
       EventHandling::registerForEvent("rehashEvent", $this, "loadConfig");
+      $this->loadConfig();
       return true;
     }
   }
