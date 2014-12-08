@@ -1,7 +1,7 @@
 <?php
   class __CLASSNAME__ {
     public $depend = array("Channel", "Client", "Modes");
-    public $name = "juno";
+    public $name = "Outgoing~juno";
     private $channel = null;
     private $client = null;
     private $config = array();
