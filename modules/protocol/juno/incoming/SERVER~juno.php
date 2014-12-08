@@ -47,7 +47,7 @@
       $this->juno = ModuleManagement::getModuleByName("Outgoing~juno");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
-        array("server", false));
+        array("server"));
       return true;
     }
   }
