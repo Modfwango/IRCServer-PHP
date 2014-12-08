@@ -17,10 +17,7 @@
 
       if ($connection->getOption("recvpass") == $command[0]) {
         $connection->setOption("authenticated", true);
-        if ($connection->getOption("sentpass") == true) {
-          $connection->send("READY");
-        }
-        else {
+        if ($connection->getOption("sentpass") != true) {
           $this->juno->authenticate($connection);
         }
       }
