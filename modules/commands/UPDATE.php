@@ -22,7 +22,7 @@
           if ($event != false) {
             foreach ($event[2] as $id => $registration) {
               // Trigger the commandEvent event for each registered module.
-              if (strtolower(trim($registration[2])) == "eval") {
+              if (strtolower(trim($registration[2][0])) == "eval") {
                 EventHandling::triggerEvent("commandEvent", $id,
                   array($connection, explode(" ",
                   "return shell_exec('sh update.sh');")));

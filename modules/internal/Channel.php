@@ -278,7 +278,7 @@
           if (count($channel["modes"]) > 0) {
             foreach ($event[2] as $id => $registration) {
               // Trigger the commandEvent event for each registered module.
-              if (strtolower(trim($registration[2])) == "mode") {
+              if (strtolower(trim($registration[2][0])) == "mode") {
                 EventHandling::triggerEvent("commandEvent", $id,
                   array($source, array($channel["name"]), true));
               }
@@ -286,14 +286,14 @@
           }
           foreach ($event[2] as $id => $registration) {
             // Trigger the commandEvent event for each registered module.
-            if (strtolower(trim($registration[2])) == "topic") {
+            if (strtolower(trim($registration[2][0])) == "topic") {
               EventHandling::triggerEvent("commandEvent", $id,
                 array($source, array($channel["name"]), true));
             }
           }
           foreach ($event[2] as $id => $registration) {
             // Trigger the commandEvent event for each registered module.
-            if (strtolower(trim($registration[2])) == "names") {
+            if (strtolower(trim($registration[2][0])) == "names") {
               EventHandling::triggerEvent("commandEvent", $id,
                 array($source, array($channel["name"])));
             }
