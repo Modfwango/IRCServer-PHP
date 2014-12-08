@@ -34,6 +34,19 @@
       $connection->send(":".$this->config["sid"]." ENDBURST ".time());
     }
 
+    public function getConnection($servhost) {
+      return (isset($this->config["connections"][$servhost]) ?
+        $this->config["connections"][$servhost] : false);
+    }
+
+    public function getSID() {
+      return $this->config["sid"];
+    }
+
+    public function getVersion() {
+      return $this->config["version"];
+    }
+
     private function loadConfig($name = null, $data = null) {
       $config = @json_decode(trim(StorageHandling::loadFile($this,
         "config.json")), true);
