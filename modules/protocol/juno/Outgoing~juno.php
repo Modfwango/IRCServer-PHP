@@ -60,7 +60,7 @@
     public function receiveConnectionConnected($name, $connection) {
       if ($connection->getOption("server") == true &&
           $connection->getOption("protocol") == "juno") {
-        $this->acquaint();
+        $this->acquaint($connection);
       }
     }
 
