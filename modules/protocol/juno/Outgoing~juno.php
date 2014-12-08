@@ -1,11 +1,12 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Channel", "Client", "Modes");
+    public $depend = array("Channel", "Client", "Modes", "Self");
     public $name = "Outgoing~juno";
     private $channel = null;
     private $client = null;
     private $config = array();
     private $modes = null;
+    private $self = null;
 
     public function acquaint($connection) {
       $connection->send("SERVER ".$this->config["sid"]." ".
@@ -90,6 +91,7 @@
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("connectionConnectedEvent", $this,
         "receiveConnectionConnected");
       EventHandling::registerForEvent("rehashEvent", $this, "loadConfig");
