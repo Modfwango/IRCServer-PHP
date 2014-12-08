@@ -46,8 +46,12 @@
       }
       $acm = implode(" ", $acm);
 
-      $connection->send(":".$this->getSID()." AUM ".$aum);
-      $connection->send(":".$this->getSID()." ACM ".$acm);
+      if (trim($aum) != null) {
+        $connection->send(":".$this->getSID()." AUM ".$aum);
+      }
+      if (trim($acm) != null) {
+        $connection->send(":".$this->getSID()." ACM ".$acm);
+      }
 
       $connection->send(":".$this->getSID()." ENDBURST ".time());
       $connection->setOption("sentburst", true);
