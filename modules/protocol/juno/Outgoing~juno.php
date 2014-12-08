@@ -11,7 +11,7 @@
     public function acquaint($connection) {
       $connection->send("SERVER ".$this->config["sid"]." ".
         $this->self->getConfigFlag("serverdomain")." ".
-        $this->config["protocolversion"]." ".
+        $this->config["version"]." ".
         $this->self->getConfigFlag("version")." :".
         $this->self->getConfigFlag("serverdescription"));
       $connection->setOption("acquainted", true);
