@@ -30,27 +30,25 @@
     public function burst($connection) {
       $connection->send(":".$this->getSID()." BURST ".time());
 
-      $aum = $this->config["umodemap"];
-      foreach ($aum as $key => $um) {
-        $name = $um;
-        $um = $this->modes->getModeByName($key);
-        $aum[$key] = $name.":".$um[1];
+      $acm = array();
+      $aum = array();
+      $modes = $this->modes->getModes();
+      foreach ($modes as $mode) {
+        if ($mode[2] == "0") {
+          $name = $this->convertOutgoingCModeName($mode[0]);
+          $acm[] = ($name != false ? $name : $mode[0]).":".$mode[1].":".
+            $mode[3];
+        }
+        if ($mode[2] == "1") {
+          $name = $this->convertOutgoingUModeName($mode[0]);
+          $aum[] = ($name != false ? $name : $mode[0]).":".$mode[1];
+        }
       }
-      $aum = implode(" ", $aum);
-
-      $acm = $this->config["cmodemap"];
-      foreach ($acm as $key => $cm) {
-        $name = $cm;
-        $cm = $this->modes->getModeByName($key);
-        $acm[$key] = $name.":".$cm[1].":".$cm[3];
+      if (count($acm) > 0) {
+        $connection->send(":".$this->getSID()." ACM ".implode(" ", $acm));
       }
-      $acm = implode(" ", $acm);
-
-      if (trim($aum) != null) {
-        $connection->send(":".$this->getSID()." AUM ".$aum);
-      }
-      if (trim($acm) != null) {
-        $connection->send(":".$this->getSID()." ACM ".$acm);
+      if (count($aum) > 0) {
+        $connection->send(":".$this->getSID()." AUM ".implode(" ", $aum));
       }
 
       $connection->send(":".$this->getSID()." ENDBURST ".time());

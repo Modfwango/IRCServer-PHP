@@ -55,6 +55,10 @@
         $this->modes["bytype"][$type] : false);
     }
 
+    public function getModes() {
+        return array_values($this->modes["byname"]);
+    }
+
     public function getModesAndWeight() {
       // Retrieve the requested modes if they exist, otherwise return false.
       $ret = $this->getModeNamesAndWeight();
