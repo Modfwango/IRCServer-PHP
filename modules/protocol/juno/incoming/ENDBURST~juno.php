@@ -24,7 +24,7 @@
     public function isInstantiated() {
       $this->juno = ModuleManagement::getModuleByName("Outgoing~juno");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
-        array("burst", true, "juno"));
+        array("endburst", true, "juno"));
       return true;
     }
   }
