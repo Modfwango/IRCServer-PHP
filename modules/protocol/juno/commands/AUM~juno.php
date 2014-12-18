@@ -1,6 +1,7 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Juno", "Modes", "ServerBurstEvent~juno");
+    public $depend = array("CommandEvent", "Juno", "Modes",
+      "ServerBurstEvent~juno");
     public $name = "AUM~juno";
     private $juno = null;
     private $modes = null;
@@ -40,6 +41,7 @@
       }
       $lburst[] = ":".$this->juno->getSID()." AUM ".implode(" ", $modes);
       $connection->setOption("lburst");
+      return array(true);
     }
 
     public function isInstantiated() {

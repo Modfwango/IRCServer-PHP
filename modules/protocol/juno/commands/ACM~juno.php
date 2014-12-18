@@ -41,6 +41,7 @@
       }
       $lburst[] = ":".$this->juno->getSID()." ACM ".implode(" ", $modes);
       $connection->setOption("lburst");
+      return array(true);
     }
 
     public function isInstantiated() {

@@ -11,6 +11,7 @@
       if ($connection->getOption("lburstend") == false) {
         $connection->setOption("lburststart", time());
         $connection->setOption("lburst", array());
+        return array(true);
       }
       return array(false);
     }
