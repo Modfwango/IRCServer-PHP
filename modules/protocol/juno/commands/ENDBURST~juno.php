@@ -1,6 +1,6 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Outgoing~juno");
+    public $depend = array("Juno");
     public $name = "ENDBURST~juno";
     private $juno = null;
 
@@ -16,13 +16,19 @@
       $command = array_values($command);
 
       $connection->setOption("endburst", $command[0]);
-      if ($connection->getOption("sentburst") == false) {
-        $this->juno->burst($connection);
+      $event = EventHandling::getEventByName("serverBurstEvent~juno");
+      if ($event != false) {
+        foreach ($event[2] as $id => $registration) {
+          // Trigger the serverBurstEvent~juno event for each
+          // registered module
+          EventHandling::triggerEvent("serverBurstEvent~juno", $id,
+            $connection);
+        }
       }
     }
 
     public function isInstantiated() {
-      $this->juno = ModuleManagement::getModuleByName("Outgoing~juno");
+      $this->juno = ModuleManagement::getModuleByName("Juno");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         array("endburst", true, "juno"));
       return true;

@@ -7,7 +7,7 @@
       "0" => array(), "1" => array(), "2" => array(), "3" => array(),
       "4" => array(), "5" => array()), "byweight" => array());
 
-    public function getModeByName($name) {
+    public function getModeByName($name, $alphabet = 0) {
       // Retrieve the requested mode if it exists, otherwise return false.
       if (isset($this->modes["byname"][$name])) {
         return $this->modes["byname"][$name];
@@ -15,51 +15,51 @@
       return false;
     }
 
-    public function getModeByChar($target, $char) {
+    public function getModeByChar($target, $char, $alphabet = 0) {
       // Retrieve the requested mode if it exists, otherwise return false.
       return $this->getModeByName($this->getModeNameByChar($target, $char));
     }
 
-    public function getModeByPrefix($prefix) {
+    public function getModeByPrefix($prefix, $alphabet = 0) {
       // Retrieve the requested mode if it exists, otherwise return false.
       return $this->getModeByName($this->getModeNameByPrefix($prefix));
     }
 
-    public function getModeNameByChar($target, $char) {
+    public function getModeNameByChar($target, $char, $alphabet = 0) {
       // Retrieve the requested name if it exists, otherwise return false.
       return (isset($this->modes["bychar"][$target][$char]) ?
         $this->modes["bychar"][$target][$char] : false);
     }
 
-    public function getModeNameByPrefix($prefix) {
+    public function getModeNameByPrefix($prefix, $alphabet = 0) {
       // Retrieve the requested name if it exists, otherwise return false.
       return (isset($this->modes["byprefix"][$prefix]) ?
         $this->modes["byprefix"][$prefix] : false);
     }
 
-    public function getModeNamesAndWeight() {
+    public function getModeNamesAndWeight($alphabet = 0) {
       // Retrieve the requested names if they exist, otherwise return false.
       return (isset($this->modes["byweight"]) ?
         $this->modes["byweight"] : false);
     }
 
-    public function getModeNamesByTarget($target) {
+    public function getModeNamesByTarget($target, $alphabet = 0) {
       // Retrieve the requested names if they exist, otherwise return false.
       return (isset($this->modes["bytarget"][$target]) ?
         $this->modes["bytarget"][$target] : false);
     }
 
-    public function getModeNamesByType($type) {
+    public function getModeNamesByType($type, $alphabet = 0) {
       // Retrieve the requested names if they exist, otherwise return false.
       return (isset($this->modes["bytype"][$type]) ?
         $this->modes["bytype"][$type] : false);
     }
 
-    public function getModes() {
+    public function getModes($alphabet = 0) {
         return array_values($this->modes["byname"]);
     }
 
-    public function getModesAndWeight() {
+    public function getModesAndWeight($alphabet = 0) {
       // Retrieve the requested modes if they exist, otherwise return false.
       $ret = $this->getModeNamesAndWeight();
       foreach ($ret as $weight => &$modenames) {
@@ -73,7 +73,7 @@
       return false;
     }
 
-    public function getModesByTarget($target) {
+    public function getModesByTarget($target, $alphabet = 0) {
       // Retrieve the requested modes if they exist, otherwise return false.
       $modes = array();
       foreach ($this->getModeNamesByTarget($target) as $name) {
@@ -87,7 +87,7 @@
       return false;
     }
 
-    public function getModesByType($type) {
+    public function getModesByType($type, $alphabet = 0) {
       // Retrieve the requested modes if they exist, otherwise return false.
       $modes = array();
       foreach ($this->getModeNamesByType($type) as $name) {
@@ -102,7 +102,7 @@
     }
 
     public function getModeStringComponents($ms, $letters = false,
-        $ignore = array()) {
+        $ignore = array(), $alphabet = 0) {
       $modes = array();
       $params = array();
       foreach ($ms as $mode) {
@@ -122,7 +122,7 @@
       return array($modes, $params);
     }
 
-    public function parseModes($type, $modeString) {
+    public function parseModes($type, $modeString, $alphabet = 0) {
       $mex = array($modeString);
       if (stristr($mex[0], " ")) {
         $mex = explode(" ", $mex[0]);
@@ -179,7 +179,7 @@
       return $modes;
     }
 
-    public function setMode($mode) {
+    public function setMode($mode, $alphabet = 0) {
       $this->unsetMode($mode);
       for ($i = 0; $i < 4; $i++) {
         $mode[$i] = strval($mode[$i]);
@@ -208,9 +208,11 @@
         $this->modes["byweight"][$mode[5]][] = $mode[0];
         ksort($this->modes["byweight"]);
       }
+      Logger::debug("Current mode state:");
+      Logger::debug(var_export($this->modes, true));
     }
 
-    public function unsetMode($mode) {
+    public function unsetMode($mode, $alphabet = 0) {
       $names = array();
 
       foreach ($this->modes["byname"] as $m) {

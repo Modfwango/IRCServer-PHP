@@ -11,3 +11,7 @@ Check WHO compatibility with OPER / AWAY
 Implement a ShouldAllowNickChangeEvent
 
 Revamp nickname change event system
+
+Abstract all calls to `Connection::send()`
+
+Audit protocol module dependencies

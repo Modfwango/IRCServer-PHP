@@ -1,31 +1,12 @@
 <?php
   class __CLASSNAME__ {
     public $depend = array("Channel", "Client", "Modes", "Self");
-    public $name = "Outgoing~juno";
+    public $name = "Juno";
     private $channel = null;
     private $client = null;
     private $config = array();
     private $modes = null;
     private $self = null;
-
-    public function acquaint($connection) {
-      $connection->send("SERVER ".$this->config["sid"]." ".
-        $this->self->getConfigFlag("serverdomain")." ".
-        $this->getVersion()." ".$this->self->getConfigFlag("version")." :".
-        $this->self->getConfigFlag("serverdescription"));
-      $connection->setOption("acquainted", true);
-      if ($connection->getOption("sid") != false) {
-        $this->authenticate($connection);
-      }
-    }
-
-    public function authenticate($connection) {
-      $connection->send("PASS ".$connection->getOption("sendpass"));
-      $connection->setOption("sentpass", true);
-      if ($connection->getOption("authenticated") == true) {
-        $connection->send("READY");
-      }
-    }
 
     public function burst($connection) {
       $connection->send(":".$this->getSID()." BURST ".time());
@@ -125,13 +106,6 @@
       $this->tryConnections();
     }
 
-    public function receiveConnectionConnected($name, $connection) {
-      if ($connection->getOption("server") == true &&
-          $connection->getOption("protocol") == "juno") {
-        $this->acquaint($connection);
-      }
-    }
-
     public function tryConnections() {
       foreach ($this->config["connections"] as $host => $c) {
         if ($c["autoconn"] == true) {
@@ -158,8 +132,6 @@
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
       $this->self = ModuleManagement::getModuleByName("Self");
-      EventHandling::registerForEvent("connectionConnectedEvent", $this,
-        "receiveConnectionConnected");
       EventHandling::registerForEvent("rehashEvent", $this, "loadConfig");
       $this->loadConfig();
       return true;
