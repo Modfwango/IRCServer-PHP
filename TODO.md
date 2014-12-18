@@ -14,8 +14,6 @@ Revamp nickname change event system
 
 Abstract all calls to `Connection::send()`
 
-Audit protocol module dependencies
-
 Create alphabet for each server, not each protocol
 
 Look into blocking outgoing connections

@@ -1,12 +1,8 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Channel", "Client", "Modes", "Self");
+    public $depend = array("RehashEvent");
     public $name = "Juno";
-    private $channel = null;
-    private $client = null;
     private $config = array();
-    private $modes = null;
-    private $self = null;
 
     public function getConnection($servhost) {
       return (isset($this->config["connections"][$servhost]) ?
@@ -80,10 +76,6 @@
     }
 
     public function isInstantiated() {
-      $this->channel = ModuleManagement::getModuleByName("Channel");
-      $this->client = ModuleManagement::getModuleByName("Client");
-      $this->modes = ModuleManagement::getModuleByName("Modes");
-      $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("rehashEvent", $this, "loadConfig");
       $this->loadConfig();
       return true;

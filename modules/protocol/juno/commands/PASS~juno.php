@@ -1,8 +1,8 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Juno");
+    public $depend = array("CommandEvent", "ServerAuthenticatedEvent~juno",
+      "ServerAcquaintedEvent~juno");
     public $name = "PASS~juno";
-    private $juno = null;
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];
@@ -52,7 +52,6 @@
     }
 
     public function isInstantiated() {
-      $this->juno = ModuleManagement::getModuleByName("Juno");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         array("pass", true, "juno"));
       EventHandling::registerForEvent("serverAcquaintedEvent~juno", $this,

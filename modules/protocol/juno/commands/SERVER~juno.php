@@ -1,8 +1,10 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Juno", "Self"/*, "Server"*/);
+    public $depend = array("CommandEvent", "ConnectionConnectedEvent", "Juno",
+      "Modes", "Self", "ServerAcquaintedEvent~juno");
     public $name = "SERVER~juno";
     private $juno = null;
+    private $modes = null;
     private $self = null;
 
     public function receiveCommand($name, $data) {
@@ -52,7 +54,7 @@
       if ($connection->getOption("lacquainted") == false &&
           $connection->getOption("protocol") == "juno" &&
           $connection->getOption("server") == true) {
-        $connection->send("SERVER ".$this->config["sid"]." ".
+        $connection->send("SERVER ".$this->juno->getSID()." ".
           $this->self->getConfigFlag("serverdomain")." ".
           $this->juno->getVersion()." ".
           $this->self->getConfigFlag("version")." :".

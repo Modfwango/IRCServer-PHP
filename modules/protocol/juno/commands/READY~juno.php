@@ -1,8 +1,8 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Juno");
+    public $depend = array("CommandEvent", "ServerAuthenticatedEvent~juno",
+      "ServerBurstEvent~juno");
     public $name = "READY~juno";
-    private $juno = null;
     private $shouldReady = null;
 
     public function receiveCommand($name, $data) {
@@ -29,7 +29,6 @@
     }
 
     public function isInstantiated() {
-      $this->juno = ModuleManagement::getModuleByName("Juno");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         array("ready", true, "juno"));
       EventHandling::registerForEvent("serverAuthenticatedEvent~juno", $this,

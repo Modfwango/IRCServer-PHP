@@ -1,6 +1,6 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Modes", "Juno");
+    public $depend = array("Juno", "Modes", "ServerBurstEvent~juno");
     public $name = "AUM~juno";
     private $juno = null;
     private $modes = null;
