@@ -75,6 +75,7 @@
 
     public function isInstantiated() {
       $this->juno = ModuleManagement::getModuleByName("Juno");
+      $this->modes = ModuleManagement::getModuleByName("Modes");
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         array("server"));
