@@ -69,7 +69,6 @@
               "recvpass" => $c["recvpass"]
             )
           ));
-          $connection->connect();
           ConnectionManagement::newConnection($connection);
         }
       }
