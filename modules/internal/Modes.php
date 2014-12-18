@@ -265,6 +265,8 @@
           }
         }
       }
+      Logger::debug("Current mode state:");
+      Logger::debug(var_export($this->modes, true));
     }
 
     public function isUnloadable() {
