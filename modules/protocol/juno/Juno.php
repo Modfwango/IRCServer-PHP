@@ -2,7 +2,6 @@
   class __CLASSNAME__ {
     public $depend = array("Channel", "Client", "Modes", "Self");
     public $name = "Juno";
-    private $alphabet = null;
     private $channel = null;
     private $client = null;
     private $config = array();
@@ -84,7 +83,6 @@
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
-      $this->alphabet = $this->modes->createAlphabet();
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("rehashEvent", $this, "loadConfig");
       $this->loadConfig();

@@ -23,6 +23,7 @@
             $this->juno->getSID() != $command[0] &&
             strtolower($this->self->getConfigFlag("serverdomain")) !=
             strtolower($command[1])) {
+          $connection->setOption("alphabet", $this->modes->createAlphabet());
           $connection->setOption("server", true);
           $connection->setOption("protocol", "juno");
           $connection->setOption("sid", $command[0]);
