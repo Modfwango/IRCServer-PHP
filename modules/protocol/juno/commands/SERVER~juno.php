@@ -32,7 +32,7 @@
           $connection->setOption("servhost", $command[1]);
           $connection->setOption("sendpass", $c["sendpass"]);
           $connection->setOption("recvpass", $c["recvpass"]);
-          $connection->setOption("raquainted", true);
+          $connection->setOption("racquainted", true);
 
           $event = EventHandling::getEventByName("serverAcquaintedEvent~juno");
           if ($event != false) {
