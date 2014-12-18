@@ -29,8 +29,7 @@
     public function receiveServerBurst($name, $id, $connection) {
       $lburst = $connection->getOption("lburst");
       $modes = array();
-      foreach ($this->modes->getModesByTarget("1",
-               $connection->getOption("alphabet")) as $mode) {
+      foreach ($this->modes->getModesByTarget("1") as $mode) {
         $modes[] = $mode[0].":".$mode[1];
       }
       $lburst[] = ":".$this->juno->getSID()." AUM ".implode(" ", $modes);
