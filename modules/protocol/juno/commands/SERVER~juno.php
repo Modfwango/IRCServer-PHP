@@ -77,7 +77,7 @@
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         array("server"));
       EventHandling::registerForEvent("connectionConnectedEvent", $this,
-        "receiveConnectionConnected");
+        "receiveServerEvent");
       EventHandling::registerForEvent("serverAcquaintedEvent~juno", $this,
         "receiveServerEvent");
       return true;

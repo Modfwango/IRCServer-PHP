@@ -16,21 +16,30 @@
       }
       $command = array_values($command);
 
-      $map = (is_array($connection->getOption("umodemap")) ?
-        $connection->getOption("umodemap") : array());
       if (count($command) > 0) {
         foreach ($command as $item) {
           $item = explode(":", $item);
-          $localName = $this->juno->convertIncomingUModeName($item[0]);
-          if ($localName != false) {
-            $map[$item[1]] = $this->modes->getModeByName($localName);
+          if ($item[2] == "4") {
+            $this->modes->setMode(array($item[0], $item[1], "1", $item[2],
+              $item[3], $item[4]), $connection->getOption("alphabet"));
           }
           else {
-            $map[$item[1]] = array($item[0], $item[1], "1", "0");
+            $this->modes->setMode(array($item[0], $item[1], "1", $item[2]),
+              $connection->getOption("alphabet"));
           }
         }
       }
-      $connection->setOption("umodemap", $map);
+    }
+
+    public function receiveServerBurst($name, $id, $connection) {
+      $lburst = $connection->getOption("lburst");
+      $modes = array();
+      foreach ($this->modes->getModesByTarget("1",
+               $connection->getOption("alphabet")) as $mode) {
+        $modes[] = $mode[0].":".$mode[1].":".$mode[3].":".$mode[4].":".$mode[5];
+      }
+      $lburst[] = ":".$this->juno->getSID()." AUM ".implode(" ", $modes);
+      $connection->setOption("lburst");
     }
 
     public function isInstantiated() {
@@ -38,6 +47,8 @@
       $this->modes = ModuleManagement::getModuleByName("Modes");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         array("aum", true, "juno"));
+      EventHandling::registerAsEventPreprocessor("serverBurstEvent~juno", $this,
+        "receiveServerBurst");
       return true;
     }
   }
