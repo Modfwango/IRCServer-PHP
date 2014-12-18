@@ -38,7 +38,7 @@
       foreach ($this->modes->getModesByTarget("0",
                $connection->getOption("alphabet")) as $mode) {
         if ($mode[3] == "4") {
-          $modes[] = $mode[0].":".$mode[1].":".$mode[3].":".$mode[4].":"
+          $modes[] = $mode[0].":".$mode[1].":".$mode[3].":".$mode[4].":".
             $mode[5];
         }
         else {
