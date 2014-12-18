@@ -19,13 +19,15 @@
     public function receiveServerBurst($name, $connection) {
       $connection->setOption("lburstend", time());
       $burstLines = $connection->getOption("lburst");
-      $connection->send("BURST ".$connection->getOption("lburststart"));
+      $connection->send(":".$this->juno->getSID()." BURST ".
+        $connection->getOption("lburststart"));
       if (is_array($burstLines) && count($burstLines) > 0) {
         foreach ($burstLines as $line) {
           $connection->send($line);
         }
       }
-      $connection->send("ENDBURST ".$connection->getOption("lburstend"));
+      $connection->send(":".$this->juno->getSID()." ENDBURST ".
+        $connection->getOption("lburstend"));
     }
 
     public function isInstantiated() {

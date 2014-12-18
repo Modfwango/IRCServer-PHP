@@ -9,58 +9,6 @@
     private $modes = null;
     private $self = null;
 
-    public function burst($connection) {
-      $connection->send(":".$this->getSID()." BURST ".time());
-
-      $acm = array();
-      $aum = array();
-      $modes = $this->modes->getModes();
-      foreach ($modes as $mode) {
-        if ($mode[2] == "0") {
-          $name = $this->convertOutgoingCModeName($mode[0]);
-          $acm[] = ($name != false ? $name : $mode[0]).":".$mode[1].":".
-            $mode[3];
-        }
-        if ($mode[2] == "1") {
-          $name = $this->convertOutgoingUModeName($mode[0]);
-          $aum[] = ($name != false ? $name : $mode[0]).":".$mode[1];
-        }
-      }
-      if (count($acm) > 0) {
-        $connection->send(":".$this->getSID()." ACM ".implode(" ", $acm));
-      }
-      if (count($aum) > 0) {
-        $connection->send(":".$this->getSID()." AUM ".implode(" ", $aum));
-      }
-
-      $connection->send(":".$this->getSID()." ENDBURST ".time());
-      $connection->setOption("sentburst", true);
-    }
-
-    public function convertIncomingCModeName($name) {
-      $tmp = array_flip($this->config["cmodemap"]);
-      return (isset($tmp[$name]) ? $tmp[$name] : false);
-    }
-
-    public function convertIncomingUModeName($name) {
-      $tmp = array_flip($this->config["umodemap"]);
-      return (isset($tmp[$name]) ? $tmp[$name] : false);
-    }
-
-    public function convertOutgoingCModeName($name) {
-      return (isset($this->config["cmodemap"][$name]) ?
-        $this->config["cmodemap"][$name] : false);
-    }
-
-    public function convertOutgoingUModeName($name) {
-      return (isset($this->config["umodemap"][$name]) ?
-        $this->config["umodemap"][$name] : false);
-    }
-
-    public function getAlphabet() {
-      return $this->alphabet;
-    }
-
     public function getConnection($servhost) {
       return (isset($this->config["connections"][$servhost]) ?
         $this->config["connections"][$servhost] : false);
@@ -91,16 +39,16 @@
             )
           ),
           "cmodemap" => array(
-            "ChannelBan" => "ban",
-            "ChannelBanExemption" => "except",
-            "ChannelOperator" => "op",
-            "ChannelVoice" => "voice",
-            "InviteException" => "invite_except",
-            "InviteOnly" => "invite_only",
-            "Moderated" => "moderated",
-            "NoExternalMessages" => "no_ext",
-            "ProtectTopic" => "protect_topic",
-            "UnrestrictedInvite" => "free_invite"
+            "ban" => "ChannelBan",
+            "except" => "ChannelBanExemption",
+            "op" => "ChannelOperator",
+            "voice" => "ChannelVoice",
+            "invite_except" => "InviteException",
+            "invite_only" => "InviteOnly",
+            "moderated" => "Moderated",
+            "no_ext" => "NoExternalMessages",
+            "protect_topic" => "ProtectTopic",
+            "free_invite" => "UnrestrictedInvite"
           ),
           "umodemap" => array()
         );
