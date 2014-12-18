@@ -37,10 +37,16 @@
       $modes = array();
       foreach ($this->modes->getModesByTarget("0",
                $connection->getOption("alphabet")) as $mode) {
-        $modes[] = $mode[0].":".$mode[1].":".$mode[3].":".$mode[4].":".$mode[5];
+        if ($mode[3] == "4") {
+          $modes[] = $mode[0].":".$mode[1].":".$mode[3].":".$mode[4].":"
+            $mode[5];
+        }
+        else {
+          $modes[] = $mode[0].":".$mode[1].":".$mode[3];
+        }
       }
       $lburst[] = ":".$this->juno->getSID()." ACM ".implode(" ", $modes);
-      $connection->setOption("lburst");
+      $connection->setOption("lburst", $lburst);
       return array(true);
     }
 

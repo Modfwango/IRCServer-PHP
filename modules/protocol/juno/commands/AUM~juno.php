@@ -20,14 +20,8 @@
       if (count($command) > 0) {
         foreach ($command as $item) {
           $item = explode(":", $item);
-          if ($item[2] == "4") {
-            $this->modes->setMode(array($item[0], $item[1], "1", $item[2],
-              $item[3], $item[4]), $connection->getOption("alphabet"));
-          }
-          else {
-            $this->modes->setMode(array($item[0], $item[1], "1", $item[2]),
-              $connection->getOption("alphabet"));
-          }
+          $this->modes->setMode(array($item[0], $item[1], "1", $item[2]),
+            $connection->getOption("alphabet"));
         }
       }
     }
@@ -37,10 +31,10 @@
       $modes = array();
       foreach ($this->modes->getModesByTarget("1",
                $connection->getOption("alphabet")) as $mode) {
-        $modes[] = $mode[0].":".$mode[1].":".$mode[3].":".$mode[4].":".$mode[5];
+        $modes[] = $mode[0].":".$mode[1];
       }
       $lburst[] = ":".$this->juno->getSID()." AUM ".implode(" ", $modes);
-      $connection->setOption("lburst");
+      $connection->setOption("lburst", $lburst);
       return array(true);
     }
 
