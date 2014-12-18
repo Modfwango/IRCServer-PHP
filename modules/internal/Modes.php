@@ -243,27 +243,24 @@
             unset($this->modes["byprefix"][$key]);
           }
         }
-        foreach ($this->modes["bytarget"] as $key => &$modes) {
-          $modes = array_unique($modes);
-          foreach ($modes as $mode) {
+        foreach ($this->modes["bytarget"] as $key => $modes) {
+          foreach ($modes as $key1 => $mode) {
             if ($mode == $name) {
-              unset($this->modes["bytarget"][$key]);
+              unset($this->modes["bytarget"][$key][$key1]);
             }
           }
         }
-        foreach ($this->modes["bytype"] as $key => &$modes) {
-          $modes = array_unique($modes);
-          foreach ($modes as $mode) {
+        foreach ($this->modes["bytype"] as $key => $modes) {
+          foreach ($modes as $key1 => $mode) {
             if ($mode == $name) {
-              unset($this->modes["bytype"][$key]);
+              unset($this->modes["bytype"][$key][$key1]);
             }
           }
         }
-        foreach ($this->modes["byweight"] as $key => &$modes) {
-          $modes = array_unique($modes);
-          foreach ($modes as $mode) {
+        foreach ($this->modes["byweight"] as $key => $modes) {
+          foreach ($modes as $key1 => $mode) {
             if ($mode == $name) {
-              unset($this->modes["byweight"][$key]);
+              unset($this->modes["byweight"][$key][$key1]);
             }
           }
         }
