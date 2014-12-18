@@ -40,12 +40,14 @@
 
     public function getModeByChar($target, $char, $alphabet = 0) {
       // Retrieve the requested mode if it exists, otherwise return false.
-      return $this->getModeByName($this->getModeNameByChar($target, $char));
+      return $this->getModeByName($this->getModeNameByChar($target, $char,
+        $alphabet), $alphabet);
     }
 
     public function getModeByPrefix($prefix, $alphabet = 0) {
       // Retrieve the requested mode if it exists, otherwise return false.
-      return $this->getModeByName($this->getModeNameByPrefix($prefix));
+      return $this->getModeByName($this->getModeNameByPrefix($prefix,
+        $alphabet), $alphabet);
     }
 
     public function getModeNameByChar($target, $char, $alphabet = 0) {
@@ -84,10 +86,10 @@
 
     public function getModesAndWeight($alphabet = 0) {
       // Retrieve the requested modes if they exist, otherwise return false.
-      $ret = $this->getModeNamesAndWeight();
+      $ret = $this->getModeNamesAndWeight($alphabet);
       foreach ($ret as $weight => &$modenames) {
         foreach ($modenames as &$modename) {
-          $modename = $this->getModeByName($modename);
+          $modename = $this->getModeByName($modename, $alphabet);
         }
       }
       if (count($ret) > 0) {
@@ -99,7 +101,7 @@
     public function getModesByTarget($target, $alphabet = 0) {
       // Retrieve the requested modes if they exist, otherwise return false.
       $modes = array();
-      foreach ($this->getModeNamesByTarget($target) as $name) {
+      foreach ($this->getModeNamesByTarget($target, $alphabet) as $name) {
         if (isset($this->modes[$alphabet]["byname"][$name])) {
           $modes[] = $this->modes[$alphabet]["byname"][$name];
         }
@@ -113,7 +115,7 @@
     public function getModesByType($type, $alphabet = 0) {
       // Retrieve the requested modes if they exist, otherwise return false.
       $modes = array();
-      foreach ($this->getModeNamesByType($type) as $name) {
+      foreach ($this->getModeNamesByType($type, $alphabet) as $name) {
         if (isset($this->modes[$alphabet]["byname"][$name])) {
           $modes[] = $this->modes[$alphabet]["byname"][$name];
         }
@@ -130,7 +132,7 @@
       $params = array();
       foreach ($ms as $mode) {
         if (is_array($ignore) && !in_array($mode["name"], $ignore)) {
-          $m = $this->getModeByName($mode["name"]);
+          $m = $this->getModeByName($mode["name"], $alphabet);
           if ($m != false) {
             if ($m[3] == "0") {
               $modes[] = ($letters == false ? $m[0] : $m[1]);
@@ -160,7 +162,7 @@
           $operation = $m;
         }
         else {
-          $mode = $this->getModeByChar($type, $m);
+          $mode = $this->getModeByChar($type, $m, $alphabet);
           if ($mode != false) {
             if ($operation == "+" && in_array($mode[3],
             array("1", "2", "3", "4")) && isset($mex[0])) {
