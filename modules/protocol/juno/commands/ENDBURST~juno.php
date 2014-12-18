@@ -15,7 +15,7 @@
       }
       $command = array_values($command);
 
-      $connection->setOption("endburst", $command[0]);
+      $connection->setOption("rburstend", $command[0]);
       $event = EventHandling::getEventByName("serverBurstEvent~juno");
       if ($event != false) {
         foreach ($event[2] as $id => $registration) {

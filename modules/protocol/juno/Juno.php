@@ -2,6 +2,7 @@
   class __CLASSNAME__ {
     public $depend = array("Channel", "Client", "Modes", "Self");
     public $name = "Juno";
+    private $alphabet = null;
     private $channel = null;
     private $client = null;
     private $config = array();
@@ -54,6 +55,10 @@
     public function convertOutgoingUModeName($name) {
       return (isset($this->config["umodemap"][$name]) ?
         $this->config["umodemap"][$name] : false);
+    }
+
+    public function getAlphabet() {
+      return $this->alphabet;
     }
 
     public function getConnection($servhost) {
@@ -131,6 +136,7 @@
       $this->channel = ModuleManagement::getModuleByName("Channel");
       $this->client = ModuleManagement::getModuleByName("Client");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->alphabet = $this->modes->createAlphabet();
       $this->self = ModuleManagement::getModuleByName("Self");
       EventHandling::registerForEvent("rehashEvent", $this, "loadConfig");
       $this->loadConfig();
