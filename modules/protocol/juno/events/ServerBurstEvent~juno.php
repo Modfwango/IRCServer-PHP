@@ -18,7 +18,7 @@
     public function isInstantiated() {
       EventHandling::createEvent("serverBurstEvent~juno", $this);
       EventHandling::registerAsEventPreprocessor("serverBurstEvent~juno", $this,
-        "receiveServerBurstEvent")
+        "receiveServerBurstEvent");
       return true;
     }
   }
