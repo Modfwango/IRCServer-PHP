@@ -27,11 +27,7 @@
     __PROJECTROOT__."/modules"
   );
   // Define mandatory files
-  $files = array(
-    __PROJECTROOT__."/conf/modules.conf",
-    __PROJECTROOT__."/conf/listen.conf",
-    __PROJECTROOT__."/conf/loglevel.conf"
-  );
+  $files = array();
   // Check each directory and don't fail if it doesn't exist
   foreach ($directories as $directory) {
     if (!file_exists($directory)) {
@@ -51,6 +47,11 @@
   if (count($missing) > 0) {
     echo "Some mandatory configuration files were missing, and thus replaced. ".
       "They are listed below:".$ending.implode($ending, $missing)."\n";
+    exit(0);
+  }
+
+  // End if prelaunch is requested
+  if (isset($argv[1]) && strtolower($argv[1]) == "prelaunch") {
     exit(0);
   }
 
