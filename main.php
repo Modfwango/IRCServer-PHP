@@ -1,13 +1,13 @@
 <?php
   // Make sure that we're running on a compatible version of PHP
-  if (version_compare(phpversion(), '5.1.1', '<')) {
-      die("You must have PHP version 5.1.1 or higher to use Modfwango.\n");
+  if (version_compare(phpversion(), '5.3', '<')) {
+    echo "You must have PHP version 5.3 or higher to use Modfwango.\n";
+    exit(1);
   }
 
-  // Set the default timezone to America/Chicago; modules can temporarily set
-  // their own timezone configuration if they wish.  I'll get around to adding
-  // a configuration parameter for this one day
-  define("__TIMEZONE__", "America/Chicago");
+  // Set the default timezone to UTC; modules can temporarily set
+  // their own timezone configuration if they wish
+  define("__TIMEZONE__", "UTC");
   // Set the project root constant to the launcher's directory
   define("__PROJECTROOT__", dirname(__FILE__));
 
@@ -49,8 +49,9 @@
   // Tell the user if there was a missing file that was mandatory
   $ending = "\n * ";
   if (count($missing) > 0) {
-    die("Some mandatory configuration files were missing, and thus replaced.  ".
-      "They are listed below:".$ending.implode($ending, $missing)."\n");
+    echo "Some mandatory configuration files were missing, and thus replaced. ".
+      "They are listed below:".$ending.implode($ending, $missing)."\n";
+    exit(0);
   }
 
   // Require Modfwango core to ignite the project
