@@ -14,4 +14,6 @@ Revamp nickname change event system
 
 Abstract all calls to `Connection::send()`
 
-Look into blocking outgoing connections
+Look into blocking outgoing connections [should be solved with latest Modfwango]
+
+Fix restart command [maybe?]
