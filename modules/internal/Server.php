@@ -47,7 +47,7 @@
             $server->getOption("sid");
         }
 
-        if ($server->getHost() != false) {
+        if ($server->getOption("protocol") != false) {
           if (!isset($this->servers["byprotocol"][$server->getOption(
               "protocol")])) {
             $this->clients["byprotocol"][$server->getOption("protocol")] =
