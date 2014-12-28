@@ -84,7 +84,8 @@
       );
       foreach ($this->server->getServersByProtocol("juno") as $server) {
         $components = $this->modes->getModeStringComponents(
-          $connection->getOption("modes"), true, array(),
+          (is_array($connection->getOption("modes")) ?
+          $connection->getOption("modes") : array()), true, array(),
           $server->getOption("alphabet"));
         $static[2] = trim("+".implode($components[0])." ".
           implode($components[1]));
