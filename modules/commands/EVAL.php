@@ -1,13 +1,14 @@
 <?php
   class __CLASSNAME__ {
     public $depend = array("Channel", "Client", "CommandEvent", "Modes",
-      "Numeric", "Self");
+      "Numeric", "Self", "Server");
     public $name = "EVAL";
     private $channel = null;
     private $client = null;
     private $modes = null;
     private $numeric = null;
     private $self = null;
+    private $server = null;
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];
@@ -59,6 +60,7 @@
       $this->modes = ModuleManagement::getModuleByName("Modes");
       $this->numeric = ModuleManagement::getModuleByName("Numeric");
       $this->self = ModuleManagement::getModuleByName("Self");
+      $this->server = ModuleManagement::getModuleByName("Server");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         array("eval", false));
       return true;
