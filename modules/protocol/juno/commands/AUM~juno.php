@@ -40,8 +40,10 @@
       $modes = array();
       foreach ($this->modes->getModesByTarget("1") as $mode) {
         $name = (isset($config["reversemodemap"]["user"][$mode[0]]) ?
-          $config["reversemodemap"]["user"][$mode[0]] : $mode[0]);
-        $modes[] = $name.":".$mode[1];
+          $config["reversemodemap"]["user"][$mode[0]] : false);
+        if ($name != false) {
+          $modes[] = $name.":".$mode[1];
+        }
       }
       $lburst[] = ":".$this->juno->getSID()." AUM ".implode(" ", $modes);
       $connection->setOption("lburst", $lburst);
