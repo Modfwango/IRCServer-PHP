@@ -33,7 +33,7 @@
     public function getServerSIDsByProtocol($protocol) {
       // Retrieve the requested servers if they exist, otherwise return false.
       return (isset($this->servers["byprotocol"][$protocol]) ?
-        $this->servers["byprotocol"][$protocol] : false);
+        $this->servers["byprotocol"][$protocol] : array());
     }
 
     public function setServer($server) {
