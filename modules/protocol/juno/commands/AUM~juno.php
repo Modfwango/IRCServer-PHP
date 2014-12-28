@@ -45,7 +45,9 @@
           $modes[] = $name.":".$mode[1];
         }
       }
-      $lburst[] = ":".$this->juno->getSID()." AUM ".implode(" ", $modes);
+      if (count($modes) > 0) {
+        $lburst[] = ":".$this->juno->getSID()." AUM ".implode(" ", $modes);
+      }
       $connection->setOption("lburst", $lburst);
       return array(true);
     }
