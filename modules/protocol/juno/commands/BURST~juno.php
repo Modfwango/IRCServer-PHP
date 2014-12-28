@@ -7,6 +7,7 @@
     public function receiveCommand($name, $data) {
       $connection = $data[0];
       $command = $data[1];
+      $source = array_shift($command);
 
       foreach ($command as $key => $param) {
         if (trim($param) == null) {

@@ -65,7 +65,8 @@
           continue;
         }
 
-        if ($registration[2][1] == true) {
+        // Prepend the source if provided and registration is for servers
+        if (isset($source) && $registration[2][1] == true) {
           array_unshift($params, $source);
         }
 
