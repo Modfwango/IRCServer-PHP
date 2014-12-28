@@ -199,8 +199,8 @@
           }
         }
       }
-      Logger::debug("Modes parsed:");
-      Logger::debug(var_export($modes, true));
+      Logger::devel("Modes parsed:");
+      Logger::devel(var_export($modes, true));
       return $modes;
     }
 
@@ -233,8 +233,8 @@
         $this->modes[$alphabet]["byweight"][$mode[5]][] = $mode[0];
         ksort($this->modes[$alphabet]["byweight"]);
       }
-      Logger::debug("Current mode state:");
-      Logger::debug(var_export($this->modes, true));
+      Logger::devel("Current mode state:");
+      Logger::devel(var_export($this->modes, true));
     }
 
     public function unsetMode($mode, $alphabet = 0) {
@@ -290,8 +290,8 @@
           }
         }
       }
-      Logger::debug("Current mode state:");
-      Logger::debug(var_export($this->modes, true));
+      Logger::devel("Current mode state:");
+      Logger::devel(var_export($this->modes, true));
     }
 
     public function isUnloadable() {
