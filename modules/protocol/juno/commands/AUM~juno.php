@@ -20,17 +20,28 @@
       if (count($command) > 0) {
         foreach ($command as $item) {
           $item = explode(":", $item);
-          $this->modes->setMode(array($item[0], $item[1], "1", $item[2]),
-            $connection->getOption("alphabet"));
+          $config = $this->juno->getConnection(
+            $connection->getOption("servhost"));
+          $map = (isset($config["forwardmodemap"]["user"][$item[0]]) ?
+            $config["forwardmodemap"]["user"][$item[0]] : false);
+          $mode = $this->modes->getModeByName(($map != false ? $map :
+            $item[0]));
+          if ($mode != false) {
+            $this->modes->setMode(array($mode[0], $item[1], $mode[2], $mode[3]),
+              $connection->getOption("alphabet"));
+          }
         }
       }
     }
 
     public function receiveServerBurst($name, $id, $connection) {
+      $config = $this->juno->getConnection($connection->getOption("servhost"));
       $lburst = $connection->getOption("lburst");
       $modes = array();
       foreach ($this->modes->getModesByTarget("1") as $mode) {
-        $modes[] = $mode[0].":".$mode[1];
+        $name = (isset($config["reversemodemap"]["user"][$mode[0]]) ?
+          $config["reversemodemap"]["user"][$mode[0]] : $mode[0]);
+        $modes[] = $name.":".$mode[1];
       }
       $lburst[] = ":".$this->juno->getSID()." AUM ".implode(" ", $modes);
       $connection->setOption("lburst", $lburst);

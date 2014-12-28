@@ -30,22 +30,39 @@
               "port" => "7000",
               "sendpass" => "k",
               "recvpass" => "k",
-              "autoconn" => true
+              "autoconn" => true,
+              "forwardmodemap" => array(
+                "channel" => array(
+                  "ban" => "ChannelBan",
+                  "except" => "ChannelBanExemption",
+                  "op" => "ChannelOperator",
+                  "voice" => "ChannelVoice",
+                  "invite_except" => "InviteException",
+                  "invite_only" => "InviteOnly",
+                  "moderated" => "Moderated",
+                  "no_ext" => "NoExternalMessages",
+                  "protect_topic" => "ProtectTopic",
+                  "free_invite" => "UnrestrictedInvite"
+                ),
+                "user" => array()
+              ),
+              "reversemodemap" => array(
+                "channel" => array(
+                   "ChannelBan" => "ban",
+                   "ChannelBanExemption" => "except",
+                   "ChannelOperator" => "op",
+                   "ChannelVoice" => "voice",
+                   "InviteException" => "invite_except",
+                   "InviteOnly" => "invite_only",
+                   "Moderated" => "moderated",
+                   "NoExternalMessages" => "no_ext",
+                   "ProtectTopic" => "protect_topic",
+                   "UnrestrictedInvite" => "free_invite"
+                ),
+                "user" => array()
+              )
             )
-          ),
-          "cmodemap" => array(
-            "ban" => "ChannelBan",
-            "except" => "ChannelBanExemption",
-            "op" => "ChannelOperator",
-            "voice" => "ChannelVoice",
-            "invite_except" => "InviteException",
-            "invite_only" => "InviteOnly",
-            "moderated" => "Moderated",
-            "no_ext" => "NoExternalMessages",
-            "protect_topic" => "ProtectTopic",
-            "free_invite" => "UnrestrictedInvite"
-          ),
-          "umodemap" => array()
+          )
         );
         StorageHandling::saveFile($this, "config.json", json_encode($config,
           JSON_PRETTY_PRINT));
