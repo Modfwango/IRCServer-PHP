@@ -4,6 +4,7 @@
       "LUSERS", "Modes", "MOTD", "Numeric", "Self", "UserRegistrationEvent");
     public $name = "Welcome";
     private $client = null;
+    private $count = "a";
     private $modes = null;
     private $numeric = null;
     private $self = null;
@@ -17,12 +18,12 @@
         if ($ip == $host) {
           $connection->send(":".$this->self->getConfigFlag("serverdomain").
             " NOTICE * :*** Couldn't look up your hostname");
-          $connection->setOption("id", hash("sha256", rand().$ip));
+          $connection->setOption("id", $this->count++);
         }
         else {
           $connection->send(":".$this->self->getConfigFlag("serverdomain").
             " NOTICE * :*** Found your hostname");
-          $connection->setOption("id", hash("sha256", rand().$host));
+          $connection->setOption("id", $this->count++);
         }
         $connection->setOption("signon", time());
         $connection->setOption("idle", time());
