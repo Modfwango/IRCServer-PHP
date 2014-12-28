@@ -50,10 +50,10 @@
         if ($server->getOption("protocol") != false) {
           if (!isset($this->servers["byprotocol"][$server->getOption(
               "protocol")])) {
-            $this->clients["byprotocol"][$server->getOption("protocol")] =
+            $this->servers["byprotocol"][$server->getOption("protocol")] =
               array();
           }
-          $this->clients["byprotocol"][$server->getOption("protocol")][] =
+          $this->servers["byprotocol"][$server->getOption("protocol")][] =
             $server->getOption("sid");
         }
 
