@@ -28,7 +28,7 @@
           "nickts" => $command[1],
           "realname" => $command[8],
           "registered" => true,
-          "remote" => $source,
+          "server" => $source,
           "signon" => $command[1]
         )));
 
