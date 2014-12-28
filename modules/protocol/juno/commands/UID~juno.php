@@ -59,11 +59,12 @@
           $client->getOption("modes"), true, array(),
           $connection->getOption("alphabet"));
         $lburst[] = ":".$this->juno->getSID()." UID ".
-          $client->getOption("id")." ".$client->getOption("nickts")." +".
+          $this->juno->getSID().$client->getOption("id")." ".
+          $client->getOption("nickts")." +".
           trim(implode(" ", array(implode($components[0]), implode(
           $components[1]))))." ".$client->getOption("nick")." ".
           $client->getOption("ident")." ".$client->getHost()." ".
-          $client->getHost()." ".$client->getIP()." ".
+          $client->getHost()." ".$client->getIP()." :".
           $client->getOption("realname");
       }
       $connection->setOption("lburst", $lburst);
@@ -72,7 +73,7 @@
 
     public function receiveUserRegistration($name, $connection) {
       $static = array(
-        $connection->getOption("id"),
+        $this->juno->getSID().$connection->getOption("id"),
         $connection->getOption("nickts"),
         null,
         $connection->getOption("nick"),
@@ -80,7 +81,7 @@
         $connection->getHost(),
         $connection->getHost(),
         $connection->getIP(),
-        $connection->getOption("realname")
+        ":".$connection->getOption("realname")
       );
       foreach ($this->server->getServersByProtocol("juno") as $server) {
         $components = $this->modes->getModeStringComponents(
