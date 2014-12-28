@@ -39,7 +39,7 @@
 
         // Parse modes
         $modes = $this->modes->parseModes("1", $command[2],
-          $this->server->getServerBySID($source));
+          $this->server->getServerBySID($source)->getOption("alphabet"));
         $event = EventHandling::getEventByName("userModeEvent");
         if ($event != false) {
           foreach ($event[2] as $id => $registration) {
