@@ -32,8 +32,7 @@
       }
 
       if (substr($params[0], 0, 1) == ":") {
-        unset($params[0]);
-        $params = array_values($params);
+        $source = array_shift($params);
       }
 
       if (count($params) == 0) {
@@ -64,6 +63,10 @@
         if (isset($registration[2][2]) &&
             $connection->getOption("protocol") != $registration[2][2]) {
           continue;
+        }
+
+        if ($registration[2][1] == true) {
+          array_unshift($params, $source);
         }
 
         $count++;
