@@ -74,7 +74,7 @@
         }
         foreach ($this->servers["byprotocol"] as &$byprotocol) {
           if (in_array($server->getOption("sid"), $byprotocol)) {
-            $byprotocol = array_diff($byprotocol, array
+            $byprotocol = array_diff($byprotocol, array(
               $server->getOption("sid")));
           }
         }
