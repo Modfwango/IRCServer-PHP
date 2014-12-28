@@ -1,10 +1,12 @@
 <?php
   class __CLASSNAME__ {
-    public $depend = array("Client", "CommandEvent", "UserModeEvent",
-      "UserRegistrationEvent");
+    public $depend = array("Client", "CommandEvent", "Juno", "Server",
+      "UserModeEvent", "UserRegistrationEvent");
     public $name = "UID~juno";
     private $client = null;
+    private $juno = null;
     private $modes = null;
+    private $server = null;
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];
@@ -37,7 +39,7 @@
 
         // Parse modes
         $modes = $this->modes->parseModes("1", $command[2],
-          $connection->getOption("alphabet")); // Switch to dynamic SID alphabet
+          $this->server->getServerBySID($source));
         $event = EventHandling::getEventByName("userModeEvent");
         if ($event != false) {
           foreach ($event[2] as $id => $registration) {
@@ -50,9 +52,51 @@
       }
     }
 
+    public function receiveServerBurst($name, $id, $connection) {
+      $lburst = $connection->getOption("lburst");
+      foreach ($this->client->getClients() as $client) {
+        $components = $this->modes->getModeStringComponents(
+          $client->getOption("modes"), true, array(),
+          $connection->getOption("alphabet"));
+        $lburst[] = ":".$this->juno->getSID()." UID ".
+          $client->getOption("id")." ".$client->getOption("nickts")." +".
+          trim(implode(" ", array(implode($components[0]), implode(
+          $components[1]))))." ".$client->getOption("nick")." ".
+          $client->getOption("ident")." ".$client->getHost()." ".
+          $client->getHost()." ".$client->getIP()." ".
+          $client->getOption("realname");
+      }
+      $connection->setOption("lburst", $lburst);
+      return array(true);
+    }
+
+    public function receiveUserRegistration($name, $connection) {
+      $static = array(
+        $connection->getOption("id"),
+        $connection->getOption("nickts"),
+        null,
+        $connection->getOption("nick"),
+        $connection->getOption("ident"),
+        $connection->getHost(),
+        $connection->getHost(),
+        $connection->getIP(),
+        $connection->getOption("realname")
+      );
+      foreach ($this->server->getServersByProtocol("juno") as $server) {
+        $components = $this->modes->getModeStringComponents(
+          $connection->getOption("modes"), true, array(),
+          $server->getOption("alphabet"));
+        $static[2] = trim("+".implode($components[0])." ".
+          implode($components[1]));
+        $server->send(":".$this->juno->getSID()." UID ".implode(" ", $static));
+      }
+    }
+
     public function isInstantiated() {
       $this->client = ModuleManagement::getModuleByName("Client");
+      $this->juno = ModuleManagement::getModuleByName("Juno");
       $this->modes = ModuleManagement::getModuleByName("Modes");
+      $this->server = ModuleManagement::getModuleByName("Server");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         array("uid", true, "juno"));
       EventHandling::registerForEvent("userRegistrationEvent", $this,

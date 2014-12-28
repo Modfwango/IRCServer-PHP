@@ -153,6 +153,10 @@
       return $clients;
     }
 
+    public function getClients() {
+      return $this->clients["byid"];
+    }
+
     public function getClientsByMatchingHost($pattern) {
       $clients = array();
       foreach ($this->getClientIDsByMatchingHost($pattern) as $id) {

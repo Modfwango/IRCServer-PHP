@@ -61,4 +61,5 @@
       return true;
     }
   }
+  // Deal with SID
 ?>

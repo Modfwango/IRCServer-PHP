@@ -1,11 +1,12 @@
 <?php
   class __CLASSNAME__ {
     public $depend = array("CommandEvent", "ConnectionConnectedEvent", "Juno",
-      "Modes", "Self", "ServerAcquaintedEvent~juno");
+      "Modes", "Self", "Server", "ServerAcquaintedEvent~juno");
     public $name = "SERVER~juno";
     private $juno = null;
     private $modes = null;
     private $self = null;
+    private $server = null;
 
     public function receiveCommand($name, $data) {
       $connection = $data[0];
@@ -33,6 +34,7 @@
           $connection->setOption("sendpass", $c["sendpass"]);
           $connection->setOption("recvpass", $c["recvpass"]);
           $connection->setOption("racquainted", true);
+          $this->server->setServer($connection);
 
           $event = EventHandling::getEventByName("serverAcquaintedEvent~juno");
           if ($event != false) {
@@ -77,6 +79,7 @@
       $this->juno = ModuleManagement::getModuleByName("Juno");
       $this->modes = ModuleManagement::getModuleByName("Modes");
       $this->self = ModuleManagement::getModuleByName("Self");
+      $this->server = ModuleManagement::getModuleByName("Server");
       EventHandling::registerForEvent("commandEvent", $this, "receiveCommand",
         array("server"));
       EventHandling::registerForEvent("connectionConnectedEvent", $this,
