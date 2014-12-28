@@ -32,7 +32,7 @@
       }
 
       if (substr($params[0], 0, 1) == ":") {
-        $source = array_shift($params);
+        $source = substr(array_shift($params), 1);
       }
 
       if (count($params) == 0) {

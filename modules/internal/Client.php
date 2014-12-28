@@ -330,6 +330,7 @@
       foreach ($modes as $mode) {
         if ($mode["operation"] == "+") {
           $modesdone[] = $mode;
+          unset($mode["operation"]);
           $cl[] = $mode;
         }
         else {
@@ -424,6 +425,8 @@
           $this->clients["byrealname"][strtolower(
             $client->getOption("realname"))][] = $client->getOption("id");
         }
+        Logger::devel("New client:");
+        Logger::devel(var_export($client, true));
         return true;
       }
       return false;
