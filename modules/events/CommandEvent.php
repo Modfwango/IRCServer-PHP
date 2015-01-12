@@ -92,12 +92,14 @@
             }
 
             // Filter non-matching server preference (if specified)
-            if ($connection->getOption("server") != $registration[2][0]) {
+            if (isset($registration[2][1]) &&
+                $connection->getOption("server") != $registration[2][1]) {
               continue;
             }
 
             // Filter non-matching protocol preference (if specified)
-            if ($connection->getOption("protocol") != $registration[2][1]) {
+            if (isset($registration[2][2]) &&
+                $connection->getOption("protocol") != $registration[2][2]) {
               continue;
             }
 
