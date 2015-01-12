@@ -78,6 +78,7 @@
 
         $count++;
         EventHandling::triggerEvent($name, $id, array($connection, $params));
+        array_shift($params);
       }
       if ($count == 0) {
         // Command doesn't exist
