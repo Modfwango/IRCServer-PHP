@@ -86,23 +86,6 @@
         $event = EventHandling::getEventByName("unknownCommandEvent");
         if ($event != false) {
           foreach ($event[2] as $id => $registration) {
-            // Filter non-compliant registrations
-            if (!is_array($registration[2]) || count($registration[2]) < 2) {
-              continue;
-            }
-
-            // Filter non-matching server preference (if specified)
-            if (isset($registration[2][1]) &&
-                $connection->getOption("server") != $registration[2][1]) {
-              continue;
-            }
-
-            // Filter non-matching protocol preference (if specified)
-            if (isset($registration[2][2]) &&
-                $connection->getOption("protocol") != $registration[2][2]) {
-              continue;
-            }
-
             // Trigger the unknownCommandEvent event for each
             // applicable module.
             EventHandling::triggerEvent("unknownCommandEvent", $id,
