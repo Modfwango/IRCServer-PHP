@@ -81,6 +81,7 @@
         array_shift($params);
       }
       if ($count == 0) {
+        Logger::devel("No suitable registration found... assuming unknown");
         // Command doesn't exist
         $event = EventHandling::getEventByName("unknownCommandEvent");
         if ($event != false) {
