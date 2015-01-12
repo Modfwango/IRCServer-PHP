@@ -40,6 +40,12 @@
       }
       $cmd = array_shift($params);
 
+      if (isset($source)) {
+        Logger::devel("Source:  ".$source);
+      }
+      Logger::devel("Command: ".$cmd);
+      Logger::devel("Params:  ".json_encode($params));
+
       $count = 0;
       foreach ($registrations as $id => $registration) {
         // Filter non-compliant registrations
